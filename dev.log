@@ -1,0 +1,1210 @@
+
+> chatflow@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.31
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · optimizeCss
+    · scrollRestoration
+
+ ✓ Starting...
+ ✓ Ready in 2.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 3.6s (945 modules)
+ GET / 307 in 3911ms
+ ○ Compiling /auth/signin ...
+ ✓ Compiled /auth/signin in 3.9s (993 modules)
+ GET /auth/signin 200 in 4130ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 601ms (1082 modules)
+ GET /api/auth/session 200 in 630ms
+Initializing Socket.IO server...
+ POST /api/socket/io 200 in 743ms
+ POST /api/socket/io 200 in 779ms
+ GET /sounds/notification.mp3 404 in 751ms
+ GET /favicon.ico 200 in 849ms
+User connected: uXLj4nKplsOpLkLEAAAC
+User connected: kSuocLVYnwVksV-_AAAD
+ GET /api/auth/session 200 in 18ms
+ GET /sounds/notification.mp3 404 in 24ms
+ GET /api/auth/providers 200 in 5ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials 200 in 345ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ ○ Compiling /chat ...
+ ✓ Compiled /chat in 2.9s (2291 modules)
+ ✓ Compiled /api/conversations in 190ms (1257 modules)
+ ✓ Compiled (1259 modules)
+ GET /api/notifications 200 in 420ms
+ GET /api/conversations 200 in 424ms
+ GET /api/notifications 200 in 11ms
+ GET /api/conversations 200 in 19ms
+ GET /api/conversations 200 in 37ms
+ GET /api/conversations 200 in 9ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 82ms
+User disconnected: uXLj4nKplsOpLkLEAAAC
+User connected: NiliaOHLieVObl1BAAAF
+User disconnected: NiliaOHLieVObl1BAAAF
+User connected: yWgNLF3fyLCMDa7JAAAH
+ GET /chat 200 in 118ms
+User disconnected: yWgNLF3fyLCMDa7JAAAH
+User disconnected: kSuocLVYnwVksV-_AAAD
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 34ms
+ GET /favicon.ico 200 in 26ms
+User connected: lrSQbGY_QbM9e-VzAAAK
+User connected: kQTHRXMfa6jc-_UuAAAL
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/notifications 200 in 26ms
+ GET /api/conversations 200 in 42ms
+ GET /api/notifications 200 in 11ms
+ GET /api/conversations 200 in 24ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 15ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 12ms
+ GET /api/auth/session 200 in 6ms
+User kQTHRXMfa6jc-_UuAAAL joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ ✓ Compiled /api/messages/[conversationId] in 348ms (1022 modules)
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 387ms
+ ✓ Compiled /api/messages/read in 159ms (1024 modules)
+ POST /api/messages/read 200 in 186ms
+User kQTHRXMfa6jc-_UuAAAL left conversation: cme2d5h2b0008ku9gwwohgv5p
+User kQTHRXMfa6jc-_UuAAAL joined conversation: cme267cwv0000ku2wv1fewftm
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 54ms
+ ✓ Compiled /api/users/blocked in 179ms (1026 modules)
+ GET /api/users/blocked 200 in 202ms
+ POST /api/messages/read 200 in 18ms
+ ✓ Compiled in 1106ms (2063 modules)
+ ✓ Compiled in 1ms (1026 modules)
+ GET /api/auth/session 200 in 1125ms
+ GET /api/conversations 200 in 348ms
+ ✓ Compiled in 1ms (1026 modules)
+ ✓ Compiled in 0ms (1026 modules)
+ GET /api/conversations 200 in 287ms
+ ✓ Compiled in 1ms (1026 modules)
+ GET /api/conversations 200 in 313ms
+User kQTHRXMfa6jc-_UuAAAL left conversation: cme267cwv0000ku2wv1fewftm
+User kQTHRXMfa6jc-_UuAAAL joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 29ms
+User kQTHRXMfa6jc-_UuAAAL left conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/users/blocked 200 in 14ms
+User kQTHRXMfa6jc-_UuAAAL joined conversation: cme267cwv0000ku2wv1fewftm
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 23ms
+User kQTHRXMfa6jc-_UuAAAL left conversation: cme267cwv0000ku2wv1fewftm
+User kQTHRXMfa6jc-_UuAAAL joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 29ms
+User kQTHRXMfa6jc-_UuAAAL left conversation: cme2d5h2b0008ku9gwwohgv5p
+User kQTHRXMfa6jc-_UuAAAL joined conversation: cme267cwv0000ku2wv1fewftm
+ GET /api/users/blocked 200 in 17ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 37ms
+ ✓ Compiled /api/messages/search in 211ms (1028 modules)
+ GET /api/messages/search?query=sad&conversationId=cme267cwv0000ku2wv1fewftm 200 in 238ms
+ ✓ Compiled in 454ms (2051 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+User disconnected: kQTHRXMfa6jc-_UuAAAL
+ GET /chat 200 in 218ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 29ms
+ GET /favicon.ico 200 in 34ms
+User connected: qAXHnRbqPfvhJuMfAAAO
+User connected: uPNBp8yM8FYms9h3AAAP
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/notifications 200 in 27ms
+ GET /api/conversations 200 in 32ms
+ GET /api/notifications 200 in 11ms
+ GET /api/conversations 200 in 14ms
+ GET /api/conversations 200 in 13ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 12ms
+User disconnected: lrSQbGY_QbM9e-VzAAAK
+ GET /api/auth/session 200 in 8ms
+ GET /chat 200 in 27ms
+User disconnected: qAXHnRbqPfvhJuMfAAAO
+User disconnected: uPNBp8yM8FYms9h3AAAP
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 40ms
+ GET /favicon.ico 200 in 13ms
+User connected: El-BHuKnoLDaxb5WAAAS
+User connected: gEuVSiTbG11DL-4jAAAT
+ GET /api/auth/session 200 in 14ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/notifications 200 in 14ms
+ GET /api/conversations 200 in 25ms
+ GET /api/notifications 200 in 16ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 9ms
+ GET /api/conversations 200 in 9ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 13ms
+User gEuVSiTbG11DL-4jAAAT joined conversation: cme267cwv0000ku2wv1fewftm
+ GET /api/users/blocked 200 in 17ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 38ms
+ GET /api/messages/search?query=sad&conversationId=cme267cwv0000ku2wv1fewftm 200 in 14ms
+ GET /api/messages/search?query=what&conversationId=cme267cwv0000ku2wv1fewftm 200 in 11ms
+ GET /api/messages/search?query=wha&conversationId=cme267cwv0000ku2wv1fewftm 200 in 9ms
+User gEuVSiTbG11DL-4jAAAT left conversation: cme267cwv0000ku2wv1fewftm
+User gEuVSiTbG11DL-4jAAAT joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 15ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 14ms
+ GET /api/auth/session 200 in 10ms
+User disconnected: gEuVSiTbG11DL-4jAAAT
+User disconnected: El-BHuKnoLDaxb5WAAAS
+ GET /chat 200 in 59ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 39ms
+ GET /favicon.ico 200 in 44ms
+User connected: Epe3RZTx8Wz1a1NRAAAW
+User connected: ALa2jQiTDGe97O1pAAAX
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/notifications 200 in 14ms
+ GET /api/notifications 200 in 8ms
+ GET /api/conversations 200 in 32ms
+ GET /api/conversations 200 in 16ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 13ms
+ GET /api/conversations 200 in 11ms
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme267cwv0000ku2wv1fewftm
+ GET /api/users/blocked 200 in 11ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 28ms
+ GET /api/auth/session 200 in 7ms
+User disconnected: Epe3RZTx8Wz1a1NRAAAW
+User connected: TheDOeFMSDA72oT6AAAZ
+User ALa2jQiTDGe97O1pAAAX left conversation: cme267cwv0000ku2wv1fewftm
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 27ms
+ ✓ Compiled /api/messages/send in 301ms (1026 modules)
+ POST /api/messages/send 201 in 336ms
+User ALa2jQiTDGe97O1pAAAX left conversation: cme2d5h2b0008ku9gwwohgv5p
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme267cwv0000ku2wv1fewftm
+ GET /api/users/blocked 200 in 16ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 30ms
+User ALa2jQiTDGe97O1pAAAX left conversation: cme267cwv0000ku2wv1fewftm
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 15ms
+ GET /api/auth/session 200 in 7ms
+ POST /api/messages/send 201 in 27ms
+ ✓ Compiled in 919ms (2016 modules)
+ ✓ Compiled /api/conversations in 116ms (985 modules)
+ GET /api/conversations 200 in 140ms
+ ✓ Compiled in 376ms (2020 modules)
+ GET /api/conversations 200 in 16ms
+ ✓ Compiled in 645ms (2018 modules)
+User ALa2jQiTDGe97O1pAAAX left conversation: cme2d5h2b0008ku9gwwohgv5p
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/conversations 200 in 44ms
+ ✓ Compiled /api/messages/[conversationId] in 143ms (985 modules)
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 182ms
+ ✓ Compiled in 411ms (2020 modules)
+User ALa2jQiTDGe97O1pAAAX left conversation: cme2d5h2b0008ku9gwwohgv5p
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 31ms
+ GET /api/conversations 200 in 41ms
+ ✓ Compiled in 370ms (2020 modules)
+User ALa2jQiTDGe97O1pAAAX left conversation: cme2d5h2b0008ku9gwwohgv5p
+User ALa2jQiTDGe97O1pAAAX joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/conversations 200 in 37ms
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 34ms
+ ✓ Compiled /api/auth/[...nextauth] in 186ms (986 modules)
+ GET /api/auth/session 200 in 212ms
+ GET /chat 200 in 188ms
+User disconnected: ALa2jQiTDGe97O1pAAAX
+User disconnected: TheDOeFMSDA72oT6AAAZ
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 637ms (2010 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 745ms
+User connected: zWdGD0A3HQOGXVpZAAAb
+User connected: vmYhKLYfVcDqqsKeAAAd
+ ✓ Compiled /favicon.ico in 197ms (1020 modules)
+ GET /api/auth/session 200 in 333ms
+ GET /favicon.ico 200 in 416ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/conversations 200 in 26ms
+ ✓ Compiled /api/notifications in 143ms (1022 modules)
+ GET /api/notifications 200 in 291ms
+ GET /api/conversations 200 in 264ms
+ GET /api/notifications 200 in 12ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 10ms
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 27ms
+ ✓ Compiled /api/users/blocked in 149ms (1024 modules)
+ GET /api/users/blocked 200 in 296ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 296ms
+ ✓ Compiled /api/messages/send in 221ms (1026 modules)
+ POST /api/messages/send 201 in 253ms
+ GET /api/auth/session 200 in 14ms
+User disconnected: zWdGD0A3HQOGXVpZAAAb
+User disconnected: vmYhKLYfVcDqqsKeAAAd
+User connected: 3wPTQUF7EodPmbdcAAAf
+User connected: fsr088fATLSJ72aoAAAh
+User disconnected: fsr088fATLSJ72aoAAAh
+User connected: XYZVQZafmqdoOLlIAAAj
+ GET /api/auth/session 200 in 8ms
+ ✓ Compiled in 1232ms (2000 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /chat 200 in 242ms
+User disconnected: 3wPTQUF7EodPmbdcAAAf
+User disconnected: XYZVQZafmqdoOLlIAAAj
+ ✓ Compiled /_not-found in 266ms (2003 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 379ms
+User connected: wKAjzYD_D5KJTPYSAAAm
+User connected: qcx3dm8BvKiSf93kAAAn
+ ✓ Compiled /favicon.ico in 311ms (1013 modules)
+ GET /api/auth/session 200 in 329ms
+ GET /favicon.ico 200 in 572ms
+ ✓ Compiled /api/conversations in 258ms (1016 modules)
+ ✓ Compiled (1020 modules)
+ GET /api/auth/session 200 in 436ms
+ GET /api/notifications 200 in 447ms
+ GET /api/notifications 200 in 6ms
+ GET /api/conversations 200 in 457ms
+ GET /api/conversations 200 in 19ms
+ GET /api/conversations 200 in 19ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 15ms
+ GET /api/conversations 200 in 12ms
+ ✓ Compiled in 374ms (2057 modules)
+ GET /api/conversations 200 in 23ms
+ ✓ Compiled in 303ms (1037 modules)
+User disconnected: wKAjzYD_D5KJTPYSAAAm
+ ✓ Compiled in 224ms (1037 modules)
+ ✓ Compiled in 206ms (1035 modules)
+ ✓ Compiled in 190ms (1035 modules)
+ ✓ Compiled in 206ms (1035 modules)
+User connected: 8mNplU5__jyKIs4cAAAp
+ ✓ Compiled in 207ms (1035 modules)
+ ✓ Compiled in 190ms (1035 modules)
+ GET /api/auth/session 200 in 13ms
+User disconnected: qcx3dm8BvKiSf93kAAAn
+User disconnected: 8mNplU5__jyKIs4cAAAp
+ GET /chat 200 in 170ms
+ ✓ Compiled /_not-found in 407ms (2003 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 530ms
+User connected: V1U2_PQ74wYH2QX7AAAr
+User connected: UXz9-Z9Sp9OQUMjqAAAt
+ ✓ Compiled /favicon.ico in 196ms (1013 modules)
+ GET /api/auth/session 200 in 303ms
+ GET /favicon.ico 200 in 397ms
+ GET /api/auth/session 200 in 10ms
+ ✓ Compiled /api/conversations in 114ms (1016 modules)
+ ✓ Compiled (1020 modules)
+ GET /api/notifications 200 in 490ms
+ GET /api/conversations 200 in 490ms
+ GET /api/notifications 200 in 12ms
+ GET /api/conversations 200 in 15ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 10ms
+ GET /api/auth/session 200 in 10ms
+User disconnected: UXz9-Z9Sp9OQUMjqAAAt
+User disconnected: V1U2_PQ74wYH2QX7AAAr
+ GET /chat 200 in 187ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 59ms
+User connected: GCzOze_0iabsxViqAAAw
+ GET /favicon.ico 200 in 52ms
+User connected: k3aRxJ97iDl21k3lAAAx
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/notifications 200 in 14ms
+ GET /api/conversations 200 in 23ms
+ GET /api/notifications 200 in 15ms
+ GET /api/conversations 200 in 14ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 10ms
+User k3aRxJ97iDl21k3lAAAx joined conversation: cme267cwv0000ku2wv1fewftm
+ ✓ Compiled /api/messages/[conversationId] in 265ms (1022 modules)
+ ✓ Compiled (1024 modules)
+ GET /api/users/blocked 200 in 455ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 457ms
+User k3aRxJ97iDl21k3lAAAx left conversation: cme267cwv0000ku2wv1fewftm
+User k3aRxJ97iDl21k3lAAAx joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 26ms
+User disconnected: GCzOze_0iabsxViqAAAw
+User connected: fboR_E1qLYoH820pAAAz
+ GET /api/auth/session 200 in 14ms
+ GET /api/auth/csrf 200 in 7ms
+ POST /api/auth/signout 200 in 7ms
+User disconnected: k3aRxJ97iDl21k3lAAAx
+ GET /auth/signin 200 in 131ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 35ms
+ GET /api/auth/session 200 in 11ms
+User connected: WnCaOH4A4Vtd9ZdRAAA2
+User connected: DDtcCuNswszUK28aAAA3
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/providers 200 in 7ms
+ GET /api/auth/csrf 200 in 7ms
+ POST /api/auth/callback/credentials 401 in 270ms
+ GET /api/auth/providers 200 in 8ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials 200 in 278ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/notifications 200 in 29ms
+ GET /api/notifications 200 in 21ms
+ GET /api/conversations 200 in 36ms
+ GET /api/conversations 200 in 16ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 12ms
+ GET /api/auth/csrf 200 in 8ms
+ POST /api/auth/signout 200 in 6ms
+ GET /auth/signin 200 in 38ms
+User disconnected: DDtcCuNswszUK28aAAA3
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 34ms
+ GET /api/auth/session 200 in 9ms
+User connected: lWuA_QR-jljbVX_3AAA6
+User connected: yHb7DnnWikwvJF25AAA7
+ GET /api/auth/session 200 in 7ms
+User disconnected: fboR_E1qLYoH820pAAAz
+ GET /api/auth/providers 200 in 10ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials 200 in 275ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/notifications 200 in 17ms
+ GET /api/conversations 200 in 22ms
+ GET /api/notifications 200 in 12ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 15ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 9ms
+ GET /api/conversations 200 in 11ms
+User yHb7DnnWikwvJF25AAA7 joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 27ms
+ ✓ Compiled /api/messages/read in 311ms (991 modules)
+ POST /api/messages/read 200 in 351ms
+User disconnected: WnCaOH4A4Vtd9ZdRAAA2
+ ✓ Compiled /api/messages/send in 210ms (993 modules)
+ POST /api/messages/send 201 in 237ms
+ POST /api/messages/read 200 in 27ms
+User disconnected: yHb7DnnWikwvJF25AAA7
+ GET /chat 200 in 202ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 38ms
+User connected: 8L5500HL-9s9Ffq7AAA-
+User connected: 2HQyFx2SGyF5YH6yAAA_
+ ✓ Compiled /favicon.ico in 170ms (1026 modules)
+ GET /api/auth/session 200 in 316ms
+ GET /favicon.ico 200 in 397ms
+ GET /api/auth/session 200 in 14ms
+ GET /api/notifications 200 in 19ms
+ GET /api/conversations 200 in 23ms
+ GET /api/notifications 200 in 11ms
+ GET /api/conversations 200 in 13ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 8ms
+User 2HQyFx2SGyF5YH6yAAA_ joined conversation: cme2d5h2b0008ku9gwwohgv5p
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 27ms
+User disconnected: lWuA_QR-jljbVX_3AAA6
+User disconnected: 8L5500HL-9s9Ffq7AAA-
+User connected: CaicQ_h_tbZxkrNYAABB
+ ✓ Compiled in 1109ms (1989 modules)
+ ✓ Compiled in 422ms (1989 modules)
+ ✓ Compiled in 200ms (1035 modules)
+ ✓ Compiled in 453ms (1989 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+User disconnected: 2HQyFx2SGyF5YH6yAAA_
+User disconnected: CaicQ_h_tbZxkrNYAABB
+ GET /chat 200 in 190ms
+ ✓ Compiled /_not-found in 299ms (1978 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 402ms
+User connected: wjrQrEIJZdByIJlUAABE
+User connected: ZVufhxx2Ossh_fBsAABF
+ ✓ Compiled /api/auth/[...nextauth] in 280ms (987 modules)
+ ✓ Compiled (1013 modules)
+ GET /api/auth/session 200 in 390ms
+ GET /favicon.ico 200 in 601ms
+ ✓ Compiled /api/conversations in 134ms (1016 modules)
+ ✓ Compiled (1020 modules)
+ GET /api/auth/session 200 in 356ms
+ GET /api/notifications 200 in 359ms
+ GET /api/conversations 200 in 363ms
+ GET /api/notifications 200 in 12ms
+ GET /api/conversations 200 in 14ms
+ GET /api/conversations 200 in 9ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 9ms
+ GET /api/conversations 200 in 11ms
+ ✓ Compiled in 213ms (1037 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 313ms (2043 modules)
+User disconnected: wjrQrEIJZdByIJlUAABE
+User disconnected: ZVufhxx2Ossh_fBsAABF
+ GET /chat 200 in 399ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 46ms
+ GET /favicon.ico 200 in 30ms
+ GET /api/auth/session 200 in 20ms
+User connected: OjocuzA9_YJGxrH7AABI
+ GET /api/auth/session 200 in 11ms
+User connected: uJQ5M2z1iMt4pd82AABJ
+ GET /api/notifications 200 in 20ms
+ GET /api/conversations 200 in 19ms
+ GET /api/notifications 200 in 13ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 14ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 12ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 12ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 17ms
+User disconnected: OjocuzA9_YJGxrH7AABI
+User disconnected: uJQ5M2z1iMt4pd82AABJ
+ GET /chat 200 in 85ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 34ms
+User connected: gFXFKLY5pI92RmEWAABL
+ GET /favicon.ico 200 in 61ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 7ms
+User connected: KFNLdhYioui_6lyuAABN
+ GET /api/conversations 200 in 31ms
+ GET /api/notifications 200 in 41ms
+ GET /api/notifications 200 in 12ms
+ GET /api/conversations 200 in 24ms
+ GET /api/conversations 200 in 13ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 13ms
+ ✓ Compiled /api/messages/[conversationId] in 285ms (1022 modules)
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 317ms
+ ✓ Compiled /api/users/search in 174ms (1024 modules)
+ GET /api/users/search?q=z&limit=20 200 in 198ms
+ POST /api/conversations 201 in 33ms
+ ✓ Compiled /api/users/blocked in 170ms (1026 modules)
+ GET /api/users/blocked 200 in 335ms
+ GET /api/messages/cme2e9aii000akudtpdkez60b 200 in 328ms
+ ✓ Compiled /api/messages/send in 226ms (1028 modules)
+ POST /api/messages/send 201 in 259ms
+ ✓ Compiled /api/messages/search in 152ms (1030 modules)
+ GET /api/messages/search?query=e&conversationId=cme2e9aii000akudtpdkez60b 200 in 184ms
+ GET /api/auth/csrf 200 in 8ms
+ POST /api/auth/signout 200 in 9ms
+User disconnected: gFXFKLY5pI92RmEWAABL
+ GET /auth/signin 200 in 141ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 31ms
+ GET /api/auth/session 200 in 6ms
+User connected: 1Xk-zfEy9xCDQmYUAABP
+ GET /api/auth/session 200 in 15ms
+User disconnected: KFNLdhYioui_6lyuAABN
+ GET /api/auth/providers 200 in 8ms
+ GET /api/auth/csrf 200 in 11ms
+ POST /api/auth/callback/credentials 401 in 13ms
+ GET /api/auth/providers 200 in 8ms
+ GET /api/auth/csrf 200 in 6ms
+ POST /api/auth/callback/credentials 401 in 8ms
+ GET /api/auth/providers 200 in 7ms
+ GET /api/auth/csrf 200 in 3ms
+ POST /api/auth/callback/credentials 401 in 5ms
+ GET /api/auth/providers 200 in 9ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials 401 in 6ms
+ GET /api/auth/providers 200 in 12ms
+ GET /api/auth/csrf 200 in 7ms
+ POST /api/auth/callback/credentials 401 in 20ms
+ GET /api/auth/providers 200 in 9ms
+ GET /api/auth/csrf 200 in 6ms
+ POST /api/auth/callback/credentials 401 in 6ms
+ GET /api/auth/providers 200 in 8ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials 401 in 6ms
+ GET /api/auth/providers 200 in 9ms
+ GET /api/auth/csrf 200 in 6ms
+ POST /api/auth/callback/credentials 401 in 7ms
+ GET /api/auth/providers 200 in 10ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials 401 in 6ms
+ GET /api/auth/providers 200 in 9ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials 401 in 6ms
+ GET /api/auth/providers 200 in 6ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials 401 in 6ms
+ GET /api/auth/providers 200 in 9ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials 401 in 5ms
+ ○ Compiling /auth/signup ...
+ ✓ Compiled /auth/signup in 1013ms (1981 modules)
+ ✓ Compiled /api/users/register in 201ms (980 modules)
+ POST /api/users/register 201 in 507ms
+ ✓ Compiled /api/auth/[...nextauth] in 127ms (987 modules)
+ GET /api/auth/providers 200 in 144ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials 200 in 281ms
+ GET /api/auth/session 200 in 5ms
+User connected: 1RBEvM8dZfmO-D1ZAABR
+User disconnected: 1RBEvM8dZfmO-D1ZAABR
+ ✓ Compiled /api/conversations in 143ms (989 modules)
+ ✓ Compiled (993 modules)
+ GET /api/conversations 200 in 311ms
+ GET /api/notifications 200 in 322ms
+ GET /api/conversations 200 in 8ms
+ GET /api/notifications 200 in 12ms
+ GET /api/conversations 200 in 13ms
+ GET /api/conversations 200 in 6ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 7ms
+User connected: h3ugMmoPKTsYD7ilAABT
+ ✓ Compiled / in 351ms (1230 modules)
+ GET / 307 in 570ms
+ GET /auth/signin 200 in 37ms
+User connected: uGRoszYhIP0xyOceAABV
+ ✓ Compiled /favicon.ico in 261ms (1263 modules)
+ GET /api/auth/session 200 in 453ms
+ GET /favicon.ico 200 in 510ms
+ GET /api/auth/session 200 in 50ms
+ GET /api/auth/providers 200 in 5ms
+ GET /api/auth/csrf 200 in 7ms
+ POST /api/auth/callback/credentials 401 in 263ms
+ GET /api/auth/providers 200 in 8ms
+ GET /api/auth/csrf 200 in 6ms
+ POST /api/auth/callback/credentials 200 in 282ms
+ GET /api/auth/session 200 in 4ms
+User connected: lUDHovI5l4HXKjU3AABX
+ GET /api/auth/session 200 in 6ms
+ GET /api/notifications 200 in 20ms
+ GET /api/conversations 200 in 30ms
+ GET /favicon.ico 200 in 32ms
+ GET /api/notifications 200 in 18ms
+ GET /api/conversations 200 in 16ms
+ GET /api/conversations 200 in 10ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 8ms
+ ✓ Compiled /api/messages/[conversationId] in 213ms (1265 modules)
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 251ms
+ ✓ Compiled /api/messages/read in 255ms (1267 modules)
+ POST /api/messages/read 200 in 294ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 26ms
+ ✓ Compiled /api/users/blocked in 176ms (1269 modules)
+ GET /api/users/blocked 200 in 209ms
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 30ms
+ ✓ Compiled /api/conversations/[conversationId]/settings in 216ms (1271 modules)
+ GET /api/conversations/cme2d5h2b0008ku9gwwohgv5p/settings 200 in 250ms
+User disconnected: uGRoszYhIP0xyOceAABV
+ GET /api/users/blocked 200 in 32ms
+ GET /api/messages/cme267cwv0000ku2wv1fewftm 200 in 50ms
+ GET /api/messages/cme2d5h2b0008ku9gwwohgv5p 200 in 30ms
+ ✓ Compiled /api/messages/send in 201ms (1033 modules)
+ POST /api/messages/send 201 in 254ms
+User disconnected: lUDHovI5l4HXKjU3AABX
+User connected: QTaEq179gmKaF__6AABZ
+ GET /api/conversations/cme2d5h2b0008ku9gwwohgv5p/settings 200 in 15ms
+User connected: 1dNNL6uOHdu3j1BUAABb
+ ✓ Compiled /api/users/search in 228ms (995 modules)
+ GET /api/users/search?q=test&limit=20 200 in 276ms
+ ✓ Compiled /api/conversations in 138ms (999 modules)
+ POST /api/conversations 201 in 169ms
+ GET /api/users/blocked 200 in 23ms
+ GET /api/messages/cme2eoqlp000lkudtmh1ut010 200 in 31ms
+ POST /api/messages/send 201 in 28ms
+ ✓ Compiled /api/auth/[...nextauth] in 356ms (2024 modules)
+ GET /api/auth/session 200 in 522ms
+ GET /sounds/notification.mp3 404 in 630ms
+ ✓ Compiled /favicon.ico in 165ms (1032 modules)
+ GET /favicon.ico 200 in 232ms
+User disconnected: h3ugMmoPKTsYD7ilAABT
+User disconnected: 1Xk-zfEy9xCDQmYUAABP
+ GET /chat 200 in 216ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 34ms
+ GET /favicon.ico 200 in 24ms
+User connected: sK5R8dD__ApHyie9AABd
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 8ms
+User connected: 9JUfDszzAPrtVkLyAABf
+ ✓ Compiled /api/notifications in 192ms (1034 modules)
+ GET /api/notifications 200 in 384ms
+ GET /api/conversations 200 in 381ms
+ GET /api/notifications 200 in 15ms
+ GET /api/conversations 200 in 17ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 8ms
+ GET /api/users/blocked 200 in 18ms
+ GET /api/messages/cme2eoqlp000lkudtmh1ut010 200 in 25ms
+ ✓ Compiled /api/messages/read in 162ms (1036 modules)
+ POST /api/messages/read 200 in 190ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 9ms
+ GET /chat 200 in 144ms
+User disconnected: sK5R8dD__ApHyie9AABd
+User disconnected: 9JUfDszzAPrtVkLyAABf
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 28ms
+ GET /favicon.ico 200 in 46ms
+User connected: TTYnHnWKoL_-eRahAABh
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 15ms
+User connected: GlhfrLiJlceYgSd-AABj
+ GET /api/notifications 200 in 21ms
+ GET /api/conversations 200 in 33ms
+ GET /api/notifications 200 in 15ms
+ GET /api/conversations 200 in 13ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 9ms
+ GET /api/auth/session 200 in 7ms
+User disconnected: QTaEq179gmKaF__6AABZ
+User connected: h4L0vUArdcxfEKuwAABl
+User disconnected: 1dNNL6uOHdu3j1BUAABb
+ POST /api/messages/send 201 in 28ms
+ GET /api/auth/session 200 in 13ms
+User connected: IE2-jPtKLBFurdcxAABn
+ GET /api/users/blocked 200 in 17ms
+ GET /api/messages/cme2eoqlp000lkudtmh1ut010 200 in 29ms
+ POST /api/messages/read 200 in 20ms
+ GET /api/auth/session 200 in 10ms
+ POST /api/messages/send 201 in 38ms
+ GET /api/auth/session 200 in 10ms
+User disconnected: TTYnHnWKoL_-eRahAABh
+ GET /chat 200 in 40ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 42ms
+User connected: JiE6PFdWijiSBfq5AABp
+ GET /api/auth/session 200 in 13ms
+ GET /favicon.ico 200 in 32ms
+ GET /api/auth/session 200 in 21ms
+User connected: tvlEotT0qxSKmPQJAABr
+ GET /api/notifications 200 in 25ms
+ GET /api/conversations 200 in 34ms
+ GET /api/notifications 200 in 20ms
+ GET /api/conversations 200 in 29ms
+ GET /api/conversations 200 in 11ms
+ GET /api/conversations 200 in 12ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 9ms
+ GET /api/messages/cme2eoqlp000lkudtmh1ut010 200 in 23ms
+ GET /api/users/blocked 200 in 36ms
+ POST /api/messages/read 200 in 30ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 6ms
+User disconnected: GlhfrLiJlceYgSd-AABj
+ GET /api/auth/session 200 in 13ms
+User disconnected: tvlEotT0qxSKmPQJAABr
+User connected: TzdN0BOhhEEPNDb7AABt
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 12ms
+ GET /api/auth/session 200 in 12ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 14ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 33ms
+ GET /api/auth/session 200 in 17ms
+ GET /api/auth/session 200 in 16ms
+ GET /api/auth/session 200 in 15ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/auth/session 200 in 20ms
+ ✓ Compiled in 354ms (983 modules)
+ ✓ Compiled in 539ms (2006 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+User disconnected: IE2-jPtKLBFurdcxAABn
+User disconnected: h4L0vUArdcxfEKuwAABl
+ GET /chat 200 in 310ms
+User disconnected: JiE6PFdWijiSBfq5AABp
+User disconnected: TzdN0BOhhEEPNDb7AABt
+ GET /chat 200 in 309ms
+ ✓ Compiled /_not-found in 342ms (2009 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 465ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 385ms
+ ✓ Compiled /favicon.ico in 224ms (1017 modules)
+User connected: npK2JWMGY3VlPBhGAABw
+User connected: f-5tXc2mvTgqy53sAABx
+ GET /api/auth/session 200 in 68ms
+ GET /api/auth/session 200 in 65ms
+ GET /favicon.ico 200 in 345ms
+ GET /favicon.ico 200 in 375ms
+User connected: lq9FWuQtz6MT4XoOAAB0
+User connected: bWP7e1cO5X_yG471AAB1
+ GET /api/auth/session 200 in 38ms
+ GET /api/auth/session 200 in 34ms
+ ✓ Compiled /api/conversations in 404ms (1020 modules)
+ ✓ Compiled (1024 modules)
+ GET /api/notifications 200 in 623ms
+ GET /api/notifications 200 in 634ms
+ GET /api/conversations 200 in 632ms
+ GET /api/conversations 200 in 639ms
+ GET /api/notifications 200 in 24ms
+ GET /api/notifications 200 in 19ms
+ GET /api/conversations 200 in 26ms
+ GET /api/conversations 200 in 21ms
+ GET /api/conversations 200 in 21ms
+ GET /api/conversations 200 in 17ms
+ GET /api/conversations 200 in 29ms
+ GET /api/conversations 200 in 24ms
+ GET /api/conversations 200 in 16ms
+ GET /api/conversations 200 in 19ms
+ GET /api/conversations 200 in 18ms
+ GET /api/conversations 200 in 17ms
+ ✓ Compiled in 499ms (1039 modules)
+User disconnected: npK2JWMGY3VlPBhGAABw
+User disconnected: f-5tXc2mvTgqy53sAABx
+User disconnected: bWP7e1cO5X_yG471AAB1
+User connected: 0GYzclDbzqJUmyH-AAB3
+User connected: -xgrpClV_EpdusCyAAB5
+ ⨯ Error: ENOENT: no such file or directory, open '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+    at Object.readFileSync (node:fs:457:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1389:18)
+    at Module.load (node:internal/modules/cjs/loader:1206:32)
+    at Module._load (node:internal/modules/cjs/loader:1022:12)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at NodeModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js:15:84)
+    at RouteModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js:14:37)
+    at DevServer.runApi (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:595:67)
+    at DevServer.handleApiRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:771:21)
+    at NextNodeServer.handleCatchallRenderRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:269:48)
+    at async DevServer.handleRequestImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/trace/trace.js:154:20) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+}
+ ✓ Compiled /_error in 301ms (2051 modules)
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 3ms
+ GET /api/auth/session 500 in 1747ms
+User connected: edtTtWKrqYEhPNnqAAB7
+User disconnected: edtTtWKrqYEhPNnqAAB7
+ ⨯ Error: ENOENT: no such file or directory, open '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+    at Object.readFileSync (node:fs:457:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1389:18)
+    at Module.load (node:internal/modules/cjs/loader:1206:32)
+    at Module._load (node:internal/modules/cjs/loader:1022:12)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at NodeModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js:15:84)
+    at RouteModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js:14:37)
+    at DevServer.runApi (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:595:67)
+    at DevServer.handleApiRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:771:21)
+    at NextNodeServer.handleCatchallRenderRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:269:48)
+    at async DevServer.handleRequestImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/trace/trace.js:154:20) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+}
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 1ms
+ POST /api/auth/_log 500 in 300ms
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 1ms
+Time 1ms
+ GET /chat 500 in 1866ms
+User disconnected: lq9FWuQtz6MT4XoOAAB0
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 1ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 41ms
+ GET /favicon.ico 404 in 50ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/aiofficer/Workspace/Test/chatflow/.next/cache/webpack/client-development-fallback/0.pack.gz_' -> '/home/aiofficer/Workspace/Test/chatflow/.next/cache/webpack/client-development-fallback/0.pack.gz'
+ ⨯ Error: ENOENT: no such file or directory, open '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+    at Object.readFileSync (node:fs:457:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1389:18)
+    at Module.load (node:internal/modules/cjs/loader:1206:32)
+    at Module._load (node:internal/modules/cjs/loader:1022:12)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at NodeModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js:15:84)
+    at RouteModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js:14:37)
+    at DevServer.runApi (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:595:67)
+    at DevServer.handleApiRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:771:21)
+    at NextNodeServer.handleCatchallRenderRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:269:48)
+    at async DevServer.handleRequestImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/trace/trace.js:154:20) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+}
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 2ms
+ GET /api/auth/session 500 in 44ms
+ ⨯ Error: ENOENT: no such file or directory, open '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+    at Object.readFileSync (node:fs:457:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1389:18)
+    at Module.load (node:internal/modules/cjs/loader:1206:32)
+    at Module._load (node:internal/modules/cjs/loader:1022:12)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at NodeModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js:15:84)
+    at RouteModuleLoader.load (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js:14:37)
+    at DevServer.runApi (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:595:67)
+    at DevServer.handleApiRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:771:21)
+    at NextNodeServer.handleCatchallRenderRequest (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:269:48)
+    at async DevServer.handleRequestImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/trace/trace.js:154:20) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/api/auth/[...nextauth].js'
+}
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+User connected: HPEzIiHh3CDkMix0AAB9
+Time 0ms
+ POST /api/auth/_log 500 in 59ms
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 0ms
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 1ms
+ GET /auth/signin 500 in 26ms
+User disconnected: HPEzIiHh3CDkMix0AAB9
+ ⨯ Error: Cannot find module '/home/aiofficer/Workspace/Test/chatflow/.next/server/pages/_document.js'
+Require stack:
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js
+- /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at mod.require (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js:109:84)
+    at /home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/next-server.js:714:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/require.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/load-components.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/build/utils.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/router-server.js',
+    '/home/aiofficer/Workspace/Test/chatflow/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Time 1ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 24ms
+User disconnected: 0GYzclDbzqJUmyH-AAB3
+User disconnected: -xgrpClV_EpdusCyAAB5
+ ✓ Compiled / in 498ms (1255 modules)
+ GET / 307 in 742ms
+ GET /chat 200 in 147ms
+ GET /_next/static/css/app/chat/page.css?v=1754632608216 404 in 40ms
+ GET /_next/static/css/app/layout.css?v=1754632608216 404 in 42ms
+ GET /_next/static/chunks/main-app.js?v=1754632608216 404 in 22ms
+[?25h
