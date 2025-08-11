@@ -65,7 +65,6 @@ A comprehensive real-time messaging platform built with Next.js 14, featuring in
 - **Railway/Supabase** - Database hosting
 - **Redis** - Caching (optional)
 - **GitHub Actions** - CI/CD pipeline
-- **Docker** - Containerization
 
 ## 🚀 Quick Start
 
@@ -123,17 +122,6 @@ npm run test:e2e:ui
 1. Connect your GitHub repository to Vercel
 2. Configure environment variables
 3. Deploy automatically on push to main
-
-### Docker
-```bash
-docker build -t chatflow .
-docker run -p 3000:3000 chatflow
-```
-
-### Docker Compose
-```bash
-docker-compose up -d
-```
 
 ## 🔧 Configuration
 
