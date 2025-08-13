@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -15,6 +15,13 @@ export default function SettingsPage() {
   const [bio, setBio] = useState('')
   const [saving, setSaving] = useState(false)
 
+  // Update local state when session changes
+  useEffect(() => {
+    if (session?.user?.name) {
+      setName(session.user.name)
+    }
+  }, [session?.user?.name])
+
   if (!session) {
     router.push('/auth/signin')
     return null
@@ -24,6 +31,8 @@ export default function SettingsPage() {
     e.preventDefault()
     try {
       setSaving(true)
+      console.log('Settings: Saving profile changes:', { name, bio })
+      
       const resp = await fetch(`/api/users/${session.user?.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -34,9 +43,49 @@ export default function SettingsPage() {
         throw new Error(err.error || 'Failed to save settings')
       }
       const data = await resp.json()
-      await update({ ...session, user: { ...session.user, ...data.user } })
+      console.log('Settings: API response received:', data.user)
+      
+      // Update the session with the new data
+      console.log('Settings: Current session before update:', session.user)
+      console.log('Settings: Data received from API:', data.user)
+      
+      // Try updating the session with just the changed data
+      console.log('Settings: Triggering session update with new data')
+      const result = await update({
+        user: {
+          ...session.user,
+          ...data.user
+        }
+      })
+      console.log('Settings: Session update result:', result)
+      
+      // Also try a simple refresh to force NextAuth to re-read from the database
+      console.log('Settings: Forcing session refresh')
+      const refreshResult = await update()
+      console.log('Settings: Session refresh result:', refreshResult)
+      
+      // Wait for session to propagate and socket events to process
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      // Verify the session was updated
+      console.log('Settings: Session after update:', session.user)
+      console.log('Settings: Profile changes saved and broadcasted')
+      
+      // Update local state to reflect changes immediately
+      setName(data.user.name || name)
+      if (data.user.bio !== undefined) setBio(data.user.bio || bio)
+      
+      // Broadcast a custom event to notify components of profile changes
+      console.log('Settings: Broadcasting profile change event')
+      window.dispatchEvent(new CustomEvent('profileUpdated', {
+        detail: {
+          userId: session.user.id,
+          userData: data.user
+        }
+      }))
     } catch (err) {
       console.error('Save settings failed:', err)
+      alert('Failed to save settings. Please try again.')
     } finally {
       setSaving(false)
     }

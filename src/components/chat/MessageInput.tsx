@@ -111,15 +111,24 @@ export function MessageInput({
     if (!files) return
 
     Array.from(files).forEach(file => {
-      // Check file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
+      // Check file size (50MB limit for GIFs and videos, 10MB for others)
+      const isLargeMediaFile = file.type.includes('gif') || file.type.includes('video')
+      const maxSize = isLargeMediaFile ? 50 * 1024 * 1024 : 10 * 1024 * 1024
+      
+      if (file.size > maxSize) {
         // TODO: Show error toast
-        console.error('File too large:', file.name)
+        console.error(`File too large: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`)
         return
       }
 
       const url = URL.createObjectURL(file)
-      const fileType = type || (file.type.startsWith('image/') ? 'image' : 'file')
+      let fileType: 'image' | 'file' = 'file'
+      
+      if (type) {
+        fileType = type
+      } else if (file.type.startsWith('image/')) {
+        fileType = 'image'
+      }
       
       setAttachments(prev => [...prev, { file, url, type: fileType }])
     })
@@ -186,7 +195,7 @@ export function MessageInput({
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
                   Replying to {replyTo.senderName}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-md">
+                <p className="text-sm text-gray-600 dark:text-gray-400 break-words line-clamp-2 max-w-full pr-8">
                   {replyTo.content}
                 </p>
               </div>
@@ -215,6 +224,12 @@ export function MessageInput({
                       alt={attachment.file.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
+                    {/* Show GIF indicator */}
+                    {attachment.file.type === 'image/gif' && (
+                      <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 rounded">
+                        GIF
+                      </div>
+                    )}
                     <button
                       onClick={() => removeAttachment(index)}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100"
@@ -362,7 +377,7 @@ export function MessageInput({
         type="file"
         multiple
         className="hidden"
-        accept="image/*"
+        accept="image/*,.gif"
         onChange={(e) => handleFileUpload(e.target.files, 'image')}
       />
 

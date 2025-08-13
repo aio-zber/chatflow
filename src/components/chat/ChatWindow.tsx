@@ -54,7 +54,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const { data: session } = useSession()
   const { socket } = useSocketContext()
   const { conversations, loading: conversationsLoading, markConversationAsRead } = useConversations()
-  const { messages, loading: messagesLoading, error: messagesError, sendMessage, loadMore, hasMore, markMessagesAsRead, reactToMessage } = useMessages(conversationId)
+  const { messages, loading: messagesLoading, error: messagesError, sendMessage, loadMore, hasMore, markMessagesAsRead, reactToMessage, scrollToMessage } = useMessages(conversationId)
   const [replyTo, setReplyTo] = useState<MessageBubbleMessage | null>(null)
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([])
   const [showScrollButton, setShowScrollButton] = useState(false)
@@ -112,10 +112,40 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     setSearchQuery('')
     setSearchResults([])
     setIsBlocked(false)
-  }, [conversationId])
+    
+    // Immediate scroll to bottom when conversation changes and has messages
+    if (conversationId && transformedMessages.length > 0) {
+      // Use multiple methods to ensure scroll happens
+      requestAnimationFrame(() => {
+        // First try: scroll to the ref
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: 'instant', block: 'end' })
+        }
+        
+        // Second try: scroll the container
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+        }
+        
+        setAutoScroll(true)
+      })
+      
+      // Additional delayed scroll to ensure it works with async content
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'instant', block: 'end' })
+          }
+          if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+          }
+        })
+      }, 100)
+    }
+  }, [conversationId, transformedMessages.length])
 
   // Use the new auto-scroll hook for multi-websocket support
-  const { scrollToBottom, scrollOnSendMessage, forceScrollToBottom, instantScrollToBottom } = useAutoScroll({
+  const { scrollToBottom, scrollOnSendMessage } = useAutoScroll({
     conversationId,
     messages,
     userId: session?.user?.id || null,
@@ -123,22 +153,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     setAutoScroll,
   })
 
-  // Force scroll when conversation loads and messages are available
-  useEffect(() => {
-    if (conversationId && messages.length > 0 && !messagesLoading) {
-      // Add delay to ensure DOM is updated
-      setTimeout(() => {
-        const hasUnread = messages.some(
-          (m) => m.senderId !== session?.user?.id && m.status !== 'read'
-        )
-        
-        if (hasUnread) {
-          console.log('Force scrolling to bottom for conversation with unread messages:', conversationId)
-          instantScrollToBottom()
-        }
-      }, 300)
-    }
-  }, [conversationId, messages.length, messagesLoading, instantScrollToBottom, session?.user?.id])
+  // The useAutoScroll hook now handles all scroll behavior automatically
+  // Removed redundant scroll logic to prevent conflicts
 
   // Check if the other user is blocked
   useEffect(() => {
@@ -272,12 +288,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     return () => clearTimeout(timer)
   }, [searchQuery, searchMessages])
 
-  // Auto-scroll when autoScroll state changes
-  useEffect(() => {
-    if (autoScroll) {
-      scrollToBottom()
-    }
-  }, [transformedMessages, autoScroll, scrollToBottom])
+  // Auto-scroll is now fully handled by the useAutoScroll hook
+  // Removed redundant effect to prevent scroll conflicts
 
   // Handle scroll to show/hide scroll button and load more messages
   const handleScroll = useCallback(() => {
@@ -309,16 +321,60 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   // Removed scroll-to-first-unread behavior; stick to auto-scroll-to-bottom strategy
 
-  const handleSendMessage = async (content: string) => {
+  const handleSendMessage = async (content: string, attachments?: File[]) => {
     if (!conversationId || !session?.user) return
 
     try {
       // Use the enhanced auto-scroll for sent messages
       scrollOnSendMessage()
+      
+      let messageAttachments: any[] = []
+      
+      // Handle file uploads if attachments are provided
+      if (attachments && attachments.length > 0) {
+        console.log('Processing file attachments:', attachments.length)
+        
+        for (const file of attachments) {
+          try {
+            const formData = new FormData()
+            formData.append('file', file)
+            
+            const uploadResponse = await fetch('/api/upload', {
+              method: 'POST',
+              body: formData,
+            })
+            
+            if (!uploadResponse.ok) {
+              const errorData = await uploadResponse.json().catch(() => ({ error: 'Upload failed' }))
+              throw new Error(errorData.error || 'Failed to upload file')
+            }
+            
+            const uploadData = await uploadResponse.json()
+            console.log('File uploaded successfully:', uploadData)
+            
+            // Handle the response format from the upload API
+            const uploadedFile = uploadData.files?.[0]
+            if (uploadedFile) {
+              messageAttachments.push({
+                fileName: uploadedFile.name,
+                fileSize: uploadedFile.size,
+                fileType: uploadedFile.mimetype || file.type,
+                fileUrl: uploadedFile.url,
+              })
+            }
+          } catch (uploadError) {
+            console.error('Error uploading file:', file.name, uploadError)
+            // Continue with other files but notify user of the error
+            // TODO: Add proper error notification to user
+          }
+        }
+      }
+      
       await sendMessage({
         content,
         conversationId,
-        replyToId: replyTo?.id || undefined
+        replyToId: replyTo?.id || undefined,
+        ...(messageAttachments.length > 0 && { attachments: messageAttachments })
       })
       setReplyTo(null)
     } catch (error) {
@@ -366,6 +422,55 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   const handleReact = (messageId: string, emoji: string) => {
     reactToMessage(messageId, emoji)
+  }
+
+  const handleEditMessage = async (messageId: string, newContent: string) => {
+    try {
+      const response = await fetch(`/api/messages/message/${messageId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: newContent,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to edit message')
+      }
+
+      // The useMessages hook will handle the real-time update via socket
+    } catch (error) {
+      console.error('Failed to edit message:', error)
+      throw error
+    }
+  }
+
+  const handleDeleteMessage = async (messageId: string) => {
+    try {
+      const response = await fetch(`/api/messages/message/${messageId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete message')
+      }
+
+      // The useMessages hook will handle the real-time update via socket
+    } catch (error) {
+      console.error('Failed to delete message:', error)
+      throw error
+    }
+  }
+
+  const handleHideMessage = async (messageId: string) => {
+    // This is a client-side only operation - hide from current view
+    // In a real implementation, you might want to store this preference
+    const messageElement = document.querySelector(`[data-message-id="${messageId}"]`)
+    if (messageElement) {
+      messageElement.style.display = 'none'
+    }
   }
 
   const handleTyping = (isTyping: boolean) => {
@@ -604,6 +709,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       {/* Messages */}
       <div 
         ref={messagesContainerRef}
+        data-messages-container
         className="flex-1 overflow-y-auto p-4 space-y-4 relative"
       >
         {/* Load more indicator */}
@@ -641,6 +747,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                   message={message}
                   onReply={handleReply}
                   onReact={handleReact}
+                  onScrollToMessage={scrollToMessage}
+                  onEdit={handleEditMessage}
+                  onDelete={handleDeleteMessage}
+                  onHideFromView={handleHideMessage}
                 />
               ))}
             </>
@@ -661,6 +771,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 message={message}
                 onReply={handleReply}
                 onReact={handleReact}
+                onScrollToMessage={scrollToMessage}
+                onEdit={handleEditMessage}
+                onDelete={handleDeleteMessage}
+                onHideFromView={handleHideMessage}
               />
             ))
           )

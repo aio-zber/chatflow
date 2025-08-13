@@ -68,7 +68,11 @@ export const useConversations = () => {
       }
 
       const data = await response.json()
-      setConversations(data.conversations || [])
+      // Sort conversations by updatedAt timestamp (most recent first)
+      const sortedConversations = (data.conversations || []).sort((a: Conversation, b: Conversation) => 
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+      setConversations(sortedConversations)
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch conversations')
@@ -192,14 +196,48 @@ export const useConversations = () => {
     }
 
     const handleNewMessage = (message: Message) => {
+      setConversations(prev => {
+        // Find the conversation with the new message
+        const targetConvIndex = prev.findIndex(conv => conv.id === message.conversationId)
+        if (targetConvIndex === -1) return prev // Conversation not found
+        
+        // Update the conversation with the new message
+        const updatedConv = {
+          ...prev[targetConvIndex],
+          messages: [message],
+          updatedAt: new Date(message.createdAt),
+          unreadCount: message.senderId === session?.user?.id ? prev[targetConvIndex].unreadCount : prev[targetConvIndex].unreadCount + 1
+        }
+        
+        // Create new array with the updated conversation moved to the top
+        const newConversations = [updatedConv]
+        
+        // Add all other conversations (excluding the one we just updated)
+        for (let i = 0; i < prev.length; i++) {
+          if (i !== targetConvIndex) {
+            newConversations.push(prev[i])
+          }
+        }
+        
+        return newConversations
+      })
+    }
+
+    const handleMessageUpdate = (updatedMessage: Message) => {
+      console.log('useConversations: Received message-updated:', updatedMessage.id, updatedMessage)
+      console.log('useConversations: Current conversations count:', conversations.length)
       setConversations(prev => 
         prev.map(conv => {
-          if (conv.id === message.conversationId) {
+          if (conv.id === updatedMessage.conversationId) {
+            console.log('useConversations: Updating message in conversation:', conv.id)
+            console.log('useConversations: Current messages in conversation:', conv.messages.length)
+            const messageExists = conv.messages.some(msg => msg.id === updatedMessage.id)
+            console.log('useConversations: Message exists in conversation:', messageExists)
             return {
               ...conv,
-              messages: [message],
-              updatedAt: new Date(message.createdAt),
-              unreadCount: message.senderId === session?.user?.id ? conv.unreadCount : conv.unreadCount + 1
+              messages: conv.messages.map(msg => 
+                msg.id === updatedMessage.id ? { ...msg, ...updatedMessage } : msg
+              )
             }
           }
           return conv
@@ -207,15 +245,21 @@ export const useConversations = () => {
       )
     }
 
-    const handleMessageUpdate = (updatedMessage: Message) => {
+    const handleMessageDelete = (data: { messageId: string; conversationId: string }) => {
+      console.log('useConversations: Received message-deleted:', data.messageId, data)
+      console.log('useConversations: Current conversations count:', conversations.length)
       setConversations(prev => 
         prev.map(conv => {
-          if (conv.id === updatedMessage.conversationId) {
+          if (conv.id === data.conversationId) {
+            console.log('useConversations: Removing message from conversation:', conv.id)
+            console.log('useConversations: Messages before deletion:', conv.messages.length)
+            const messageExists = conv.messages.some(msg => msg.id === data.messageId)
+            console.log('useConversations: Message exists in conversation:', messageExists)
+            const filtered = conv.messages.filter(msg => msg.id !== data.messageId)
+            console.log('useConversations: Messages after deletion:', filtered.length)
             return {
               ...conv,
-              messages: conv.messages.map(msg => 
-                msg.id === updatedMessage.id ? { ...msg, ...updatedMessage } : msg
-              )
+              messages: filtered
             }
           }
           return conv
@@ -234,11 +278,36 @@ export const useConversations = () => {
     }
 
     const handleConversationUpdate = (updatedConversation: Conversation) => {
-      setConversations(prev => 
-        prev.map(conv => 
-          conv.id === updatedConversation.id ? { ...conv, ...updatedConversation } : conv
+      setConversations(prev => {
+        // Find the conversation to update
+        const targetConvIndex = prev.findIndex(conv => conv.id === updatedConversation.id)
+        if (targetConvIndex === -1) return prev // Conversation not found
+        
+        // Update the conversation
+        const updated = { ...prev[targetConvIndex], ...updatedConversation }
+        
+        // If this conversation has a more recent updatedAt, move it to the top
+        const isMoreRecent = prev.some(conv => 
+          conv.id !== updatedConversation.id && 
+          new Date(updated.updatedAt).getTime() > new Date(conv.updatedAt).getTime()
         )
-      )
+        
+        if (isMoreRecent && targetConvIndex > 0) {
+          // Move to top
+          const newConversations = [updated]
+          for (let i = 0; i < prev.length; i++) {
+            if (i !== targetConvIndex) {
+              newConversations.push(prev[i])
+            }
+          }
+          return newConversations
+        } else {
+          // Just update in place
+          return prev.map(conv => 
+            conv.id === updatedConversation.id ? updated : conv
+          )
+        }
+      })
     }
 
     const handleConversationRead = (data: { userId: string; conversationId: string | null; updatedCount: number }) => {
@@ -274,20 +343,96 @@ export const useConversations = () => {
       }
     }
 
+    const handleUserProfileUpdated = (data: { userId: string; avatar?: string; name?: string; username?: string }) => {
+      console.log('User profile updated event received:', data)
+      setConversations(prev => {
+        return prev.map(conv => {
+          // Update all participants in this conversation if they match the updated user
+          const updatedParticipants = conv.participants.map(participant => {
+            if (participant.user.id === data.userId) {
+              return {
+                ...participant,
+                user: {
+                  ...participant.user,
+                  ...(data.avatar !== undefined && { avatar: data.avatar }),
+                  ...(data.name !== undefined && { name: data.name }),
+                  ...(data.username !== undefined && { username: data.username })
+                }
+              }
+            }
+            return participant
+          })
+          
+          // Update otherParticipants as well
+          const updatedOtherParticipants = conv.otherParticipants.map(participant => {
+            if (participant.user.id === data.userId) {
+              return {
+                ...participant,
+                user: {
+                  ...participant.user,
+                  ...(data.avatar !== undefined && { avatar: data.avatar }),
+                  ...(data.name !== undefined && { name: data.name }),
+                  ...(data.username !== undefined && { username: data.username })
+                }
+              }
+            }
+            return participant
+          })
+
+          // Update messages sender info if needed
+          const updatedMessages = conv.messages.map(message => {
+            if (message.senderId === data.userId) {
+              return {
+                ...message,
+                sender: {
+                  ...message.sender,
+                  ...(data.name !== undefined && { name: data.name }),
+                  ...(data.username !== undefined && { username: data.username })
+                }
+              }
+            }
+            return message
+          })
+          
+          // Only return updated conversation if there were actual changes
+          const hasChanges = 
+            updatedParticipants.some((p, i) => p !== conv.participants[i]) ||
+            updatedOtherParticipants.some((p, i) => p !== conv.otherParticipants[i]) ||
+            updatedMessages.some((m, i) => m !== conv.messages[i])
+            
+          if (hasChanges) {
+            console.log(`Updated profile info for user ${data.userId} in conversation ${conv.id}`)
+            return {
+              ...conv,
+              participants: updatedParticipants,
+              otherParticipants: updatedOtherParticipants,
+              messages: updatedMessages
+            }
+          }
+          
+          return conv
+        })
+      })
+    }
+
     socket.on('new-message', handleNewMessage)
     socket.on('conversation-read', handleConversationRead)
     socket.on('message-status-updated', handleMessageStatusUpdated)
     socket.on('message-updated', handleMessageUpdate)
+    socket.on('message-deleted', handleMessageDelete)
     socket.on('new-conversation', handleNewConversation)
     socket.on('conversation-updated', handleConversationUpdate)
+    socket.on('user-profile-updated', handleUserProfileUpdated)
 
     return () => {
       socket.off('new-message', handleNewMessage)
       socket.off('conversation-read', handleConversationRead)
       socket.off('message-status-updated', handleMessageStatusUpdated)
       socket.off('message-updated', handleMessageUpdate)
+      socket.off('message-deleted', handleMessageDelete)
       socket.off('new-conversation', handleNewConversation)
       socket.off('conversation-updated', handleConversationUpdate)
+      socket.off('user-profile-updated', handleUserProfileUpdated)
     }
   }, [socket, session?.user?.id])
 

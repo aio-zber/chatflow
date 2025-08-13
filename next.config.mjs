@@ -106,8 +106,8 @@ const nextConfig = {
     scrollRestoration: true,
   },
   
-  // Output optimization
-  output: 'standalone',
+  // Output optimization - only use standalone for production builds
+  ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
   
   // Enable gzip compression
   async rewrites() {

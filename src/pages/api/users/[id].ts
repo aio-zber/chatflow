@@ -65,6 +65,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       })
 
+      // Emit socket event to broadcast profile update to all connected users
+      const { getIO, getSocketInstance } = await import('@/lib/socket')
+      let io = getIO()
+      
+      // If socket is not available, try to initialize it
+      if (!io) {
+        console.log('API: Socket IO not available for user update, attempting to initialize...')
+        try {
+          io = getSocketInstance(req, res)
+          console.log('API: Socket IO initialized for user update')
+        } catch (error) {
+          console.error('API: Failed to initialize Socket IO for user update:', error)
+        }
+      }
+      
+      console.log(`API: Socket IO instance available for user update:`, !!io)
+      if (io && (name || bio !== undefined || status)) {
+        const profileUpdate = {
+          userId: id as string,
+          name: user.name,
+          username: user.username,
+          avatar: user.avatar
+        }
+        
+        console.log(`API: Broadcasting user profile update for user ${id}:`, profileUpdate)
+        console.log(`API: Socket.IO connected clients count:`, io.engine.clientsCount)
+        
+        // Emit globally to all connected clients
+        io.emit('user-profile-updated', profileUpdate)
+        console.log(`API: Emitted user-profile-updated globally`)
+        
+        // Also emit to user's specific room
+        console.log(`API: Emitting profile update to user room: user:${id}`)
+        io.to(`user:${id}`).emit('user-profile-updated', profileUpdate)
+        
+        // Log room members for debugging
+        const userRoom = io.sockets.adapter.rooms.get(`user:${id}`)
+        console.log(`API: User room members:`, userRoom ? Array.from(userRoom) : 'none')
+        
+        console.log(`API: User profile update broadcasted successfully`)
+      } else {
+        console.warn('API: Socket.IO instance not available for user profile update')
+      }
+
       res.json({ user })
     } catch (error) {
       console.error('Update user error:', error)

@@ -186,11 +186,15 @@ export const useMessages = (conversationId: string | null) => {
     if (!session?.user?.id) return
 
     const currentMessage = messages.find(m => m.id === messageId)
-    const existingForUser = currentMessage?.reactions.find(r => r.userId === session.user!.id) || null
+    if (!currentMessage) return
+    
+    const existingForUser = currentMessage.reactions?.find(r => r.userId === session.user!.id) || null
 
     // Optimistic update
     setMessages(prev => prev.map(msg => {
       if (msg.id !== messageId) return msg
+      if (!msg.reactions) return msg
+      
       const userIdx = msg.reactions.findIndex(r => r.userId === session!.user!.id)
       const hasExisting = userIdx !== -1
       const isSameEmoji = hasExisting && msg.reactions[userIdx].emoji === emoji
@@ -308,14 +312,83 @@ export const useMessages = (conversationId: string | null) => {
     }
   }, [socket, conversationId])
 
-  // Consolidated event listeners effect to prevent frequent cleanup/re-setup
+  // Global socket listeners for message updates/deletes 
   useEffect(() => {
     if (!socket) {
-      console.log('Socket not available in useMessages')
+      console.log('useMessages: No socket available for global listeners')
       return
     }
 
-    console.log('Setting up Socket.IO event listeners in useMessages for conversation:', conversationId)
+    console.log('useMessages: Setting up GLOBAL socket listeners for message updates/deletes')
+
+    const handleMessageUpdated = (updatedMessage: any) => {
+      console.log('useMessages: GLOBAL Received message-updated socket event:', updatedMessage.id, updatedMessage)
+      
+      // Update messages regardless of current conversation - let the state update handle filtering
+      setMessages(prev => {
+        // Check if the message exists in the current messages
+        const messageExists = prev.some(msg => msg.id === updatedMessage.id)
+        if (messageExists) {
+          console.log('useMessages: Message found in current conversation, updating')
+          const updated = prev.map(msg => {
+            if (msg.id === updatedMessage.id) {
+              console.log('useMessages: Updating message:', msg.id, 'from:', msg.content, 'to:', updatedMessage.content)
+              return { ...msg, ...updatedMessage }
+            }
+            return msg
+          })
+          return updated
+        } else {
+          console.log('useMessages: Message not found in current messages, ignoring')
+          return prev
+        }
+      })
+    }
+
+    const handleMessageDeleted = (data: any) => {
+      console.log('useMessages: GLOBAL Received message-deleted socket event:', data.messageId, data)
+      
+      // Update messages regardless of current conversation - let the state update handle filtering
+      setMessages(prev => {
+        const messageExists = prev.some(msg => msg.id === data.messageId)
+        if (messageExists) {
+          console.log('useMessages: Message found in current conversation, deleting')
+          const filtered = prev.filter(msg => msg.id !== data.messageId)
+          console.log('useMessages: Messages after deletion:', filtered.length)
+          return filtered
+        } else {
+          console.log('useMessages: Message not found in current messages, ignoring')
+          return prev
+        }
+      })
+    }
+
+    socket.on('message-updated', handleMessageUpdated)
+    socket.on('message-deleted', handleMessageDeleted)
+    console.log('useMessages: GLOBAL socket listeners registered')
+
+    return () => {
+      console.log('useMessages: Cleaning up GLOBAL socket listeners')
+      socket.off('message-updated', handleMessageUpdated)
+      socket.off('message-deleted', handleMessageDeleted)
+    }
+  }, [socket]) // Only depend on socket
+
+  // Socket event listeners effect for conversation-specific events
+  useEffect(() => {
+    if (!socket) {
+      console.log('useMessages: Socket not available')
+      return
+    }
+
+    if (!conversationId) {
+      console.log('useMessages: No conversation ID available')
+      return
+    }
+
+    console.log('useMessages: Setting up Socket.IO event listeners for conversation:', conversationId)
+    console.log('useMessages: Socket connected:', socket.connected)
+    console.log('useMessages: Socket ID:', socket.id)
 
     const handleNewMessage = (message: Message) => {
       console.log('Received new message via Socket.IO:', message)
@@ -347,16 +420,7 @@ export const useMessages = (conversationId: string | null) => {
       }
     }
 
-    const handleMessageUpdate = (updatedMessage: Partial<Message> & { id: string }) => {
-      console.log('Message updated via Socket.IO:', updatedMessage.id)
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === updatedMessage.id 
-            ? { ...msg, ...updatedMessage }
-            : msg
-        )
-      )
-    }
+    // Removed handleMessageUpdate - now handled by window events
 
     const handleReactionUpdate = (data: { messageId: string; reactions: any[] }) => {
       console.log('Reaction updated via Socket.IO:', data.messageId)
@@ -426,22 +490,97 @@ export const useMessages = (conversationId: string | null) => {
       })
     }
 
-    // Set up all event listeners
+    // Removed handleMessageDeleted - now handled by window events
+
+    const handleUserProfileUpdated = (data: { userId: string; avatar?: string; name?: string; username?: string }) => {
+      console.log('User profile updated via Socket.IO:', data.userId)
+      setMessages(prev => {
+        return prev.map(msg => {
+          if (msg.sender.id === data.userId) {
+            return {
+              ...msg,
+              sender: {
+                ...msg.sender,
+                ...(data.avatar !== undefined && { avatar: data.avatar }),
+                ...(data.name !== undefined && { name: data.name }),
+                ...(data.username !== undefined && { username: data.username })
+              }
+            }
+          }
+          return msg
+        })
+      })
+    }
+
+    // Set up conversation-specific socket event listeners
+    console.log('useMessages: Registering socket event listeners for conversation only')
     socket.on('new-message', handleNewMessage)
-    socket.on('message-updated', handleMessageUpdate)
     socket.on('message-reaction-updated', handleReactionUpdate)
     socket.on('message-read', handleMessageRead)
     socket.on('message-status-updated', handleMessageStatusUpdate)
+    socket.on('user-profile-updated', handleUserProfileUpdated)
+    console.log('useMessages: Conversation-specific socket event listeners registered')
 
     return () => {
-      console.log('Cleaning up Socket.IO event listeners in useMessages')
+      console.log('useMessages: Cleaning up Socket.IO event listeners for conversation:', conversationId)
       socket.off('new-message', handleNewMessage)
-      socket.off('message-updated', handleMessageUpdate)
       socket.off('message-reaction-updated', handleReactionUpdate)
       socket.off('message-read', handleMessageRead)
       socket.off('message-status-updated', handleMessageStatusUpdate)
+      socket.off('user-profile-updated', handleUserProfileUpdated)
+      console.log('useMessages: Socket event listeners cleaned up')
     }
   }, [socket, conversationId, session?.user?.id])
+
+  // Scroll to a specific message by ID
+  const scrollToMessage = useCallback(async (messageId: string) => {
+    // First, check if the message is already in the current view
+    let messageElement = document.querySelector(`[data-message-id="${messageId}"]`)
+    
+    if (messageElement) {
+      // Message is visible, scroll to it immediately
+      messageElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      })
+      
+      // Add a temporary highlight effect
+      messageElement.classList.add('highlight-message')
+      setTimeout(() => {
+        messageElement.classList.remove('highlight-message')
+      }, 2000)
+      return
+    }
+    
+    // Message not visible - check if it exists in our current messages
+    const messageExists = messages.some(msg => msg.id === messageId)
+    
+    if (!messageExists) {
+      // Message might be in older messages - need to load more
+      console.log(`Message ${messageId} not found in current messages, attempting to load more...`)
+      
+      // For now, show a user-friendly message
+      // In a full implementation, you might want to:
+      // 1. Load older messages until the message is found
+      // 2. Make an API call to find the message position
+      // 3. Navigate to the correct page/offset
+      
+      // Simple user feedback for now
+      const notification = document.createElement('div')
+      notification.className = 'fixed top-4 right-4 bg-yellow-100 dark:bg-yellow-900/90 border border-yellow-400 dark:border-yellow-600 text-yellow-800 dark:text-yellow-200 px-4 py-2 rounded-lg shadow-lg z-50 max-w-sm text-sm'
+      notification.textContent = 'Original message not found in current view. It might be in older messages.'
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 3000)
+      
+      return
+    }
+    
+    // Message exists in our data but not rendered (virtual scrolling case)
+    console.warn(`Message ${messageId} exists but not currently rendered`)
+  }, [messages])
 
   return {
     messages,
@@ -452,6 +591,7 @@ export const useMessages = (conversationId: string | null) => {
     loadMore,
     markMessagesAsRead,
     reactToMessage,
+    scrollToMessage,
     refetch: () => fetchMessages(),
   }
 }

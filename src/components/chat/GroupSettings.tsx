@@ -13,7 +13,8 @@ import {
   LogOut,
   Trash2,
   Settings,
-  Users
+  Users,
+  Search
 } from 'lucide-react'
 
 interface GroupMember {
@@ -39,6 +40,15 @@ interface Group {
   participants: GroupMember[]
 }
 
+interface User {
+  id: string
+  username: string
+  name: string | null
+  avatar: string | null
+  isOnline: boolean
+  lastSeen: string
+}
+
 interface GroupSettingsProps {
   conversationId: string
   isOpen: boolean
@@ -60,6 +70,11 @@ export function GroupSettings({
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState<'info' | 'members' | 'settings'>('info')
+  const [showAddMember, setShowAddMember] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<User[]>([])
+  const [searching, setSearching] = useState(false)
+  const [addingMember, setAddingMember] = useState('')
   
   const [editForm, setEditForm] = useState({
     name: '',
@@ -223,6 +238,72 @@ export function GroupSettings({
     }
   }
 
+  const searchUsers = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    setSearching(true)
+    try {
+      const response = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`)
+      if (response.ok) {
+        const data = await response.json()
+        // Filter out users who are already in the group
+        const existingUserIds = group?.participants.map(p => p.userId) || []
+        const filteredUsers = data.users.filter((user: User) => 
+          !existingUserIds.includes(user.id)
+        )
+        setSearchResults(filteredUsers)
+      }
+    } catch (error) {
+      console.error('Error searching users:', error)
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const handleAddMember = async (userId: string) => {
+    if (!isAdmin || addingMember) return
+
+    setAddingMember(userId)
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      })
+
+      if (response.ok) {
+        await fetchGroupSettings()
+        setSearchQuery('')
+        setSearchResults([])
+        setShowAddMember(false)
+      }
+    } catch (error) {
+      console.error('Error adding member:', error)
+    } finally {
+      setAddingMember('')
+    }
+  }
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery && showAddMember) {
+        searchUsers(searchQuery)
+      } else {
+        setSearchResults([])
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery, showAddMember])
+
   if (!isOpen) return null
 
   return (
@@ -384,7 +465,10 @@ export function GroupSettings({
                       Members ({group.participants.length})
                     </h3>
                     {isAdmin && (
-                      <button className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                      <button 
+                        onClick={() => setShowAddMember(true)}
+                        className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
                         <UserPlus className="w-4 h-4" />
                         <span>Add Member</span>
                       </button>
@@ -484,6 +568,106 @@ export function GroupSettings({
           </div>
         )}
       </div>
+
+      {/* Add Member Modal */}
+      {showAddMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-[70vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Add Member
+              </h3>
+              <button
+                onClick={() => {
+                  setShowAddMember(false)
+                  setSearchQuery('')
+                  setSearchResults([])
+                }}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+              >
+                <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              </button>
+            </div>
+
+            {/* Search Input */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search users by name or username..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  autoFocus
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                {searching && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Search Results */}
+            <div className="p-4 overflow-y-auto max-h-[40vh]">
+              {searchQuery.trim() === '' ? (
+                <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  <UserPlus className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>Search for users to add to the group</p>
+                </div>
+              ) : searchResults.length === 0 && !searching ? (
+                <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  <p>No users found</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {searchResults.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <div className="flex items-center space-x-3">
+                        {user.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.name || user.username}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center">
+                            <span className="text-white text-sm font-medium">
+                              {(user.name || user.username).charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {user.name || user.username}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            @{user.username}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleAddMember(user.id)}
+                        disabled={addingMember === user.id}
+                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {addingMember === user.id ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <UserPlus className="w-4 h-4" />
+                        )}
+                        <span>Add</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

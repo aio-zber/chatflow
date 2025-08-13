@@ -57,6 +57,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       select: { id: true, avatar: true, name: true, username: true, email: true },
     })
 
+    // Emit socket event to broadcast profile update to all connected users
+    const { getIO, getSocketInstance } = await import('@/lib/socket')
+    let io = getIO()
+    
+    // If socket is not available, try to initialize it
+    if (!io) {
+      console.log('API: Socket IO not available, attempting to initialize...')
+      try {
+        io = getSocketInstance(req, res)
+        console.log('API: Socket IO initialized for avatar upload')
+      } catch (error) {
+        console.error('API: Failed to initialize Socket IO:', error)
+      }
+    }
+    
+    console.log(`API: Socket IO instance available for profile update:`, !!io)
+    if (io) {
+      const profileUpdate = {
+        userId: session.user.id,
+        avatar: uploadResult.secure_url,
+        name: user.name,
+        username: user.username
+      }
+      
+      console.log(`API: Broadcasting profile update for user ${session.user.id}:`, profileUpdate)
+      console.log(`API: Socket.IO connected clients count:`, io.engine.clientsCount)
+      
+      // Emit globally to all connected clients
+      io.emit('user-profile-updated', profileUpdate)
+      console.log(`API: Emitted user-profile-updated globally`)
+      
+      // Also emit to user's specific room
+      console.log(`API: Emitting profile update to user room: user:${session.user.id}`)
+      io.to(`user:${session.user.id}`).emit('user-profile-updated', profileUpdate)
+      
+      // Log room members for debugging
+      const userRoom = io.sockets.adapter.rooms.get(`user:${session.user.id}`)
+      console.log(`API: User room members:`, userRoom ? Array.from(userRoom) : 'none')
+      
+      console.log(`API: Profile update broadcasted successfully`)
+    } else {
+      console.warn('API: Socket.IO instance not available for profile update')
+    }
+
     return res.status(200).json({ user, upload: { publicId: uploadResult.public_id, version: uploadResult.version } })
   } catch (error) {
     console.error('Avatar upload error:', error)

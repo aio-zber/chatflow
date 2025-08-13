@@ -24,17 +24,24 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
     const io = new ServerIO(res.socket.server, {
       path: '/api/socket/io',
       addTrailingSlash: false,
-      transports: ['polling', 'websocket'], // Start with polling, allow websocket upgrade
-      allowEIO3: true, // Allow Engine.IO v3 for compatibility
-      pingTimeout: 20000,
-      pingInterval: 10000,
+      transports: ['polling'], // Match client - polling only for stability
+      allowEIO3: true,
+      pingTimeout: 60000, // Longer timeout to prevent disconnections
+      pingInterval: 25000, // Longer interval for stability
+      maxHttpBufferSize: 1e6,
+      httpCompression: false, // Disable compression to reduce overhead
+      upgradeTimeout: 30000, // Longer upgrade timeout
       cors: {
         origin: process.env.NODE_ENV === 'production' 
           ? process.env.NEXTAUTH_URL 
-          : 'http://localhost:3000',
+          : ['http://localhost:3000', 'http://localhost:3001'],
         methods: ['GET', 'POST'],
         credentials: false,
+        allowedHeaders: ['Content-Type'],
       },
+      connectTimeout: 45000,
+      serveClient: false,
+      allowUpgrades: false, // Disable upgrades to prevent transport switching issues
     })
 
     io.on('connection', async (socket) => {
@@ -83,6 +90,7 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
         }
       })
 
+
       socket.on('user-online', async (userId: string) => {
         try {
           // Join the user to their personal room for targeted notifications
@@ -129,6 +137,7 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
     })
 
     res.socket.server.io = io
+    setGlobalSocketIO(io)
   }
 }
 
@@ -138,4 +147,15 @@ export const getSocketInstance = (req: NextApiRequest, res: NextApiResponse) => 
     initializeSocketIO(req, serverRes)
   }
   return serverRes.socket.server.io
+}
+
+// Global variable to store the Socket.IO instance
+let globalSocketIO: ServerIO | null = null
+
+export const setGlobalSocketIO = (io: ServerIO) => {
+  globalSocketIO = io
+}
+
+export const getIO = (): ServerIO | null => {
+  return globalSocketIO
 }

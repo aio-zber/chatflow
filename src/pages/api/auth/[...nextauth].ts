@@ -121,18 +121,59 @@ export const authOptions: AuthOptions = {
     maxAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
         token.username = (user as { username?: string }).username
+        token.name = user.name
         // Keep avatar out of the JWT if it's large or data-URI to avoid cookie bloat
         token.avatar = sanitizeAvatarForToken((user as { avatar?: string | null }).avatar) || undefined
       }
+      
+      // Handle session updates (when update() is called)
+      if (trigger === 'update' && session?.user) {
+        console.log('NextAuth: JWT update triggered with session:', session.user)
+        
+        // Refresh user data from database to get latest changes
+        if (token.id) {
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { id: token.id as string },
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                avatar: true,
+                email: true,
+              }
+            })
+            
+            if (dbUser) {
+              console.log('NextAuth: Refreshed user data from database:', dbUser)
+              token.name = dbUser.name
+              token.username = dbUser.username
+              token.avatar = sanitizeAvatarForToken(dbUser.avatar) || undefined
+              token.email = dbUser.email
+            }
+          } catch (error) {
+            console.error('NextAuth: Failed to refresh user data:', error)
+          }
+        }
+        
+        // Also update from session data if provided
+        if (session.user.name !== undefined) token.name = session.user.name
+        if (session.user.username !== undefined) token.username = session.user.username
+        if (session.user.avatar !== undefined) {
+          token.avatar = sanitizeAvatarForToken(session.user.avatar) || undefined
+        }
+      }
+      
       return token
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
+        session.user.name = (token.name as string | undefined) || session.user.name
         session.user.username = token.username as string
         // Only propagate sanitized avatar to session
         session.user.avatar = (token.avatar as string | undefined) || null

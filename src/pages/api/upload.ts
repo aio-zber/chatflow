@@ -41,7 +41,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
 
     const [fields, files] = await form.parse(req)
-    const uploadedFiles = Array.isArray(files.files) ? files.files : [files.files].filter(Boolean)
+    
+    // Handle both single file and multiple files
+    let uploadedFiles: any[] = []
+    
+    // Check for 'file' field (single file) or 'files' field (multiple files)
+    if (files.file) {
+      uploadedFiles = Array.isArray(files.file) ? files.file : [files.file]
+    } else if (files.files) {
+      uploadedFiles = Array.isArray(files.files) ? files.files : [files.files]
+    }
+    
+    // Filter out any undefined/null files
+    uploadedFiles = uploadedFiles.filter(Boolean)
 
     if (!uploadedFiles.length) {
       return res.status(400).json({ error: 'No files uploaded' })

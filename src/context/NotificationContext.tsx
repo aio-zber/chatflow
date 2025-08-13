@@ -58,6 +58,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
           console.warn('Notification sound file not found, continuing without audio notifications')
           audioRef.current = null
         }
+        
+        // Test if the file exists by attempting to load metadata
+        audioRef.current.addEventListener('loadstart', () => {
+          // File exists and is loading
+        }, { once: true })
       } catch (error) {
         console.warn('Could not initialize notification audio:', error)
         audioRef.current = null

@@ -46,13 +46,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected')
   const [userStatuses, setUserStatuses] = useState<Record<string, { isOnline: boolean; lastSeen: Date }>>({})
   const [joinedRooms, setJoinedRooms] = useState<Set<string>>(new Set())
+  
+  // Track user ID separately to detect actual user changes (login/logout)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   const joinConversationRoom = (conversationId: string) => {
     if (socket && isConnected) {
       const roomName = `conversation:${conversationId}`
+      console.log(`SocketContext: Attempting to join room: ${roomName}`)
+      console.log(`SocketContext: Socket connected: ${socket.connected}, Socket ID: ${socket.id}`)
       socket.emit('join-room', conversationId)
       setJoinedRooms(prev => new Set([...Array.from(prev), roomName]))
-      console.log(`Joined room: ${roomName}`)
+      console.log(`SocketContext: Joined room: ${roomName}`)
+    } else {
+      console.log(`SocketContext: Cannot join room - socket: ${!!socket}, connected: ${isConnected}`)
     }
   }
 
@@ -71,7 +78,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   // Automatically join all user conversations when connected
   useEffect(() => {
-    if (socket && session?.user?.id) {
+    if (socket && currentUserId) {
       const joinAllUserConversations = async () => {
         try {
           console.log('Auto-joining all user conversations...')
@@ -80,9 +87,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
             const data = await response.json()
             const conversations = data.conversations || []
             
-            console.log(`Found ${conversations.length} conversations to join`)
+            console.log(`SocketContext: Found ${conversations.length} conversations to join`)
             conversations.forEach((conv: any) => {
-              console.log(`Auto-joining conversation: ${conv.id}`)
+              console.log(`SocketContext: Auto-joining conversation: ${conv.id}`)
               joinConversationRoom(conv.id)
             })
             
@@ -117,14 +124,27 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socket.on('reconnect', handleReconnect)
       return () => socket.off('reconnect', handleReconnect)
     }
-  }, [socket, isConnected, session?.user?.id])
+  }, [socket, isConnected, currentUserId])
+
+  // Check for actual user changes (login/logout vs session updates)
+  useEffect(() => {
+    const newUserId = session?.user?.id || null
+    
+    if (newUserId !== currentUserId) {
+      console.log('User ID changed from', currentUserId, 'to', newUserId)
+      setCurrentUserId(newUserId)
+    }
+  }, [session?.user?.id, currentUserId])
 
   useEffect(() => {
     let isMounted = true
     
     const initSocket = async () => {
-      // Only proceed if component is still mounted and session exists
-      if (!isMounted || !session?.user?.id) return
+      // Only proceed if component is still mounted and user exists
+      if (!isMounted || !currentUserId) {
+        console.log('Not initializing socket: mounted =', isMounted, 'userId =', currentUserId)
+        return
+      }
 
       // Prevent multiple initializations
       if (socket) {
@@ -132,7 +152,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         return
       }
 
-      console.log('Initializing Socket.IO client connection...')
+      console.log('Initializing Socket.IO client connection for user:', currentUserId)
       setConnectionState('connecting')
       
       const socketInstance = io(process.env.NODE_ENV === 'production' 
@@ -140,31 +160,34 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         : window.location.origin, {
         path: '/api/socket/io',
         addTrailingSlash: false,
-        forceNew: true, // Force new connection to avoid conflicts
-        timeout: 20000,  // Increased timeout
-        transports: ['polling', 'websocket'], // Start with polling, upgrade to websocket
-        upgrade: true,
-        rememberUpgrade: false, // Don't remember upgrade to avoid transport conflicts
+        forceNew: false, // Allow connection reuse
+        timeout: 45000,  // Match server timeout
+        transports: ['polling'], // Start with polling only for stability
+        upgrade: false, // Disable websocket upgrade to prevent transport issues
         autoConnect: true,
         reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionAttempts: 5,
+        reconnectionDelay: 2000,
+        reconnectionDelayMax: 10000,
+        reconnectionAttempts: 10,
+        randomizationFactor: 0.5,
+        closeOnBeforeunload: false,
       })
 
       socketInstance.on('connect', () => {
         if (isMounted) {
-          console.log('Socket connected successfully:', socketInstance.id)
+          console.log('SocketContext: Socket connected successfully:', socketInstance.id)
+          console.log('SocketContext: Socket transport:', socketInstance.io.engine.transport.name)
           setIsConnected(true)
           setConnectionState('connected')
           
           // Emit user online status and join user-specific room
-          if (session?.user?.id) {
-            console.log('Emitting user-online for:', session.user.id)
-            socketInstance.emit('user-online', session.user.id)
+          if (currentUserId) {
+            console.log('SocketContext: Emitting user-online for:', currentUserId)
+            socketInstance.emit('user-online', currentUserId)
             
             // Also join user-specific room for targeted notifications
-            socketInstance.emit('join-user-room', session.user.id)
-            console.log('Joined user-specific room:', `user:${session.user.id}`)
+            socketInstance.emit('join-user-room', currentUserId)
+            console.log('SocketContext: Joined user-specific room:', `user:${currentUserId}`)
           }
         }
       })
@@ -173,6 +196,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         console.error('Socket connection error:', error)
         if (isMounted) {
           setConnectionState('disconnected')
+          setIsConnected(false)
+          setIsFullyInitialized(false)
         }
       })
 
@@ -181,6 +206,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         if (isMounted) {
           setIsConnected(false)
           setConnectionState('disconnected')
+          setIsFullyInitialized(false)
         }
       })
 
@@ -208,6 +234,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         }
       })
 
+      // Profile updates are now handled directly by components
+      // Message updates are handled directly by useMessages and useConversations
+
       if (isMounted) {
         setSocket(socketInstance)
       }
@@ -222,8 +251,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         // Remove all listeners first
         socket.removeAllListeners()
         // Emit user offline status before disconnecting
-        if (session?.user?.id) {
-          socket.emit('user-offline', session.user.id)
+        if (currentUserId) {
+          socket.emit('user-offline', currentUserId)
         }
         socket.disconnect()
         setSocket(null)
@@ -232,16 +261,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         setConnectionState('disconnected')
       }
     }
-  }, [session?.user?.id]) // Add session dependency to reinitialize on user change
+  }, [currentUserId]) // Only reinitialize when user actually changes (login/logout)
 
   // Handle page visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (socket && session?.user?.id) {
+      if (socket && currentUserId) {
         if (document.visibilityState === 'visible') {
-          socket.emit('user-online', session.user.id)
+          socket.emit('user-online', currentUserId)
         } else {
-          socket.emit('user-offline', session.user.id)
+          socket.emit('user-offline', currentUserId)
         }
       }
     }
@@ -251,12 +280,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [socket, session?.user?.id])
+  }, [socket, currentUserId])
 
   // Handle window beforeunload
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (socket && session?.user?.id) {
+      if (socket && currentUserId) {
         socket.emit('user-offline', session.user.id)
       }
     }
@@ -266,7 +295,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
     }
-  }, [socket, session?.user?.id])
+  }, [socket, currentUserId])
 
   return (
     <SocketContext.Provider value={{ socket, isConnected, isFullyInitialized, connectionState, userStatuses, joinedRooms, joinConversationRoom, leaveConversationRoom }}>

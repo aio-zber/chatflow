@@ -94,6 +94,28 @@ body {
     text-wrap: balance;
   }
   
+  /* Line clamp utilities for text truncation */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  
   /* Mobile-first utility classes */
   .touch-manipulation {
     touch-action: manipulation;
@@ -101,6 +123,73 @@ body {
   
   .overscroll-contain {
     overscroll-behavior: contain;
+  }
+  
+  /* Mobile message bubble improvements */
+  @media (max-width: 640px) {
+    .message-bubble {
+      max-width: 85% !important;
+    }
+    
+    .message-content {
+      word-break: break-word;
+      hyphens: auto;
+      overflow-wrap: break-word;
+    }
+    
+    .reply-preview {
+      max-width: 100% !important;
+      min-width: 0;
+    }
+  }
+  
+  /* Message highlight animation for scroll-to functionality */
+  .highlight-message {
+    animation: messageHighlight 2s ease-in-out;
+  }
+  
+  @keyframes messageHighlight {
+    0% {
+      background-color: rgba(59, 130, 246, 0.1);
+      transform: scale(1);
+    }
+    25% {
+      background-color: rgba(59, 130, 246, 0.2);
+      transform: scale(1.02);
+    }
+    75% {
+      background-color: rgba(59, 130, 246, 0.1);
+      transform: scale(1.01);
+    }
+    100% {
+      background-color: transparent;
+      transform: scale(1);
+    }
+  }
+  
+  /* Click cursor for reply previews */
+  .reply-preview-clickable {
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+  
+  .reply-preview-clickable:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+  }
+  
+  .dark .reply-preview-clickable:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .reply-preview-clickable:active {
+    transform: translateY(0);
+  }
+  
+  /* Focus styles for reply previews */
+  .reply-preview-clickable:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
   }
   
   /* Focus styles for better accessibility */
