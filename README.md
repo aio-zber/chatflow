@@ -30,7 +30,7 @@ A comprehensive real-time messaging platform built with Next.js 14, featuring in
 - ✅ **File Upload**: Images, documents with 10MB limit
 - ✅ **Search**: Messages and conversations
 - ✅ **Presence**: Online/offline/typing indicators
-- ✅ **Message Status**: Sent/delivered/read receipts
+- ✅ **Message Status**: Sent/read receipts
 
 ### 🚀 Performance & Optimization (All ✅ Completed)
 - ✅ **Caching Strategy**: Client-side, server-side, CDN optimization
@@ -173,7 +173,6 @@ src/
 - Group chats (2-100 members)
 - Admin controls
 - Channels with moderation
-- Public/private channels
 
 ### Modern UI/UX
 - Responsive design (mobile-first)

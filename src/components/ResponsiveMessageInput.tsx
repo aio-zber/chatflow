@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, Smile, X, Plus } from 'lucide-react'
+import { Send, Paperclip, X, Plus } from 'lucide-react'
 
 interface ResponsiveMessageInputProps {
   onSendMessage: (content: string, attachments?: File[]) => void
@@ -99,7 +99,7 @@ export function ResponsiveMessageInput({
         <div className="px-3 sm:px-4 pt-3 sm:pt-4">
           <div className="flex flex-wrap gap-2">
             {attachments.map((file, index) => (
-              <div key={index} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 text-sm">
+              <div key={`attachment-${file.name}-${file.size}-${index}`} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 text-sm">
                 <Paperclip className="w-4 h-4 text-gray-500" />
                 <span className="truncate max-w-32 sm:max-w-48">{file.name}</span>
                 <span className="text-xs text-gray-500">({formatFileSize(file.size)})</span>
@@ -124,6 +124,7 @@ export function ResponsiveMessageInput({
               onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
               className="btn-touch p-2 sm:p-2.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors touch-manipulation focus-ring"
               disabled={disabled}
+              aria-label="Attach"
             >
               <Plus className="w-5 h-5" />
             </button>
@@ -180,6 +181,7 @@ export function ResponsiveMessageInput({
             onClick={handleSend}
             disabled={disabled || (!message.trim() && attachments.length === 0)}
             className="btn-touch flex-shrink-0 p-2 sm:p-2.5 bg-primary-600 text-white rounded-full hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation focus-ring"
+            aria-label="Send"
           >
             <Send className="w-5 h-5" />
           </button>

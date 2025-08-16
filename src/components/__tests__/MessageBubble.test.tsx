@@ -1,6 +1,14 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useSession } from 'next-auth/react'
 import { MessageBubble } from '../chat/MessageBubble'
+
+// Mock next-auth
+jest.mock('next-auth/react', () => ({
+  useSession: jest.fn()
+}))
+
+const mockUseSession = useSession as jest.MockedFunction<typeof useSession>
 
 const mockMessage = {
   id: 'test-message-1',
@@ -23,6 +31,12 @@ const mockProps = {
 describe('MessageBubble', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseSession.mockReturnValue({
+      data: {
+        user: { id: 'test-user-id', name: 'Current User', email: 'current@example.com' }
+      },
+      status: 'authenticated'
+    })
   })
 
   it('renders message content correctly', () => {
@@ -41,10 +55,16 @@ describe('MessageBubble', () => {
     render(<MessageBubble {...mockProps} />)
     
     const messageContainer = screen.getByRole('article')
-    await user.hover(messageContainer)
+    const messageContent = messageContainer.querySelector('.message-content')
+    if (messageContent) {
+      await user.hover(messageContent)
+      // Wait a bit for the hover state to be processed
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
     
-    expect(screen.getByRole('button', { name: /reply/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /react/i })).toBeInTheDocument()
+    // Actions should be visible after hover
+    expect(screen.queryByLabelText('Add reaction')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Reply to message')).toBeInTheDocument()
   })
 
   it('calls onReply when reply button is clicked', async () => {
@@ -52,9 +72,13 @@ describe('MessageBubble', () => {
     render(<MessageBubble {...mockProps} />)
     
     const messageContainer = screen.getByRole('article')
-    await user.hover(messageContainer)
+    const messageContent = messageContainer.querySelector('.message-content')
+    if (messageContent) {
+      await user.hover(messageContent)
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
     
-    const replyButton = screen.getByRole('button', { name: /reply/i })
+    const replyButton = screen.getByLabelText('Reply to message')
     await user.click(replyButton)
     
     expect(mockProps.onReply).toHaveBeenCalledWith(mockMessage)
@@ -94,12 +118,13 @@ describe('MessageBubble', () => {
   })
 
   it('displays message status indicator', () => {
-    const messageWithStatus = {
+    const ownMessageWithStatus = {
       ...mockMessage,
+      senderId: 'test-user-id', // Make it an own message
       status: 'read' as const,
     }
 
-    render(<MessageBubble {...mockProps} message={messageWithStatus} />)
+    render(<MessageBubble {...mockProps} message={ownMessageWithStatus} />)
     
     // Check for read status indicator (double check marks)
     expect(screen.getByTestId('message-status')).toBeInTheDocument()

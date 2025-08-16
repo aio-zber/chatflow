@@ -209,10 +209,11 @@ export function BlockedUsersManager({ className = '' }: BlockedUsersManagerProps
               <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="sort-by-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Sort by
                     </label>
                     <select
+                      id="sort-by-select"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-600 dark:text-white"
@@ -223,10 +224,11 @@ export function BlockedUsersManager({ className = '' }: BlockedUsersManagerProps
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="filter-by-status-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Filter by status
                     </label>
                     <select
+                      id="filter-by-status-select"
                       value={filterBy}
                       onChange={(e) => setFilterBy(e.target.value as FilterOption)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-600 dark:text-white"

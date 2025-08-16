@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]'
 import { prisma } from '@/lib/prisma'
-import { v2 as cloudinary } from 'cloudinary'
+import cloudinary, { uploadOptions } from '@/lib/cloudinary'
 
 export const config = {
   api: {
@@ -28,25 +28,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Missing image' })
     }
 
-    // Configure Cloudinary (expects env vars set)
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-      secure: true,
-    })
-
     // Ensure data URL format for upload
     const isDataUrl = imageBase64.startsWith('data:')
     const dataUri = isDataUrl ? imageBase64 : `data:image/png;base64,${imageBase64}`
 
     const uploadResult = await cloudinary.uploader.upload(dataUri, {
-      folder: 'chatflow/avatars',
+      ...uploadOptions.avatar,
       public_id: `avatar_${session.user.id}_${Date.now()}`,
-      transformation: [
-        { width: 512, height: 512, crop: 'fill', gravity: 'auto' },
-        { fetch_format: 'auto', quality: 'auto' },
-      ],
       overwrite: true,
       invalidate: true,
     })

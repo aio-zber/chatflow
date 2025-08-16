@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { Bell, BellOff, Check, CheckCheck, Trash2, Filter, X, Settings } from 'lucide-react'
+import { Bell, BellOff, Check, CheckCheck, Trash2, X, Settings } from 'lucide-react'
 
 interface Notification {
   id: string
@@ -18,7 +17,6 @@ interface NotificationCenterProps {
 }
 
 export function NotificationCenter({ onClose }: NotificationCenterProps) {
-  const { data: session } = useSession()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
@@ -228,7 +226,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
           {loading ? (
             <div className="p-4 space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="flex space-x-3 animate-pulse">
+                <div key={`notification-skeleton-${i}`} className="flex space-x-3 animate-pulse">
                   <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
                   <div className="flex-1 space-y-2">
                     <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>

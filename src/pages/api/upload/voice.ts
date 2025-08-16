@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]'
-import formidable, { File as FormidableFile } from 'formidable'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import formidable from 'formidable'
+import { readFile, unlink } from 'fs/promises'
+import { uploadToCloudinary } from '../../../lib/cloudinary'
 
 export const config = {
   api: {
@@ -35,39 +34,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'No voice file provided' })
     }
 
-    // Validate file type
-    const allowedTypes = ['audio/webm', 'audio/mp4', 'audio/mpeg', 'audio/wav']
-    if (!allowedTypes.includes(voiceFile.mimetype || '')) {
+    // Validate file type - be more permissive with audio types
+    const allowedTypes = ['audio/webm', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/x-wav', '']
+    const mimeType = voiceFile.mimetype || ''
+    const isAudioType = mimeType.startsWith('audio/') || allowedTypes.includes(mimeType)
+    
+    if (!isAudioType) {
+      console.log('Rejected voice upload - mimetype:', mimeType)
       return res.status(400).json({ error: 'Invalid file type. Only audio files are allowed.' })
     }
-
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'voice')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now()
-    const userId = session.user.id
-    const fileExtension = voiceFile.originalFilename?.split('.').pop() || 'webm'
-    const filename = `voice_${userId}_${timestamp}.${fileExtension}`
-    const filePath = join(uploadsDir, filename)
-
-    // Save file
-    const fileBuffer = await readFileAsBuffer(voiceFile)
-    await writeFile(filePath, fileBuffer)
-
-    // Return file URL
-    const fileUrl = `/uploads/voice/${filename}`
     
-    res.status(200).json({
-      success: true,
-      fileUrl,
-      filename,
-      size: voiceFile.size,
-      duration: fields.duration ? parseInt(fields.duration as string) : 0,
-    })
+    console.log('Voice upload - mimetype:', mimeType, 'size:', voiceFile.size)
+
+    try {
+      // Read file content
+      const fileBuffer = await readFile(voiceFile.filepath)
+      
+      // Generate filename
+      const timestamp = Date.now()
+      const userId = session.user.id
+      const originalName = voiceFile.originalFilename || 'voice-message'
+      const filename = `voice_${userId}_${timestamp}_${originalName}`
+      
+      // Upload to Cloudinary
+      const result = await uploadToCloudinary(
+        fileBuffer,
+        filename,
+        'voice'
+      )
+      
+      // Clean up temp file
+      try {
+        await unlink(voiceFile.filepath)
+      } catch (cleanupError) {
+        console.warn('Failed to cleanup temp voice file:', cleanupError)
+      }
+      
+      res.status(200).json({
+        success: true,
+        fileUrl: result.secureUrl,
+        filename: result.publicId,
+        size: result.bytes,
+        duration: fields.duration ? parseInt(fields.duration as string) : 0,
+        cloudinaryPublicId: result.publicId,
+        format: result.format
+      })
+    } catch (uploadError) {
+      console.error('Error uploading voice message to Cloudinary:', uploadError)
+      
+      // Clean up temp file on error
+      try {
+        await unlink(voiceFile.filepath)
+      } catch (cleanupError) {
+        console.warn('Failed to cleanup temp voice file:', cleanupError)
+      }
+      
+      throw uploadError
+    }
 
   } catch (error) {
     console.error('Voice upload error:', error)
@@ -75,12 +98,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-async function readFileAsBuffer(file: FormidableFile): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const fs = require('fs')
-    fs.readFile(file.filepath, (err: any, data: Buffer) => {
-      if (err) reject(err)
-      else resolve(data)
-    })
-  })
-}

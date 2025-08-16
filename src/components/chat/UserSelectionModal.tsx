@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useSession } from 'next-auth/react'
 import { Search, X, Users, MessageCircle, Check, Plus, Loader2 } from 'lucide-react'
 import { useConversations } from '@/hooks/useConversations'
+import { UserPresenceIndicator } from '@/components/UserPresenceIndicator'
 
 interface User {
   id: string
@@ -22,7 +22,6 @@ interface UserSelectionModalProps {
 
 export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: UserSelectionModalProps) {
   
-  const { data: session } = useSession()
   const { createConversation, createGroupConversation } = useConversations()
   
   const [mode, setMode] = useState<'direct' | 'group'>('direct')
@@ -366,9 +365,14 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                       <div className="relative flex-shrink-0">
                         {getUserAvatar(user)}
-                        {user.isOnline && (
-                          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-                        )}
+                        <div className="absolute bottom-0 right-0">
+                          <UserPresenceIndicator 
+                            userId={user.id}
+                            userIsOnline={user.isOnline}
+                            userLastSeen={user.lastSeen}
+                            size="md"
+                          />
+                        </div>
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -382,9 +386,14 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {user.isOnline ? 'Online' : `Last seen ${formatLastSeen(user.lastSeen)}`}
-                        </p>
+                        <UserPresenceIndicator 
+                          userId={user.id}
+                          userIsOnline={user.isOnline}
+                          userLastSeen={user.lastSeen}
+                          showText={true}
+                          size="sm"
+                          className="text-xs"
+                        />
                       </div>
                     </div>
 

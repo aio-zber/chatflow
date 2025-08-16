@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ChatSidebar } from '@/components/chat/ChatSidebar'
 import { ChatWindow } from '@/components/chat/ChatWindow'
 import { UserProfile } from '@/components/UserProfile'
@@ -11,8 +11,8 @@ import { NotificationBadge } from '@/components/NotificationBadge'
 import { useSocketContext } from '@/context/SocketContext'
 
 export default function ChatPage() {
-  const { data: session, status } = useSession()
-  const { socket, isConnected } = useSocketContext()
+  const { status } = useSession()
+  const { isConnected } = useSocketContext()
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 

@@ -95,6 +95,7 @@ export const authOptions: AuthOptions = {
           email: user.email,
           name: user.name,
           username: user.username,
+          bio: user.bio,
           // Do NOT return large avatar payloads; only a small URL
           avatar: safeAvatar,
         }
@@ -126,6 +127,7 @@ export const authOptions: AuthOptions = {
         token.id = user.id
         token.username = (user as { username?: string }).username
         token.name = user.name
+        token.bio = (user as { bio?: string | null }).bio
         // Keep avatar out of the JWT if it's large or data-URI to avoid cookie bloat
         token.avatar = sanitizeAvatarForToken((user as { avatar?: string | null }).avatar) || undefined
       }
@@ -143,6 +145,7 @@ export const authOptions: AuthOptions = {
                 id: true,
                 name: true,
                 username: true,
+                bio: true,
                 avatar: true,
                 email: true,
               }
@@ -152,6 +155,7 @@ export const authOptions: AuthOptions = {
               console.log('NextAuth: Refreshed user data from database:', dbUser)
               token.name = dbUser.name
               token.username = dbUser.username
+              token.bio = dbUser.bio
               token.avatar = sanitizeAvatarForToken(dbUser.avatar) || undefined
               token.email = dbUser.email
             }
@@ -163,6 +167,7 @@ export const authOptions: AuthOptions = {
         // Also update from session data if provided
         if (session.user.name !== undefined) token.name = session.user.name
         if (session.user.username !== undefined) token.username = session.user.username
+        if (session.user.bio !== undefined) token.bio = session.user.bio
         if (session.user.avatar !== undefined) {
           token.avatar = sanitizeAvatarForToken(session.user.avatar) || undefined
         }
@@ -175,6 +180,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string
         session.user.name = (token.name as string | undefined) || session.user.name
         session.user.username = token.username as string
+        session.user.bio = (token.bio as string | undefined) || null
         // Only propagate sanitized avatar to session
         session.user.avatar = (token.avatar as string | undefined) || null
       }

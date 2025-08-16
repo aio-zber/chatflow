@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useRef, useCallback, KeyboardEvent } from 'react'
-import { Send, Paperclip, Image, Smile, X, File, Mic } from 'lucide-react'
+import { Send, Paperclip, Image, Smile, X, File, Mic, Sticker } from 'lucide-react'
 import { VoiceMessageRecorder } from '../VoiceMessage'
+import { StickerPicker } from './StickerPicker'
 
 interface MessageInputProps {
   onSendMessage: (content: string, attachments?: File[]) => void
@@ -36,6 +37,7 @@ export function MessageInput({
   const [message, setMessage] = useState('')
   const [attachments, setAttachments] = useState<AttachmentPreview[]>([])
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [showStickerPicker, setShowStickerPicker] = useState(false)
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   
@@ -161,6 +163,15 @@ export function MessageInput({
     }, 0)
   }
 
+  const handleStickerSelect = (sticker: string) => {
+    // For stickers, we can either send them immediately or insert them like emojis
+    // Let's send them immediately as this is more typical for sticker functionality
+    if (onSendMessage) {
+      onSendMessage(sticker)
+    }
+    setShowStickerPicker(false)
+  }
+
   const handleVoiceMessage = (audioBlob: Blob, duration: number) => {
     if (onSendVoiceMessage) {
       onSendVoiceMessage(audioBlob, duration)
@@ -216,7 +227,7 @@ export function MessageInput({
         <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <div className="flex flex-wrap gap-2">
             {attachments.map((attachment, index) => (
-              <div key={index} className="relative group">
+              <div key={`attachment-${attachment.file.name}-${attachment.file.size}-${index}`} className="relative group">
                 {attachment.type === 'image' ? (
                   <div className="relative">
                     <img
@@ -309,14 +320,28 @@ export function MessageInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-2xl px-4 py-3 pr-12 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-2xl px-4 py-3 pr-20 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ minHeight: '44px', maxHeight: '120px' }}
           />
           
-          {/* Emoji button */}
-          <div className="absolute right-3 bottom-3">
+          {/* Emoji and Sticker buttons */}
+          <div className="absolute right-3 bottom-3 flex space-x-1">
             <button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              onClick={() => {
+                setShowStickerPicker(!showStickerPicker)
+                setShowEmojiPicker(false)
+              }}
+              disabled={disabled}
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Add sticker"
+            >
+              <Sticker className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => {
+                setShowEmojiPicker(!showEmojiPicker)
+                setShowStickerPicker(false)
+              }}
               disabled={disabled}
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Add emoji"
@@ -347,6 +372,22 @@ export function MessageInput({
                   ))}
                 </div>
               </div>
+            </>
+          )}
+
+          {/* Sticker picker */}
+          {showStickerPicker && (
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setShowStickerPicker(false)}
+                aria-hidden="true"
+              />
+              <StickerPicker
+                isOpen={showStickerPicker}
+                onClose={() => setShowStickerPicker(false)}
+                onStickerSelect={handleStickerSelect}
+              />
             </>
           )}
         </div>

@@ -14,8 +14,10 @@ import {
   Trash2,
   Settings,
   Users,
-  Search
+  Search,
+  Image
 } from 'lucide-react'
+import { MediaHistory } from './MediaHistory'
 
 interface GroupMember {
   id: string
@@ -74,6 +76,7 @@ export function GroupSettings({
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<User[]>([])
   const [searching, setSearching] = useState(false)
+  const [showMediaHistory, setShowMediaHistory] = useState(false)
   const [addingMember, setAddingMember] = useState('')
   
   const [editForm, setEditForm] = useState({
@@ -455,6 +458,17 @@ export function GroupSettings({
                       </p>
                     </div>
                   </div>
+
+                  {/* Media History Button */}
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      onClick={() => setShowMediaHistory(true)}
+                      className="w-full flex items-center justify-center px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    >
+                      <Image className="w-4 h-4 mr-2" />
+                      View Media History
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -668,6 +682,14 @@ export function GroupSettings({
           </div>
         </div>
       )}
+
+      {/* Media History Modal */}
+      <MediaHistory
+        isOpen={showMediaHistory}
+        onClose={() => setShowMediaHistory(false)}
+        conversationId={conversationId}
+        title="Group Media History"
+      />
     </div>
   )
 }

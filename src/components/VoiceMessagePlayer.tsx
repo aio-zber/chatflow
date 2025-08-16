@@ -182,7 +182,7 @@ export function VoiceMessagePlayer({
                 const height = Math.random() * 16 + 4 // Random height between 4-20px
                 return (
                   <div
-                    key={i}
+                    key={`waveform-bg-${i}`}
                     className={`
                       w-1 rounded-full transition-colors
                       ${isOwn ? 'bg-blue-300' : 'bg-gray-300 dark:bg-gray-500'}
@@ -203,7 +203,7 @@ export function VoiceMessagePlayer({
                   const height = Math.random() * 16 + 4
                   return (
                     <div
-                      key={i}
+                      key={`waveform-progress-${i}`}
                       className={`
                         w-1 rounded-full
                         ${isOwn ? 'bg-white' : 'bg-blue-600'}

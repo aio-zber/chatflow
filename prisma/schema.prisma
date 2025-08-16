@@ -60,6 +60,12 @@ model User {
   messageReactions MessageReaction[]
   blockedUsers    UserBlock[] @relation("BlockedBy")
   blockedBy       UserBlock[] @relation("Blocked")
+  callRecords     CallRecord[]
+  
+  // E2EE relationships
+  devices         Device[]
+  deviceProvisioning DeviceProvisioning[]
+  encryptedBackups EncryptedBackup[]
 }
 
 model UserBlock {
@@ -138,6 +144,8 @@ model Conversation {
   
   participants ConversationParticipant[]
   messages     Message[]
+  callRecords  CallRecord[]
+  encryptedMessages EncryptedMessage[]
 }
 
 model ConversationParticipant {
@@ -195,3 +203,156 @@ model Notification {
 
   @@index([userId])
 }
+
+model CallRecord {
+  id             String   @id @default(cuid())
+  conversationId String?
+  callerId       String
+  callType       String   // 'voice' or 'video'
+  status         String   // 'completed', 'missed', 'cancelled'
+  duration       Int      @default(0) // duration in seconds
+  startedAt      DateTime @default(now())
+  endedAt        DateTime?
+  participants   String[] // Array of participant user IDs
+  
+  caller         User          @relation(fields: [callerId], references: [id], onDelete: Cascade)
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+  @@index([callerId])
+}
+
+// E2EE Models
+model Device {
+  id             String   @id @default(cuid())
+  userId         String
+  registrationId Int
+  identityKey    String   // Public key only
+  name           String?
+  isPrimary      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  lastSeen       DateTime?
+  
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  signedPreKeys         SignedPreKey[]
+  oneTimePreKeys        OneTimePreKey[]
+  sentMessages          EncryptedMessage[]     @relation("SentMessages")
+  receivedMessages      EncryptedMessage[]     @relation("ReceivedMessages")
+  groupSenderKeys       GroupSenderKey[]       @relation("SenderDevice")
+  groupReceivedKeys     GroupSenderKey[]       @relation("RecipientDevice")
+  uploadedAttachments   EncryptedAttachment[]
+  backups               EncryptedBackup[]
+  
+  @@unique([userId, registrationId])
+  @@map("devices")
+}
+
+model SignedPreKey {
+  id        String   @id @default(cuid())
+  deviceId  String
+  keyId     Int
+  publicKey String
+  signature String
+  createdAt DateTime @default(now())
+  
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  @@unique([deviceId, keyId])
+  @@map("signed_prekeys")
+}
+
+model OneTimePreKey {
+  id        String    @id @default(cuid())
+  deviceId  String
+  keyId     Int
+  publicKey String
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+  
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  @@unique([deviceId, keyId])
+  @@map("one_time_prekeys")
+}
+
+model EncryptedMessage {
+  id                String    @id @default(cuid())
+  senderDeviceId    String
+  recipientDeviceId String
+  conversationId    String?
+  ciphertext        String
+  messageType       Int       // 1=MESSAGE, 3=PREKEY_MESSAGE
+  timestamp         DateTime  @default(now())
+  deliveredAt       DateTime?
+  
+  senderDevice    Device        @relation("SentMessages", fields: [senderDeviceId], references: [id], onDelete: Cascade)
+  recipientDevice Device        @relation("ReceivedMessages", fields: [recipientDeviceId], references: [id], onDelete: Cascade)
+  conversation    Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([recipientDeviceId, deliveredAt])
+  @@map("encrypted_messages")
+}
+
+model GroupSenderKey {
+  id                 String   @id @default(cuid())
+  groupId            String
+  senderDeviceId     String
+  distributionId     String
+  encryptedSenderKey String
+  recipientDeviceId  String
+  createdAt          DateTime @default(now())
+  
+  senderDevice    Device @relation("SenderDevice", fields: [senderDeviceId], references: [id], onDelete: Cascade)
+  recipientDevice Device @relation("RecipientDevice", fields: [recipientDeviceId], references: [id], onDelete: Cascade)
+  
+  @@unique([groupId, senderDeviceId, recipientDeviceId])
+  @@map("group_sender_keys")
+}
+
+model EncryptedAttachment {
+  id               String   @id @default(cuid())
+  uploaderDeviceId String
+  filename         String
+  mimeType         String
+  sizeBytes        BigInt
+  digestSha256     String
+  ciphertextUrl    String
+  createdAt        DateTime @default(now())
+  
+  uploaderDevice Device @relation(fields: [uploaderDeviceId], references: [id], onDelete: Cascade)
+  
+  @@map("encrypted_attachments")
+}
+
+model DeviceProvisioning {
+  id            String   @id @default(cuid())
+  provisioningId String  @unique
+  userId        String
+  encryptedData String?
+  iv            String?
+  approved      Boolean  @default(false)
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("device_provisioning")
+}
+
+model EncryptedBackup {
+  id            String   @id @default(cuid())
+  userId        String
+  deviceId      String
+  version       Int
+  kdfSalt       String
+  encryptedData String
+  hmac          String
+  createdAt     DateTime @default(now())
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, createdAt])
+  @@map("encrypted_backups")
+}
+

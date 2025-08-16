@@ -71,9 +71,19 @@ export function VoiceMessageRecorder({
       streamRef.current = stream
       audioChunksRef.current = []
 
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      })
+      // Try to use the best available format
+      let mimeType = 'audio/webm;codecs=opus'
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'audio/webm'
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = 'audio/mp4'
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = '' // Use default
+          }
+        }
+      }
+
+      const mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {})
       
       mediaRecorderRef.current = mediaRecorder
 
@@ -84,7 +94,7 @@ export function VoiceMessageRecorder({
       }
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm;codecs=opus' })
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType || 'audio/webm' })
         setAudioBlob(audioBlob)
         
         // Create audio URL for playback
@@ -177,7 +187,18 @@ export function VoiceMessageRecorder({
 
   const handleSend = () => {
     if (audioBlob && duration > 0) {
+      console.log('Sending voice message:', { 
+        blobSize: audioBlob.size, 
+        blobType: audioBlob.type, 
+        duration 
+      })
       onSend(audioBlob, duration)
+    } else {
+      console.error('Cannot send voice message:', { 
+        hasBlob: !!audioBlob, 
+        duration,
+        blobSize: audioBlob?.size 
+      })
     }
   }
 

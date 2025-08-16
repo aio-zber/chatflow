@@ -103,7 +103,7 @@ class ClientCache {
     return {
       size: this.cache.size,
       maxSize: this.maxSize,
-      usage: Math.round((this.cache.size / this.maxSize) * 100),
+      usage: (this.cache.size / this.maxSize) * 100,
     }
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useEffect, useState } from 'react'
+import React, { useCallback, useRef, useEffect, useState, useMemo } from 'react'
 import { useVirtualizer } from '@/hooks/useVirtualizer'
 import { MessageBubble } from './chat/MessageBubble'
 
@@ -27,8 +27,9 @@ interface Message {
     id: string
     name: string
     url: string
-    type: 'image' | 'file'
+    type: 'image' | 'file' | 'voice'
     size?: number
+    duration?: number
   }[]
 }
 
@@ -40,50 +41,112 @@ interface VirtualizedMessageListProps {
   onReply?: (message: Message) => void
   onEdit?: (messageId: string, content: string) => void
   onDelete?: (messageId: string) => void
+  onScrollToMessage?: (messageId: string) => void
+  scrollToMessageLoading?: string | null
   className?: string
 }
 
 const ITEM_HEIGHT = 120 // Approximate height per message
 
+interface VirtualItem {
+  index: number
+  start: number
+  end: number
+  height: number
+}
+
+// Memoized message item component to prevent unnecessary re-renders
+const MessageItem = React.memo<{
+  message: Message
+  virtualItem: VirtualItem
+  onReact?: (messageId: string, emoji: string) => void
+  onReply?: (message: Message) => void
+  onEdit?: (messageId: string, content: string) => void
+  onDelete?: (messageId: string) => void
+  onScrollToMessage?: (messageId: string) => void
+  scrollToMessageLoading?: string | null
+}>(({ 
+  message, 
+  virtualItem,
+  onReact, 
+  onReply, 
+  onEdit, 
+  onDelete,
+  onScrollToMessage,
+  scrollToMessageLoading
+}) => (
+  <div
+    style={{
+      position: 'absolute',
+      top: virtualItem.start,
+      left: 0,
+      right: 0,
+      height: virtualItem.height,
+    }}
+  >
+    <MessageBubble
+      message={message}
+      onReact={onReact}
+      onReply={onReply}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      onScrollToMessage={onScrollToMessage}
+      scrollToMessageLoading={scrollToMessageLoading}
+    />
+  </div>
+))
+
+MessageItem.displayName = 'MessageItem'
+
 export function VirtualizedMessageList({
   messages,
-  currentUserId,
+  currentUserId, // eslint-disable-line @typescript-eslint/no-unused-vars
   onLoadMore,
   onReact,
   onReply,
   onEdit,
   onDelete,
+  onScrollToMessage,
+  scrollToMessageLoading,
   className = '',
 }: VirtualizedMessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerHeight, setContainerHeight] = useState(400)
   const [autoScroll, setAutoScroll] = useState(true)
 
-  // Update container height on resize
+  // Update container height on resize with debouncing
   useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout
     const updateHeight = () => {
-      if (containerRef.current) {
-        setContainerHeight(containerRef.current.clientHeight)
-      }
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        if (containerRef.current) {
+          setContainerHeight(containerRef.current.clientHeight)
+        }
+      }, 100)
     }
 
     updateHeight()
     window.addEventListener('resize', updateHeight)
-    return () => window.removeEventListener('resize', updateHeight)
+    return () => {
+      window.removeEventListener('resize', updateHeight)
+      clearTimeout(resizeTimeout)
+    }
   }, [])
+
+  const virtualizerConfig = useMemo(() => ({
+    itemHeight: ITEM_HEIGHT,
+    containerHeight,
+    itemCount: messages.length,
+    overscan: 3,
+  }), [containerHeight, messages.length])
 
   const {
     visibleItems,
     totalHeight,
     handleScroll,
     scrollToItem,
-    scrollTop,
-  } = useVirtualizer({
-    itemHeight: ITEM_HEIGHT,
-    containerHeight,
-    itemCount: messages.length,
-    overscan: 3,
-  })
+  } = useVirtualizer(virtualizerConfig)
 
   // Handle scroll for auto-scroll behavior
   const handleScrollEvent = useCallback(
@@ -105,10 +168,13 @@ export function VirtualizedMessageList({
     [handleScroll, onLoadMore]
   )
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive - debounced
   useEffect(() => {
     if (autoScroll && messages.length > 0) {
-      scrollToItem(messages.length - 1, 'end')
+      const scrollTimeout = setTimeout(() => {
+        scrollToItem(messages.length - 1, 'end')
+      }, 50)
+      return () => clearTimeout(scrollTimeout)
     }
   }, [messages.length, autoScroll, scrollToItem])
 
@@ -141,6 +207,7 @@ export function VirtualizedMessageList({
         className="h-full overflow-auto custom-scrollbar"
         onScroll={handleScrollEvent}
         style={{ overscrollBehavior: 'contain' }}
+        data-messages-container="true"
       >
         {/* Virtual container */}
         <div style={{ height: totalHeight, position: 'relative' }}>
@@ -149,26 +216,17 @@ export function VirtualizedMessageList({
             if (!message) return null
 
             return (
-              <div
-                key={message.id}
-                style={{
-                  position: 'absolute',
-                  top: virtualItem.start,
-                  left: 0,
-                  right: 0,
-                  height: virtualItem.height,
-                }}
-              >
-                <MessageBubble
-                  message={message}
-                  isOwn={message.senderId === currentUserId}
-                  onReact={onReact}
-                  onReply={onReply}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  className="px-4 py-2"
-                />
-              </div>
+              <MessageItem
+                key={`msg-${message.id}`}
+                message={message}
+                virtualItem={virtualItem}
+                onReact={onReact}
+                onReply={onReply}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onScrollToMessage={onScrollToMessage}
+                scrollToMessageLoading={scrollToMessageLoading}
+              />
             )
           })}
         </div>

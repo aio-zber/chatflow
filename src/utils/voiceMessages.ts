@@ -41,7 +41,7 @@ export function convertAudioBlob(
   blob: Blob, 
   targetMimeType: string = 'audio/webm;codecs=opus'
 ): Promise<Blob> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (blob.type === targetMimeType) {
       resolve(blob)
       return

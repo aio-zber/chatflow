@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, EyeOff, Save, X } from 'lucide-react'
+import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, EyeOff, Save, X, Download } from 'lucide-react'
 import { MessageFormatter } from '../MessageFormatter'
 import { VoiceMessagePlayer } from '../VoiceMessagePlayer'
 
@@ -47,9 +47,10 @@ interface MessageBubbleProps {
   onEdit?: (messageId: string, newContent: string) => void
   onDelete?: (messageId: string) => void
   onHideFromView?: (messageId: string) => void
+  scrollToMessageLoading?: string | null
 }
 
-export function MessageBubble({ message, onReply, onReact, onScrollToMessage, onEdit, onDelete, onHideFromView }: MessageBubbleProps) {
+export function MessageBubble({ message, onReply, onReact, onScrollToMessage, onEdit, onDelete, onHideFromView, scrollToMessageLoading }: MessageBubbleProps) {
   const { data: session } = useSession()
   const [showActions, setShowActions] = useState(false)
   const [showReactions, setShowReactions] = useState(false)
@@ -120,9 +121,10 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: false,
+      timeZone: 'UTC'
     })
   }
 
@@ -195,8 +197,30 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
     setShowMoreOptions(false)
   }
 
+  const handleDownloadAttachment = async (attachment: { url: string; name: string }) => {
+    try {
+      // Create a temporary link element to trigger download
+      const response = await fetch(attachment.url)
+      if (!response.ok) throw new Error('Download failed')
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = attachment.name
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Download failed:', error)
+      // Fallback: open in new tab
+      window.open(attachment.url, '_blank')
+    }
+  }
+
   return (
-    <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} group`} data-message-id={message.id}>
+    <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} group`} data-message-id={message.id} role="article">
       <div className={`flex message-bubble max-w-[85%] sm:max-w-[70%] ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'} items-end space-x-2`}>
         {/* Avatar for received messages */}
         {!isOwnMessage && (
@@ -252,11 +276,14 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                 }
               } : undefined}
               aria-label={onScrollToMessage ? `Go to original message from ${message.replyTo.senderName}` : undefined}
-              title={onScrollToMessage ? "Click to scroll to original message" : undefined}
+              title={onScrollToMessage ? (scrollToMessageLoading === message.replyTo!.id ? "Searching for message..." : "Click to scroll to original message") : undefined}
             >
-              <p className="font-medium text-gray-700 dark:text-gray-300 truncate">
-                {message.replyTo.senderName}
-              </p>
+              <div className="font-medium text-gray-700 dark:text-gray-300 truncate flex items-center space-x-2">
+                <span>{message.replyTo.senderName}</span>
+                {scrollToMessageLoading === message.replyTo.id && (
+                  <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+                )}
+              </div>
               <p className="text-gray-600 dark:text-gray-400 break-words line-clamp-2 text-wrap">
                 {message.replyTo.content}
               </p>
@@ -367,7 +394,7 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                 {message.attachments.map((attachment) => (
                   <div key={attachment.id}>
                     {attachment.type === 'image' ? (
-                      <div className="relative">
+                      <div className="relative group">
                         <img
                           src={attachment.url}
                           alt={attachment.name}
@@ -376,6 +403,17 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                             // TODO: Open image in modal
                           }}
                         />
+                        {/* Download button for images */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDownloadAttachment(attachment)
+                          }}
+                          className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-white"
+                          title="Download image"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
                         {/* Show GIF indicator */}
                         {attachment.name.toLowerCase().endsWith('.gif') && (
                           <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
@@ -393,7 +431,7 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                         className="my-1"
                       />
                     ) : (
-                      <div className="flex items-center space-x-2 p-2 bg-white/10 dark:bg-black/10 rounded-lg">
+                      <div className="flex items-center space-x-2 p-2 bg-white/10 dark:bg-black/10 rounded-lg hover:bg-white/20 dark:hover:bg-black/20 transition-colors group">
                         <div className="w-8 h-8 bg-white/20 dark:bg-black/20 rounded flex items-center justify-center">
                           <span className="text-xs font-mono">📄</span>
                         </div>
@@ -405,6 +443,13 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                             </p>
                           )}
                         </div>
+                        <button
+                          onClick={() => handleDownloadAttachment(attachment)}
+                          className="p-2 rounded-full hover:bg-white/20 dark:hover:bg-black/20 focus:outline-none focus:ring-2 focus:ring-blue-500 opacity-60 hover:opacity-100 transition-opacity"
+                          title="Download file"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
                       </div>
                     )}
                   </div>
@@ -418,7 +463,7 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
               ${isOwnMessage ? 'text-white/70' : 'text-gray-500 dark:text-gray-400'}
             `}>
               <span>{formatTime(message.timestamp)}</span>
-              {isOwnMessage && getStatusIcon()}
+              {isOwnMessage && <span data-testid="message-status">{getStatusIcon()}</span>}
             </div>
 
             {/* Quick actions (visible via hover/long-press) */}
@@ -550,7 +595,7 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                   })()}
                 >
                   <span>{reaction.emoji}</span>
-                  <span className={`font-medium ${((reaction as any).userId === session?.user?.id || (reaction as any).hasReacted) ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}>1</span>
+                  <span className={`font-medium ${((reaction as any).userId === session?.user?.id || (reaction as any).hasReacted) ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}>{reaction.count}</span>
                 </button>
               ))}
             </div>

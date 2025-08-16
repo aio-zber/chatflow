@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useSocketContext } from '@/context/SocketContext'
 
@@ -76,12 +76,31 @@ export const useMessages = (conversationId: string | null) => {
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [scrollToMessageLoading, setScrollToMessageLoading] = useState<string | null>(null)
+
+  // Use refs to track current state values to avoid stale closures in scrollToMessage
+  const currentMessagesRef = useRef(messages)
+  const currentHasMoreRef = useRef(hasMore)
+  const currentNextCursorRef = useRef(nextCursor)
+  
+  // Update refs whenever state changes
+  useEffect(() => {
+    currentMessagesRef.current = messages
+    currentHasMoreRef.current = hasMore
+    currentNextCursorRef.current = nextCursor
+  }, [messages, hasMore, nextCursor])
 
   const fetchMessages = useCallback(async (cursor?: string) => {
     if (!conversationId || !session?.user?.id) return
 
     try {
-      setLoading(true)
+      if (cursor) {
+        setLoadingMore(true)
+      } else {
+        setLoading(true)
+      }
+      
       const url = new URL(`/api/messages/${conversationId}`, window.location.origin)
       if (cursor) url.searchParams.set('cursor', cursor)
 
@@ -94,7 +113,12 @@ export const useMessages = (conversationId: string | null) => {
       const data = await response.json()
       
       if (cursor) {
-        setMessages(prev => [...data.messages, ...prev])
+        // When loading more messages, deduplicate by ID to prevent React key conflicts
+        setMessages(prev => {
+          const existingIds = new Set(prev.map(msg => msg.id))
+          const newMessages = data.messages.filter(msg => !existingIds.has(msg.id))
+          return [...newMessages, ...prev]
+        })
       } else {
         setMessages(data.messages || [])
       }
@@ -105,7 +129,11 @@ export const useMessages = (conversationId: string | null) => {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch messages')
     } finally {
-      setLoading(false)
+      if (cursor) {
+        setLoadingMore(false)
+      } else {
+        setLoading(false)
+      }
     }
   }, [conversationId, session?.user?.id])
 
@@ -175,10 +203,15 @@ export const useMessages = (conversationId: string | null) => {
   }, [session?.user])
 
   const loadMore = useCallback(async () => {
-    if (nextCursor && !loading) {
+    if (nextCursor && !loading && !loadingMore) {
       await fetchMessages(nextCursor)
+      return true // Return true if we attempted to load
     }
-  }, [nextCursor, loading, fetchMessages])
+    return false // Return false if we couldn't load
+  }, [nextCursor, loading, loadingMore, fetchMessages])
+
+  // Debounced scroll to message to prevent multiple simultaneous calls
+  const [scrollToMessageDebounce, setScrollToMessageDebounce] = useState<{[key: string]: number}>({})
 
   // React to a message: only one reaction per user. If a different emoji is selected,
   // replace the previous reaction. If same emoji is selected, remove it (toggle off).
@@ -287,12 +320,11 @@ export const useMessages = (conversationId: string | null) => {
     }
   }, [conversationId, fetchMessages])
 
-  // Ensure we're in the current conversation room (in case auto-join missed it or for new conversations)
+  // Ensure we're in the current conversation room
   useEffect(() => {
     if (!socket || !conversationId) return
 
     const ensureRoomConnection = () => {
-      console.log(`Ensuring room connection for conversation: ${conversationId}`)
       socket.emit('join-room', conversationId)
     }
 
@@ -300,7 +332,6 @@ export const useMessages = (conversationId: string | null) => {
       ensureRoomConnection()
     } else {
       const handleConnect = () => {
-        console.log('Socket connected, ensuring room connection...')
         ensureRoomConnection()
       }
       
@@ -314,126 +345,58 @@ export const useMessages = (conversationId: string | null) => {
 
   // Global socket listeners for message updates/deletes 
   useEffect(() => {
-    if (!socket) {
-      console.log('useMessages: No socket available for global listeners')
-      return
-    }
-
-    console.log('useMessages: Setting up GLOBAL socket listeners for message updates/deletes')
+    if (!socket) return
 
     const handleMessageUpdated = (updatedMessage: any) => {
-      console.log('useMessages: GLOBAL Received message-updated socket event:', updatedMessage.id, updatedMessage)
-      
-      // Update messages regardless of current conversation - let the state update handle filtering
       setMessages(prev => {
-        // Check if the message exists in the current messages
         const messageExists = prev.some(msg => msg.id === updatedMessage.id)
         if (messageExists) {
-          console.log('useMessages: Message found in current conversation, updating')
-          const updated = prev.map(msg => {
-            if (msg.id === updatedMessage.id) {
-              console.log('useMessages: Updating message:', msg.id, 'from:', msg.content, 'to:', updatedMessage.content)
-              return { ...msg, ...updatedMessage }
-            }
-            return msg
-          })
-          return updated
-        } else {
-          console.log('useMessages: Message not found in current messages, ignoring')
-          return prev
+          return prev.map(msg => 
+            msg.id === updatedMessage.id ? { ...msg, ...updatedMessage } : msg
+          )
         }
+        // Don't add messages that weren't already present to prevent duplicates
+        return prev
       })
     }
 
     const handleMessageDeleted = (data: any) => {
-      console.log('useMessages: GLOBAL Received message-deleted socket event:', data.messageId, data)
-      
-      // Update messages regardless of current conversation - let the state update handle filtering
-      setMessages(prev => {
-        const messageExists = prev.some(msg => msg.id === data.messageId)
-        if (messageExists) {
-          console.log('useMessages: Message found in current conversation, deleting')
-          const filtered = prev.filter(msg => msg.id !== data.messageId)
-          console.log('useMessages: Messages after deletion:', filtered.length)
-          return filtered
-        } else {
-          console.log('useMessages: Message not found in current messages, ignoring')
-          return prev
-        }
-      })
+      setMessages(prev => 
+        prev.filter(msg => msg.id !== data.messageId)
+      )
     }
 
     socket.on('message-updated', handleMessageUpdated)
     socket.on('message-deleted', handleMessageDeleted)
-    console.log('useMessages: GLOBAL socket listeners registered')
 
     return () => {
-      console.log('useMessages: Cleaning up GLOBAL socket listeners')
       socket.off('message-updated', handleMessageUpdated)
       socket.off('message-deleted', handleMessageDeleted)
     }
-  }, [socket]) // Only depend on socket
+  }, [socket])
 
   // Socket event listeners effect for conversation-specific events
   useEffect(() => {
-    if (!socket) {
-      console.log('useMessages: Socket not available')
-      return
-    }
-
-    if (!conversationId) {
-      console.log('useMessages: No conversation ID available')
-      return
-    }
-
-    console.log('useMessages: Setting up Socket.IO event listeners for conversation:', conversationId)
-    console.log('useMessages: Socket connected:', socket.connected)
-    console.log('useMessages: Socket ID:', socket.id)
+    if (!socket || !conversationId) return
 
     const handleNewMessage = (message: Message) => {
-      console.log('Received new message via Socket.IO:', message)
-      if (message.conversationId === conversationId) {
-        // Skip messages sent by current user (they're already added locally)
-        if (message.senderId === session?.user?.id) {
-          console.log('Skipping own message received via Socket.IO:', message.id)
-          return
-        }
-        
+      if (message.conversationId === conversationId && message.senderId !== session?.user?.id) {
         setMessages(prev => {
-          console.log('Current messages count before new message:', prev.length)
-          
-          // Check if message already exists by ID
-          const exists = prev.some(m => m.id === message.id)
-          
-          if (exists) {
-            console.log('Message already exists, skipping:', message.id)
-            return prev
-          }
-          
-          console.log('Adding new message to conversation:', message.id)
-          const newMessages = [...prev, message]
-          console.log('New messages count after adding:', newMessages.length)
-          return newMessages
+          // Prevent duplicate messages by checking for existing ID
+          if (prev.some(m => m.id === message.id)) return prev
+          return [...prev, message]
         })
-      } else {
-        console.log('Message not for current conversation:', message.conversationId, 'vs', conversationId)
       }
     }
 
-    // Removed handleMessageUpdate - now handled by window events
-
     const handleReactionUpdate = (data: { messageId: string; reactions: any[] }) => {
-      console.log('Reaction updated via Socket.IO:', data.messageId)
       setMessages(prev => prev.map(msg => {
         if (msg.id !== data.messageId) return msg
 
-        // Normalize incoming payload into per-user reactions
-        // Supports either aggregated format [{ emoji, users: [...] }] or per-user format
         const reactionsPayload = Array.isArray(data.reactions) ? data.reactions : []
         let normalized: MessageReaction[] = []
 
         if (reactionsPayload[0] && Array.isArray(reactionsPayload[0].users)) {
-          // Aggregated: flatten to per-user entries
           reactionsPayload.forEach((r: any) => {
             (r.users || []).forEach((u: any) => {
               normalized.push({
@@ -448,7 +411,6 @@ export const useMessages = (conversationId: string | null) => {
             })
           })
         } else {
-          // Assume already per-user
           normalized = reactionsPayload.map((r: any) => ({
             id: r.id || `${data.messageId}-${r.userId}-${r.emoji}`,
             emoji: r.emoji,
@@ -462,131 +424,217 @@ export const useMessages = (conversationId: string | null) => {
     }
 
     const handleMessageRead = (data: { messageId: string; readBy: string; readAt: string }) => {
-      console.log('Message read status updated via Socket.IO:', data.messageId, 'by user:', data.readBy)
-      // Update status to 'read' for messages sent by current user that were read by others
       if (data.readBy !== session?.user?.id) {
-        setMessages(prev => {
-          const updated = prev.map(msg => 
-            msg.id === data.messageId && msg.senderId === session?.user?.id
-              ? { ...msg, status: 'read' }
-              : msg
-          )
-          console.log('Updated message status for:', data.messageId)
-          return updated
-        })
+        setMessages(prev => prev.map(msg => 
+          msg.id === data.messageId && msg.senderId === session?.user?.id
+            ? { ...msg, status: 'read' }
+            : msg
+        ))
       }
     }
 
     const handleMessageStatusUpdate = (data: { messageId: string; status: string; updatedAt: string }) => {
-      console.log('Message status updated via Socket.IO:', data.messageId, 'to:', data.status)
-      setMessages(prev => {
-        const updated = prev.map(msg => 
-          msg.id === data.messageId
-            ? { ...msg, status: data.status }
-            : msg
-        )
-        console.log('Updated message status to:', data.status, 'for message:', data.messageId)
-        return updated
-      })
+      setMessages(prev => prev.map(msg => 
+        msg.id === data.messageId ? { ...msg, status: data.status } : msg
+      ))
     }
-
-    // Removed handleMessageDeleted - now handled by window events
 
     const handleUserProfileUpdated = (data: { userId: string; avatar?: string; name?: string; username?: string }) => {
-      console.log('User profile updated via Socket.IO:', data.userId)
-      setMessages(prev => {
-        return prev.map(msg => {
-          if (msg.sender.id === data.userId) {
-            return {
-              ...msg,
-              sender: {
-                ...msg.sender,
-                ...(data.avatar !== undefined && { avatar: data.avatar }),
-                ...(data.name !== undefined && { name: data.name }),
-                ...(data.username !== undefined && { username: data.username })
-              }
+      setMessages(prev => prev.map(msg => {
+        if (msg.sender.id === data.userId) {
+          return {
+            ...msg,
+            sender: {
+              ...msg.sender,
+              ...(data.avatar !== undefined && { avatar: data.avatar }),
+              ...(data.name !== undefined && { name: data.name }),
+              ...(data.username !== undefined && { username: data.username })
             }
           }
-          return msg
-        })
-      })
+        }
+        return msg
+      }))
     }
 
-    // Set up conversation-specific socket event listeners
-    console.log('useMessages: Registering socket event listeners for conversation only')
     socket.on('new-message', handleNewMessage)
     socket.on('message-reaction-updated', handleReactionUpdate)
     socket.on('message-read', handleMessageRead)
     socket.on('message-status-updated', handleMessageStatusUpdate)
     socket.on('user-profile-updated', handleUserProfileUpdated)
-    console.log('useMessages: Conversation-specific socket event listeners registered')
 
     return () => {
-      console.log('useMessages: Cleaning up Socket.IO event listeners for conversation:', conversationId)
       socket.off('new-message', handleNewMessage)
       socket.off('message-reaction-updated', handleReactionUpdate)
       socket.off('message-read', handleMessageRead)
       socket.off('message-status-updated', handleMessageStatusUpdate)
       socket.off('user-profile-updated', handleUserProfileUpdated)
-      console.log('useMessages: Socket event listeners cleaned up')
     }
   }, [socket, conversationId, session?.user?.id])
 
   // Scroll to a specific message by ID
   const scrollToMessage = useCallback(async (messageId: string) => {
-    // First, check if the message is already in the current view
-    let messageElement = document.querySelector(`[data-message-id="${messageId}"]`)
-    
-    if (messageElement) {
-      // Message is visible, scroll to it immediately
-      messageElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-      })
-      
-      // Add a temporary highlight effect
-      messageElement.classList.add('highlight-message')
-      setTimeout(() => {
-        messageElement.classList.remove('highlight-message')
-      }, 2000)
+    // Prevent multiple simultaneous scroll attempts for the same message
+    if (scrollToMessageLoading === messageId) {
+      console.log(`Already searching for message ${messageId}, ignoring duplicate request`)
       return
     }
     
-    // Message not visible - check if it exists in our current messages
-    const messageExists = messages.some(msg => msg.id === messageId)
-    
-    if (!messageExists) {
-      // Message might be in older messages - need to load more
-      console.log(`Message ${messageId} not found in current messages, attempting to load more...`)
-      
-      // For now, show a user-friendly message
-      // In a full implementation, you might want to:
-      // 1. Load older messages until the message is found
-      // 2. Make an API call to find the message position
-      // 3. Navigate to the correct page/offset
-      
-      // Simple user feedback for now
-      const notification = document.createElement('div')
-      notification.className = 'fixed top-4 right-4 bg-yellow-100 dark:bg-yellow-900/90 border border-yellow-400 dark:border-yellow-600 text-yellow-800 dark:text-yellow-200 px-4 py-2 rounded-lg shadow-lg z-50 max-w-sm text-sm'
-      notification.textContent = 'Original message not found in current view. It might be in older messages.'
-      document.body.appendChild(notification)
-      
-      setTimeout(() => {
-        document.body.removeChild(notification)
-      }, 3000)
-      
+    // Debounce rapid clicks
+    const now = Date.now()
+    const lastCall = scrollToMessageDebounce[messageId] || 0
+    if (now - lastCall < 500) {
+      console.log(`Debouncing scroll to message ${messageId}`)
       return
     }
     
-    // Message exists in our data but not rendered (virtual scrolling case)
-    console.warn(`Message ${messageId} exists but not currently rendered`)
-  }, [messages])
+    setScrollToMessageDebounce(prev => ({ ...prev, [messageId]: now }))
+    setScrollToMessageLoading(messageId)
+    
+    try {
+    // Helper function to scroll to message element
+    const scrollToMessageElement = () => {
+      const messageElement = document.querySelector(`[data-message-id="${messageId}"]`)
+      if (messageElement) {
+        messageElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+        
+        // Add a temporary highlight effect
+        messageElement.classList.add('highlight-message')
+        setTimeout(() => {
+          messageElement.classList.remove('highlight-message')
+        }, 2000)
+        return true
+      }
+      return false
+    }
+
+    // Helper function to get current state using refs
+    const getCurrentState = () => {
+      return {
+        messages: currentMessagesRef.current,
+        hasMore: currentHasMoreRef.current,
+        nextCursor: currentNextCursorRef.current
+      }
+    }
+
+    // First, check if the message is already visible in the DOM
+    if (scrollToMessageElement()) {
+      return
+    }
+    
+    // Check if message exists in current loaded messages (use fresh state)
+    const initialState = getCurrentState()
+    let messageExists = initialState.messages.some((msg: Message) => msg.id === messageId)
+    
+    if (messageExists) {
+      // Message exists in data but not rendered (virtual scrolling case)
+      // Wait a bit for potential rendering and try again
+      setTimeout(() => {
+        if (!scrollToMessageElement()) {
+          console.warn(`Message ${messageId} exists in data but not currently rendered`)
+        }
+      }, 100)
+      return
+    }
+    
+    // Message not in current messages - try to load older messages
+    let attempts = 0
+    const maxAttempts = 10 // Reasonable max attempts
+    let consecutiveNoNewMessages = 0
+    const maxConsecutiveNoNew = 2 // Reduced to fail faster
+    
+    while (attempts < maxAttempts && consecutiveNoNewMessages < maxConsecutiveNoNew) {
+      try {
+        // Get current state before loading
+        const currentState = getCurrentState()
+        const messageCountBefore = currentState.messages.length
+        
+        // Check if we have more messages to load
+        if (!currentState.hasMore && !currentState.nextCursor) {
+          console.warn('No more messages available to load')
+          break
+        }
+        
+        // Load more messages using the loadMore function
+        const didLoad = await loadMore()
+        if (!didLoad) {
+          console.warn('Could not load more messages - no cursor or already loading')
+          break
+        }
+        attempts++
+        
+        // Wait for state update with shorter intervals
+        const waitTime = Math.min(150 + (attempts * 50), 400)
+        await new Promise(resolve => setTimeout(resolve, waitTime))
+        
+        // Get updated messages state
+        const updatedState = getCurrentState()
+        messageExists = updatedState.messages.some((msg: Message) => msg.id === messageId)
+        
+        if (messageExists) {
+          // Found the message, try to scroll to it with retry logic
+          let scrollAttempts = 0
+          const maxScrollAttempts = 5
+          
+          const tryScroll = () => {
+            if (scrollToMessageElement()) {
+              return true
+            }
+            
+            scrollAttempts++
+            if (scrollAttempts < maxScrollAttempts) {
+              setTimeout(tryScroll, 100 * scrollAttempts)
+            } else {
+              console.warn(`Message ${messageId} loaded but could not scroll to it after ${maxScrollAttempts} attempts`)
+            }
+            return false
+          }
+          
+          setTimeout(tryScroll, 200)
+          return
+        }
+        
+        // Check if we actually loaded new messages
+        const newMessagesCount = updatedState.messages.length - messageCountBefore
+        if (newMessagesCount === 0) {
+          consecutiveNoNewMessages++
+          // If we can't load more messages but have the same cursor, we might be at the end
+          if (updatedState.nextCursor === currentState.nextCursor || !updatedState.nextCursor) {
+            console.warn('Reached end of available messages')
+            break
+          }
+        } else {
+          consecutiveNoNewMessages = 0 // Reset counter if we got new messages
+        }
+        
+      } catch (error) {
+        console.error('Error loading more messages while searching for target message:', error)
+        break
+      }
+    }
+    
+    // Provide detailed feedback on why we stopped searching
+    if (attempts >= maxAttempts) {
+      console.warn(`Reached maximum attempts (${maxAttempts}) searching for message ${messageId}`)
+    } else if (consecutiveNoNewMessages >= maxConsecutiveNoNew) {
+      console.warn(`Message ${messageId} not found after loading all available messages (${consecutiveNoNewMessages} consecutive empty loads)`)
+    }
+    } catch (outerError) {
+      console.error('Unexpected error in scrollToMessage:', outerError)
+    } finally {
+      setScrollToMessageLoading(null)
+    }
+  }, [loadMore, scrollToMessageLoading, scrollToMessageDebounce])
 
   return {
     messages,
     loading,
     error,
     hasMore,
+    loadingMore,
+    scrollToMessageLoading,
     sendMessage,
     loadMore,
     markMessagesAsRead,

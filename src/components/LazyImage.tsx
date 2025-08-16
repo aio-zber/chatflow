@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useInView } from 'react-intersection-observer'
 
 interface LazyImageProps {
@@ -22,7 +22,7 @@ export function LazyImage({
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
-  const [isInView, setIsInView] = useState(false)
+  // isInView state removed as it was unused
 
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -40,7 +40,7 @@ export function LazyImage({
     onError?.()
   }, [onError])
 
-  const shouldLoad = inView || isInView
+  const shouldLoad = inView
 
   return (
     <div ref={ref} className={`relative overflow-hidden ${className}`}>

@@ -51,7 +51,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   const joinConversationRoom = (conversationId: string) => {
-    if (socket && isConnected) {
+    if (socket && (isConnected || socket.connected)) {
       const roomName = `conversation:${conversationId}`
       console.log(`SocketContext: Attempting to join room: ${roomName}`)
       console.log(`SocketContext: Socket connected: ${socket.connected}, Socket ID: ${socket.id}`)
@@ -59,7 +59,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       setJoinedRooms(prev => new Set([...Array.from(prev), roomName]))
       console.log(`SocketContext: Joined room: ${roomName}`)
     } else {
-      console.log(`SocketContext: Cannot join room - socket: ${!!socket}, connected: ${isConnected}`)
+      console.log(`SocketContext: Cannot join room - socket: ${!!socket}, connected: ${isConnected || (socket && socket.connected)}`)
     }
   }
 
@@ -142,7 +142,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const initSocket = async () => {
       // Only proceed if component is still mounted and user exists
       if (!isMounted || !currentUserId) {
-        console.log('Not initializing socket: mounted =', isMounted, 'userId =', currentUserId)
+        // Socket initialization skipped - waiting for user authentication
         return
       }
 
@@ -156,7 +156,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       setConnectionState('connecting')
       
       const socketInstance = io(process.env.NODE_ENV === 'production' 
-        ? process.env.NEXT_PUBLIC_SOCKET_URL || '' 
+        ? process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin
         : window.location.origin, {
         path: '/api/socket/io',
         addTrailingSlash: false,
@@ -171,6 +171,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         reconnectionAttempts: 10,
         randomizationFactor: 0.5,
         closeOnBeforeunload: false,
+        withCredentials: false,
+        rememberUpgrade: false,
       })
 
       socketInstance.on('connect', () => {
@@ -198,6 +200,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
           setConnectionState('disconnected')
           setIsConnected(false)
           setIsFullyInitialized(false)
+          
+          // Only retry if it's not a critical server error
+          if (error.message !== 'server error') {
+            console.log('Will retry connection in 5 seconds...')
+          } else {
+            console.error('Server error detected - check server configuration')
+          }
         }
       })
 
@@ -218,6 +227,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         console.log('Socket reconnection failed after all attempts')
         if (isMounted) {
           setConnectionState('disconnected')
+        }
+      })
+
+      // Handle successful reconnection
+      socketInstance.on('reconnect', () => {
+        console.log('Socket reconnected successfully')
+        if (isMounted && currentUserId) {
+          console.log('SocketContext: Re-emitting user-online after reconnection for:', currentUserId)
+          socketInstance.emit('user-online', currentUserId)
+          socketInstance.emit('join-user-room', currentUserId)
         }
       })
 
@@ -281,6 +300,21 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [socket, currentUserId])
+
+  // Periodic heartbeat to maintain online status
+  useEffect(() => {
+    if (!socket || !currentUserId || !isConnected) return
+
+    const heartbeat = setInterval(() => {
+      if (document.visibilityState === 'visible' && socket.connected) {
+        socket.emit('user-online', currentUserId)
+      }
+    }, 30000) // Send heartbeat every 30 seconds
+
+    return () => {
+      clearInterval(heartbeat)
+    }
+  }, [socket, currentUserId, isConnected])
 
   // Handle window beforeunload
   useEffect(() => {

@@ -12,7 +12,7 @@ export default function SettingsPage() {
   const [avatarUploading, setAvatarUploading] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [name, setName] = useState(session?.user?.name || '')
-  const [bio, setBio] = useState('')
+  const [bio, setBio] = useState(session?.user?.bio || '')
   const [saving, setSaving] = useState(false)
 
   // Update local state when session changes
@@ -20,7 +20,10 @@ export default function SettingsPage() {
     if (session?.user?.name) {
       setName(session.user.name)
     }
-  }, [session?.user?.name])
+    if (session?.user?.bio !== undefined) {
+      setBio(session.user.bio || '')
+    }
+  }, [session?.user?.name, session?.user?.bio])
 
   if (!session) {
     router.push('/auth/signin')

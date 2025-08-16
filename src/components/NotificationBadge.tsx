@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useNotifications } from '@/context/NotificationContext'
-import { useConversations } from '@/hooks/useConversations'
 import { useSocketContext } from '@/context/SocketContext'
 import { Bell, BellOff, Volume2, VolumeX } from 'lucide-react'
 

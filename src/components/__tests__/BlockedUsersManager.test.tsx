@@ -5,7 +5,9 @@ import { BlockedUsersManager } from '../BlockedUsersManager'
 import { useBlockedUsers } from '@/hooks/useBlockedUsers'
 
 // Mock the hooks
-jest.mock('next-auth/react')
+jest.mock('next-auth/react', () => ({
+  useSession: jest.fn()
+}))
 jest.mock('@/hooks/useBlockedUsers')
 
 const mockUseSession = useSession as jest.MockedFunction<typeof useSession>
@@ -47,7 +49,7 @@ describe('BlockedUsersManager', () => {
         user: { id: 'current-user', name: 'Current User', email: 'current@example.com' }
       },
       status: 'authenticated'
-    } as any)
+    })
 
     mockUseBlockedUsers.mockReturnValue({
       blockedUsers: mockBlockedUsers,
@@ -154,7 +156,7 @@ describe('BlockedUsersManager', () => {
     fireEvent.click(unblockButtons[0])
 
     await waitFor(() => {
-      expect(mockUnblock).toHaveBeenCalledWith('user1', 'John Doe')
+      expect(mockUnblock).toHaveBeenCalledWith('user1')
     })
   })
 

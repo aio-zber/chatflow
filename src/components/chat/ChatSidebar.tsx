@@ -52,6 +52,7 @@ function getLastMessagePreview(conversation: any, sessionUserId?: string) {
   return lastMessage.content
 }
 
+
 export function ChatSidebar({ selectedConversationId, onSelectConversation }: ChatSidebarProps) {
   const { data: session } = useSession()
   const { conversations, loading, error } = useConversations()
@@ -92,7 +93,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
         
         {/* Conversation skeletons */}
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center space-x-3 p-3">
+          <div key={`conversation-skeleton-${i}`} className="flex items-center space-x-3 p-3">
             <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
             <div className="flex-1 space-y-2">
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4"></div>

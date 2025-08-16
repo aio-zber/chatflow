@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { Hash, Lock, Users, Plus, Search, X } from 'lucide-react'
 
 interface Channel {
@@ -25,7 +24,6 @@ interface ChannelBrowserProps {
 }
 
 export function ChannelBrowser({ onChannelSelect, onClose }: ChannelBrowserProps) {
-  const { data: session } = useSession()
   const [channels, setChannels] = useState<Channel[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -205,7 +203,7 @@ export function ChannelBrowser({ onChannelSelect, onClose }: ChannelBrowserProps
           {loading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="flex items-center space-x-3 p-3 animate-pulse">
+                <div key={`channel-skeleton-${i}`} className="flex items-center space-x-3 p-3 animate-pulse">
                   <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
                   <div className="flex-1 space-y-1">
                     <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>

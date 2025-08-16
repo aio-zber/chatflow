@@ -1,6 +1,6 @@
 'use client'
 
-import { Settings, Eye, Type, Contrast, Volume2, VolumeX } from 'lucide-react'
+import { Settings, Type, Contrast, Volume2, VolumeX } from 'lucide-react'
 import { useAccessibility } from './AccessibilityProvider'
 import { useState } from 'react'
 

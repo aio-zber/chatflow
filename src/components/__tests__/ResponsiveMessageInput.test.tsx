@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ResponsiveMessageInput } from '../ResponsiveMessageInput'
 
@@ -101,23 +101,16 @@ describe('ResponsiveMessageInput', () => {
     const user = userEvent.setup()
     render(<ResponsiveMessageInput onSendMessage={mockOnSendMessage} />)
     
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' })
-    
-    // Mock file input
-    const fileInput = document.createElement('input')
-    fileInput.type = 'file'
-    fileInput.files = { 0: file, length: 1 } as any
-    
-    // Simulate file selection
+    // Click attach button to show menu
     const attachButton = screen.getByRole('button', { name: /attach/i })
     await user.click(attachButton)
     
-    const fileInputButton = screen.getByText('Attach File')
-    fireEvent.click(fileInputButton)
-    
-    // The file would be selected through the hidden input
-    // This test verifies the UI elements are present
+    // Check that the attachment menu appears
     expect(screen.getByText('Attach File')).toBeInTheDocument()
+    
+    // Verify the file input is present
+    const fileInput = document.querySelector('input[type="file"]')
+    expect(fileInput).toBeInTheDocument()
   })
 
   it('respects disabled state', () => {
