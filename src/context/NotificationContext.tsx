@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 
 interface NotificationContextType {
@@ -35,6 +35,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const [unreadCount, setUnreadCount] = useState(0)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [isPageVisible, setIsPageVisible] = useState(true)
+  const [isWindowFocused, setIsWindowFocused] = useState(true)
+  const queuedNotifications = useRef<Array<{ title: string; options?: NotificationOptions }>>([])
 
   const notificationEnabled = permission === 'granted'
 
@@ -87,66 +90,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
   }, [soundEnabled])
 
-  // Update document title with unread count
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      const baseTitle = 'ChatFlow'
-      document.title = unreadCount > 0 ? `(${unreadCount}) ${baseTitle}` : baseTitle
-    }
-  }, [unreadCount])
-
-  const requestPermission = async (): Promise<NotificationPermission> => {
-    if (!('Notification' in window)) {
-      console.warn('This browser does not support notifications')
-      return 'denied'
-    }
-
-    const result = await Notification.requestPermission()
-    setPermission(result)
-    return result
-  }
-
-  const showNotification = (title: string, options: NotificationOptions = {}) => {
-    if (!notificationEnabled) return
-
-    // Don't show notifications if user is in the current tab and focused
-    if (document.visibilityState === 'visible' && document.hasFocus()) {
-      return
-    }
-
-    const notification = new Notification(title, {
-      icon: '/favicon.ico',
-      badge: '/favicon.ico',
-      ...options,
-    })
-
-    // Close notification after 5 seconds
-    setTimeout(() => {
-      notification.close()
-    }, 5000)
-
-    // Focus window when notification is clicked
-    notification.onclick = () => {
-      window.focus()
-      notification.close()
-    }
-  }
-
-  const playNotificationSound = () => {
-    if (soundEnabled) {
-      // Try to play the audio file first
-      if (audioRef.current) {
-        audioRef.current.play().catch(() => {
-          // If audio file fails, create a simple beep using Web Audio API
-          createSimpleNotificationBeep()
-        })
-      } else {
-        // If no audio file, create a simple beep using Web Audio API
-        createSimpleNotificationBeep()
-      }
-    }
-  }
-
   const createSimpleNotificationBeep = () => {
     if (typeof window !== 'undefined' && window.AudioContext) {
       try {
@@ -173,6 +116,115 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         }, 300)
       } catch (error) {
         console.warn('Could not create notification beep:', error)
+      }
+    }
+  }
+
+  // Track page visibility and window focus for better idle notification handling
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const visible = document.visibilityState === 'visible'
+      setIsPageVisible(visible)
+      console.log('NotificationContext: Page visibility changed to:', visible)
+      
+      // If page becomes visible, process any queued notifications
+      if (visible && queuedNotifications.current.length > 0) {
+        console.log('NotificationContext: Processing queued notifications:', queuedNotifications.current.length)
+        queuedNotifications.current.forEach(({ title, options }) => {
+          // Play sound for queued notifications when user returns
+          if (soundEnabled && audioRef.current) {
+            audioRef.current.currentTime = 0
+            audioRef.current.play().catch(() => {
+              // Fallback to simple beep if audio fails
+              createSimpleNotificationBeep()
+            })
+          }
+        })
+        queuedNotifications.current = [] // Clear queue
+      }
+    }
+
+    const handleFocus = () => {
+      setIsWindowFocused(true)
+      console.log('NotificationContext: Window focused')
+    }
+
+    const handleBlur = () => {
+      setIsWindowFocused(false)
+      console.log('NotificationContext: Window blurred')
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+    window.addEventListener('blur', handleBlur)
+
+    // Set initial states
+    setIsPageVisible(document.visibilityState === 'visible')
+    setIsWindowFocused(document.hasFocus())
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('blur', handleBlur)
+    }
+  }, [soundEnabled])
+
+  // Update document title with unread count (disabled to remove notification badges)
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const baseTitle = 'ChatFlow'
+      // Keep title clean without unread count
+      document.title = baseTitle
+    }
+  }, [unreadCount])
+
+  const requestPermission = async (): Promise<NotificationPermission> => {
+    if (!('Notification' in window)) {
+      console.warn('This browser does not support notifications')
+      return 'denied'
+    }
+
+    const result = await Notification.requestPermission()
+    setPermission(result)
+    return result
+  }
+
+  const showNotification = (title: string, options: NotificationOptions = {}) => {
+    // Disable browser notifications entirely to avoid showing encrypted content
+    // Only sound notifications will be used
+    return
+  }
+
+  const playNotificationSound = () => {
+    if (soundEnabled) {
+      console.log('NotificationContext: Attempting to play notification sound, page visible:', isPageVisible, 'window focused:', isWindowFocused)
+      
+      // If page is not visible or window is not focused, queue the notification for later
+      if (!isPageVisible || !isWindowFocused) {
+        console.log('NotificationContext: Page not visible or window not focused, queuing notification')
+        queuedNotifications.current.push({ title: 'New message' })
+        // Still try to play sound for background notifications
+      }
+      
+      // Always try to play sound, even when not focused (browsers allow this)
+      try {
+        // Try to play the audio file first
+        if (audioRef.current) {
+          // Reset audio to beginning for multiple rapid notifications
+          audioRef.current.currentTime = 0
+          audioRef.current.play().catch((error) => {
+            console.warn('Audio file playback failed:', error)
+            // If audio file fails, create a simple beep using Web Audio API
+            createSimpleNotificationBeep()
+          })
+        } else {
+          // If no audio file, create a simple beep using Web Audio API
+          createSimpleNotificationBeep()
+        }
+      } catch (error) {
+        console.warn('Notification sound failed:', error)
+        // Fallback to simple beep
+        createSimpleNotificationBeep()
       }
     }
   }

@@ -32,7 +32,7 @@ const nextConfig = {
     // Development CSP - more permissive for Next.js dev features
     const devCSP = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'", // Dev needs unsafe-eval and unsafe-inline
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval' data:", // Allow data: URLs for scripts in dev
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "media-src 'self' blob:",
@@ -92,10 +92,10 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains; preload'
           },
-          // Permissions policy for E2EE security
+          // Permissions policy for E2EE security - allow camera/microphone for call features
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), payment=()'
+            value: 'camera=(self), microphone=(self), geolocation=(), payment=()'
           },
           // Enable SharedArrayBuffer for libsignal WASM in supporting browsers
           // Use credentialless in dev to avoid CORS issues with hot reload

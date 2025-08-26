@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { CallRecord, CallRecordData } from './CallRecord'
-import { Phone, Video } from 'lucide-react'
+import { Phone } from 'lucide-react'
 
 interface CallRecordsListProps {
   conversationId: string

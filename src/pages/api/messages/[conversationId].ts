@@ -31,8 +31,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const messages = await prisma.message.findMany({
-      where: { conversationId: conversationId as string },
-      include: {
+      where: { 
+        conversationId: conversationId as string,
+        NOT: {
+          hiddenBy: {
+            some: {
+              userId: session.user.id
+            }
+          }
+        }
+      },
+      select: {
+        id: true,
+        content: true,
+        type: true,
+        status: true,
+        isSystem: true,
+        senderId: true,
+        conversationId: true,
+        channelId: true,
+        replyToId: true,
+        createdAt: true,
+        updatedAt: true,
         sender: {
           select: {
             id: true,
@@ -42,7 +62,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         },
         replyTo: {
-          include: {
+          select: {
+            id: true,
+            content: true,
             sender: {
               select: {
                 id: true,

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
+import { useSocketContext } from '@/context/SocketContext'
 
 export interface BlockedUser {
   id: string
@@ -28,6 +29,7 @@ interface UseBlockedUsersReturn {
 
 export function useBlockedUsers(): UseBlockedUsersReturn {
   const { data: session } = useSession()
+  const { socket } = useSocketContext()
   const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -78,8 +80,14 @@ export function useBlockedUsers(): UseBlockedUsersReturn {
         throw new Error(data.error || 'Failed to unblock user')
       }
 
-      // Remove the user from the blocked list
-      setBlockedUsers(prev => prev.filter(blocked => blocked.user.id !== userId))
+      // Remove the user from the blocked list immediately for instant UI update
+      setBlockedUsers(prev => {
+        const filtered = prev.filter(blocked => blocked.user.id !== userId)
+        console.log(`useBlockedUsers: Removed user ${userId} from blocked list, count: ${prev.length} -> ${filtered.length}`)
+        return filtered
+      })
+      
+      // The socket event will trigger conversation refetch automatically
       return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to unblock user')
@@ -93,6 +101,60 @@ export function useBlockedUsers(): UseBlockedUsersReturn {
   useEffect(() => {
     fetchBlockedUsers()
   }, [fetchBlockedUsers])
+
+  // Socket event handlers for real-time updates
+  useEffect(() => {
+    if (!socket) return
+
+    const handleUserBlocked = (data: { blocker: any; blocked: any; blockedAt: string }) => {
+      console.log('🚫 useBlockedUsers: User blocked event received:', data)
+      console.log('🔍 Current user ID:', session?.user?.id)
+      console.log('🔍 Blocker ID:', data.blocker?.id)
+      
+      // Only update if current user is the blocker
+      if (data.blocker.id === session?.user?.id) {
+        console.log('🚫 useBlockedUsers: Adding blocked user to local state')
+        const newBlockedUser: BlockedUser = {
+          id: `block-${data.blocked.id}`,
+          blockedAt: data.blockedAt,
+          user: {
+            id: data.blocked.id,
+            username: data.blocked.username,
+            name: data.blocked.name,
+            avatar: null,
+            status: null,
+            isOnline: false,
+            lastSeen: null
+          }
+        }
+        setBlockedUsers(prev => [newBlockedUser, ...prev])
+      }
+    }
+
+    const handleUserUnblocked = (data: { unblocker: any; unblocked: any; unblockedAt: string }) => {
+      console.log('✅ useBlockedUsers: User unblocked event received:', data)
+      console.log('🔍 Current user ID:', session?.user?.id)
+      console.log('🔍 Unblocker ID:', data.unblocker?.id)
+      
+      // Only update if current user is the unblocker
+      if (data.unblocker.id === session?.user?.id) {
+        console.log('✅ useBlockedUsers: Removing unblocked user from local state')
+        setBlockedUsers(prev => {
+          const filtered = prev.filter(blocked => blocked.user.id !== data.unblocked.id)
+          console.log(`✅ useBlockedUsers: Blocked users count: ${prev.length} -> ${filtered.length}`)
+          return filtered
+        })
+      }
+    }
+
+    socket.on('user-blocked', handleUserBlocked)
+    socket.on('user-unblocked', handleUserUnblocked)
+
+    return () => {
+      socket.off('user-blocked', handleUserBlocked)
+      socket.off('user-unblocked', handleUserUnblocked)
+    }
+  }, [socket, session?.user?.id])
 
   return {
     blockedUsers,

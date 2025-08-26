@@ -8,6 +8,7 @@ import { z } from 'zod'
 const reactionSchema = z.object({
   messageId: z.string(),
   emoji: z.string().min(1).max(4),
+  oldEmoji: z.string().optional(), // For future use
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -54,19 +55,77 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
     }
 
     if (req.method === 'POST') {
-      // Add or update reaction
-      const reaction = await prisma.messageReaction.upsert({
+      // Check if user already has any reaction to this message
+      const existingReaction = await prisma.messageReaction.findFirst({
         where: {
-          messageId_userId_emoji: {
-            messageId,
-            userId: session.user.id,
-            emoji,
+          messageId,
+          userId: session.user.id,
+        }
+      })
+
+      // If user has existing reaction and it's the same emoji, toggle it off
+      if (existingReaction && existingReaction.emoji === emoji) {
+        await prisma.messageReaction.delete({
+          where: { id: existingReaction.id }
+        })
+
+        // Get remaining reactions for this message
+        const remainingReactions = await prisma.messageReaction.findMany({
+          where: { messageId },
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                name: true,
+                avatar: true,
+              }
+            }
           }
-        },
-        update: {
-          createdAt: new Date(),
-        },
-        create: {
+        })
+
+        // Group reactions by emoji
+        const reactionCounts = remainingReactions.reduce((acc, reaction) => {
+          if (!acc[reaction.emoji]) {
+            acc[reaction.emoji] = {
+              emoji: reaction.emoji,
+              count: 0,
+              users: [] as any[],
+            }
+          }
+          acc[reaction.emoji].count++
+          acc[reaction.emoji].users.push(reaction.user)
+          return acc
+        }, {} as Record<string, { emoji: string; count: number; users: any[] }>)
+
+        // Emit real-time update
+        if (res.socket?.server?.io) {
+          const roomName = message.conversationId 
+            ? `conversation:${message.conversationId}` 
+            : `channel:${message.channelId}`
+          
+          res.socket.server.io.to(roomName).emit('message-reaction-updated', {
+            messageId,
+            reactions: Object.values(reactionCounts),
+          })
+        }
+
+        return res.status(200).json({ 
+          success: true,
+          reactions: Object.values(reactionCounts),
+        })
+      }
+
+      // If user has existing reaction (different emoji), remove it first
+      if (existingReaction) {
+        await prisma.messageReaction.delete({
+          where: { id: existingReaction.id }
+        })
+      }
+
+      // Add new reaction
+      const reaction = await prisma.messageReaction.create({
+        data: {
           messageId,
           userId: session.user.id,
           emoji,

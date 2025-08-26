@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { Search, Plus, MessageCircle, X } from 'lucide-react'
 import { BlockedUsersManager } from '@/components/BlockedUsersManager'
 import { useConversations } from '@/hooks/useConversations'
+import { useBlockedUsers } from '@/hooks/useBlockedUsers'
+import { useE2EE } from '@/hooks/useE2EE'
+import { useSocketContext } from '@/context/SocketContext'
 import { UserSelectionModal } from './UserSelectionModal'
 import { ConversationAvatar } from './ConversationAvatar'
 
@@ -25,40 +28,110 @@ function getConversationName(conversation: any) {
 function formatTime(date: Date | string) {
   const messageDate = new Date(date)
   const now = new Date()
-  const diffInHours = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60 * 60))
   
-  if (diffInHours < 1) {
-    const diffInMinutes = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60))
-    return diffInMinutes < 1 ? 'now' : `${diffInMinutes}m`
-  } else if (diffInHours < 24) {
-    return `${diffInHours}h`
+  // Check if message is from today
+  const isToday = messageDate.toDateString() === now.toDateString()
+  
+  // Check if message is from yesterday
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const isYesterday = messageDate.toDateString() === yesterday.toDateString()
+  
+  const diffInMinutes = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60))
+  const diffInHours = Math.floor(diffInMinutes / 60)
+  const diffInDays = Math.floor(diffInHours / 24)
+  
+  if (isToday) {
+    if (diffInMinutes < 1) {
+      return 'now'
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes}m`
+    } else {
+      return messageDate.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    }
+  } else if (isYesterday) {
+    return 'Yesterday'
+  } else if (diffInDays < 7) {
+    return messageDate.toLocaleDateString(undefined, { weekday: 'short' })
   } else {
-    const diffInDays = Math.floor(diffInHours / 24)
-    return diffInDays === 1 ? '1d' : `${diffInDays}d`
+    return messageDate.toLocaleDateString(undefined, { 
+      month: 'short', 
+      day: 'numeric',
+      ...(messageDate.getFullYear() !== now.getFullYear() && { year: 'numeric' })
+    })
   }
 }
 
-function getLastMessagePreview(conversation: any, sessionUserId?: string) {
+function getLastMessagePreview(conversation: any, sessionUserId?: string, decryptedContents: Record<string, string> = {}) {
   const lastMessage = conversation.messages[0]
-  if (!lastMessage) return 'No messages yet'
+  if (!lastMessage) return { content: 'No messages yet', status: null }
 
   const isOwn = lastMessage.senderId === sessionUserId
   const senderName = isOwn ? 'You' : (lastMessage.sender?.name || lastMessage.sender?.username || 'Someone')
   
-  if (conversation.isGroup && !isOwn) {
-    return `${senderName}: ${lastMessage.content}`
+  // Handle unsent/deleted messages first
+  if (lastMessage.isDeleted || lastMessage.content === '[Message deleted]' || (lastMessage as any).type === 'deleted') {
+    const messageContent = isOwn ? 'You unsent a message' : `${senderName} unsent a message`
+    return { content: messageContent, status: null }
   }
   
-  return lastMessage.content
+  // Handle file/media attachments - check both type field and attachments array
+  if (lastMessage.type === 'voice' || (lastMessage.attachments && lastMessage.attachments.some((a: any) => a.type === 'voice'))) {
+    const content = isOwn ? 'You sent a voice message' : `${senderName} sent a voice message`
+    return { content, status: isOwn ? lastMessage.status : null }
+  } else if (lastMessage.type === 'image' || (lastMessage.attachments && lastMessage.attachments.some((a: any) => a.type === 'image'))) {
+    const content = isOwn ? 'You sent an image' : `${senderName} sent an image`
+    return { content, status: isOwn ? lastMessage.status : null }
+  } else if (lastMessage.type === 'file' || (lastMessage.attachments && lastMessage.attachments.length > 0)) {
+    const content = isOwn ? 'You sent an attachment' : `${senderName} sent an attachment`
+    return { content, status: isOwn ? lastMessage.status : null }
+  }
+  
+  // Handle encrypted messages - try to use decrypted content first
+  let messageContent = lastMessage.content
+  if (messageContent && messageContent.startsWith('🔐')) {
+    // Check if we have a decrypted version
+    const decryptedContent = decryptedContents[lastMessage.id]
+    if (decryptedContent && decryptedContent !== 'Encrypted message' && decryptedContent !== '🔒 Encrypted message') {
+      messageContent = decryptedContent
+    } else {
+      // Return a more informative message while waiting for decryption
+      return { content: '🔒 Encrypted message', status: isOwn ? lastMessage.status : null }
+    }
+  }
+  
+  // Handle empty content
+  if (!messageContent || messageContent.trim() === '') {
+    const content = isOwn ? 'You sent a message' : `${senderName} sent a message`
+    return { content, status: isOwn ? lastMessage.status : null }
+  }
+  
+  let finalContent
+  if (conversation.isGroup && !isOwn) {
+    finalContent = `${senderName}: ${messageContent}`
+  } else {
+    finalContent = messageContent
+  }
+  
+  return { content: finalContent, status: isOwn ? lastMessage.status : null }
 }
 
 
 export function ChatSidebar({ selectedConversationId, onSelectConversation }: ChatSidebarProps) {
   const { data: session } = useSession()
-  const { conversations, loading, error } = useConversations()
+  const { conversations, loading, error, forceRefreshKey } = useConversations()
+  const { blockedUsers } = useBlockedUsers()
+  const { decryptMessage, isAvailable: e2eeAvailable } = useE2EE()
+  const { socket, isFullyInitialized } = useSocketContext()
   const [searchQuery, setSearchQuery] = useState('')
   const [showUserSelection, setShowUserSelection] = useState(false)
   const [activeTab, setActiveTab] = useState<'conversations' | 'blocked'>('conversations')
+  const [decryptedContents, setDecryptedContents] = useState<Record<string, string>>({})
+  const decryptionAttemptsRef = useRef<Set<string>>(new Set())
   
   // Use callback to ensure stable references
   const handleNewChatClick = useCallback(() => {
@@ -74,16 +147,224 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
     setShowUserSelection(false)
   }, [])
 
+  // Debug: Monitor conversation changes for sidebar updates
+  useEffect(() => {
+    console.log('ChatSidebar: Conversations updated, count:', conversations.length)
+    if (conversations.length > 0) {
+      console.log('ChatSidebar: Latest conversation:', conversations[0]?.id, 'last message:', conversations[0]?.messages[0]?.id)
+    }
+  }, [conversations])
+
+  // Debug: Monitor socket connectivity for sidebar
+  useEffect(() => {
+    console.log('ChatSidebar: Socket state -', 'connected:', !!socket?.connected, 'initialized:', isFullyInitialized)
+  }, [socket?.connected, isFullyInitialized])
+
+  // Decrypt encrypted messages in conversations
+  useEffect(() => {
+    if (!e2eeAvailable || !conversations.length || !decryptMessage) return
+
+    const decryptMessages = async () => {
+      for (const conversation of conversations) {
+        const lastMessage = conversation.messages[0]
+        if (lastMessage && 
+            lastMessage.content && 
+            lastMessage.content.startsWith('🔐') && 
+            !decryptionAttemptsRef.current.has(lastMessage.id)) {
+          
+          // Mark this message as attempted to prevent retries
+          decryptionAttemptsRef.current.add(lastMessage.id)
+          
+          try {
+            const encryptedData = lastMessage.content.substring(2) // Remove 🔐 prefix
+            if (encryptedData.trim()) { // Only attempt decryption if there's actual encrypted data
+              
+              // Try decryption with multiple conversation ID variations
+              let decryptedContent = null
+              const conversationIds = [
+                conversation.id, // Current conversation ID
+                lastMessage.conversationId, // Message's conversation ID (if available)
+                'default' // Fallback used in encryption
+              ].filter(Boolean)
+              
+              for (const conversationId of conversationIds) {
+                try {
+                  const result = await decryptMessage(encryptedData, conversationId)
+                  if (result && 
+                      result !== '[Encrypted message - decryption failed]' &&
+                      result !== '[Encrypted message - decrypt operation failed]' &&
+                      result !== 'Encrypted message') {
+                    decryptedContent = result
+                    console.log(`🔐 Sidebar: Successfully decrypted message with conversationId: ${conversationId}`)
+                    break
+                  }
+                } catch (decryptError) {
+                  console.log(`🔐 Sidebar: Failed to decrypt with conversationId ${conversationId}:`, decryptError.message || decryptError)
+                  continue
+                }
+              }
+              
+              if (decryptedContent) {
+                setDecryptedContents(prev => ({
+                  ...prev,
+                  [lastMessage.id]: decryptedContent
+                }))
+              } else {
+                console.warn(`🔐 Sidebar: All decryption attempts failed for message ${lastMessage.id}`)
+                setDecryptedContents(prev => ({
+                  ...prev,
+                  [lastMessage.id]: '🔒 Encrypted message'
+                }))
+              }
+            }
+          } catch (error) {
+            console.warn('🔐 Sidebar: Failed to decrypt message for sidebar preview:', error)
+            setDecryptedContents(prev => ({
+              ...prev,
+              [lastMessage.id]: '🔒 Encrypted message'
+            }))
+          }
+        }
+      }
+    }
+
+    decryptMessages()
+  }, [conversations, e2eeAvailable, decryptMessage])
+
+  // Add force refresh state for blocked users changes
+  const [forceRefresh, setForceRefresh] = useState(0)
+  
+  // Force refresh when blocked users change - ensuring immediate UI update
+  useEffect(() => {
+    console.log('🚫 ChatSidebar: Blocked users changed, count:', blockedUsers.length)
+    console.log('🚫 ChatSidebar: Blocked user IDs:', blockedUsers.map(b => b.user.id))
+    
+    // Force multiple re-renders to ensure UI updates immediately
+    setForceRefresh(prev => prev + 1)
+    
+    // Trigger immediate conversation refresh through multiple methods
+    setTimeout(() => {
+      console.log('🔄 ChatSidebar: Immediate conversation refresh trigger')
+      setForceRefresh(prev => prev + 1)
+      if (socket) {
+        socket.emit('request-conversation-refresh', { userId: session?.user?.id })
+      }
+    }, 0)
+    
+    setTimeout(() => {
+      console.log('🔄 ChatSidebar: Secondary conversation refresh trigger')  
+      setForceRefresh(prev => prev + 1)
+      if (socket) {
+        socket.emit('request-conversation-refresh', { userId: session?.user?.id })
+      }
+    }, 100)
+    
+    setTimeout(() => {
+      console.log('🔄 ChatSidebar: Tertiary conversation refresh trigger')
+      setForceRefresh(prev => prev + 1)
+      if (socket) {
+        socket.emit('request-conversation-refresh', { userId: session?.user?.id })
+      }
+    }, 500)
+  }, [blockedUsers, socket, session?.user?.id])
+
+  // Add direct socket listeners for group events to force sidebar updates
+  useEffect(() => {
+    if (!socket) return
+
+    const handleGroupMemberAdded = (data: { conversationId: string }) => {
+      console.log('👥 ChatSidebar: Group member added, forcing refresh')
+      setForceRefresh(prev => prev + 1)
+    }
+
+    const handleGroupMemberLeft = (data: { conversationId: string }) => {
+      console.log('👥 ChatSidebar: Group member left, forcing refresh')  
+      setForceRefresh(prev => prev + 1)
+    }
+
+    const handleGroupMemberRemoved = (data: { conversationId: string }) => {
+      console.log('👥 ChatSidebar: Group member removed, forcing refresh')
+      setForceRefresh(prev => prev + 1)
+    }
+
+    const handleNewMessage = (message: any) => {
+      if (message.type === 'system') {
+        console.log('🔔 ChatSidebar: System message received, forcing refresh')
+        setForceRefresh(prev => prev + 1)
+      }
+    }
+
+    socket.on('group-member-added', handleGroupMemberAdded)
+    socket.on('group-member-left', handleGroupMemberLeft)
+    socket.on('group-member-removed', handleGroupMemberRemoved)
+    socket.on('new-message', handleNewMessage)
+
+    return () => {
+      socket.off('group-member-added', handleGroupMemberAdded)
+      socket.off('group-member-left', handleGroupMemberLeft)
+      socket.off('group-member-removed', handleGroupMemberRemoved)
+      socket.off('new-message', handleNewMessage)
+    }
+  }, [socket])
+
   // Filter conversations using useMemo for performance
   const filteredConversations = useMemo(() => {
-    return conversations.filter(conversation => {
+    // Create a set of blocked user IDs for quick lookup
+    const blockedUserIds = new Set(blockedUsers.map(blocked => blocked.user.id))
+    
+    // Reduced logging for performance
+    if (Math.random() < 0.1) {
+      console.log('ChatSidebar: Filtering conversations', {
+        totalConversations: conversations.length,
+        blockedUserIds: Array.from(blockedUserIds),
+        searchQuery,
+        forceRefresh,
+        conversationIds: conversations.map(c => c.id)
+      })
+    }
+    
+    const filtered = conversations.filter(conversation => {
+      // Skip group conversations - they should always be shown even if some members are blocked
+      if (conversation.isGroup) {
+        const conversationName = getConversationName(conversation)
+        const lastMessage = conversation.messages[0]?.content || ''
+        
+        // Reduced logging for performance
+        if (Math.random() < 0.05) console.log(`ChatSidebar: Group conversation ${conversation.id} (${conversationName}) - members: ${conversation.participants?.length || 0}`)
+        
+        return conversationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+               lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+      }
+      
+      // For direct messages, check if the other user is blocked
+      const otherParticipant = conversation.otherParticipants[0]
+      if (otherParticipant && blockedUserIds.has(otherParticipant.user.id)) {
+        console.log(`ChatSidebar: Hiding conversation ${conversation.id} with blocked user ${otherParticipant.user.id} (${otherParticipant.user.name})`)
+        return false // Hide conversations with blocked users
+      }
+      
+      // Apply search filter
       const conversationName = getConversationName(conversation)
       const lastMessage = conversation.messages[0]?.content || ''
       
-      return conversationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesSearch = conversationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+      
+      // Reduced logging for performance
+      if (!matchesSearch && searchQuery && Math.random() < 0.05) {
+        console.log(`ChatSidebar: Conversation ${conversation.id} doesn't match search "${searchQuery}"`)
+      }
+      
+      return matchesSearch
     })
-  }, [conversations, searchQuery])
+    
+    // Reduced logging for performance
+    if (Math.random() < 0.1) {
+      console.log(`ChatSidebar: Filtered ${conversations.length} -> ${filtered.length} conversations`)
+      console.log(`ChatSidebar: Final conversation list:`, filtered.map(c => ({ id: c.id, name: getConversationName(c), memberCount: c.participants?.length })))
+    }
+    return filtered
+  }, [conversations, searchQuery, blockedUsers, forceRefresh])
 
   if (loading) {
     return (
@@ -200,6 +481,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
             <div className="space-y-1">
               {filteredConversations.map((conversation) => {
                 const lastMessage = conversation.messages[0]
+                const messagePreview = getLastMessagePreview(conversation, session?.user?.id, decryptedContents)
                 return (
                   <button
                     key={conversation.id}
@@ -211,28 +493,80 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <ConversationAvatar conversation={conversation} />
+                      <div className="relative">
+                        <ConversationAvatar conversation={conversation} />
+                        {/* Online status indicator for non-group conversations */}
+                        {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
+                          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
+                            conversation.otherParticipants[0].user.isOnline 
+                              ? 'bg-green-500' 
+                              : 'bg-gray-400'
+                          }`} />
+                        )}
+                      </div>
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <h3 className={`text-sm text-gray-900 dark:text-white truncate ${
-                            conversation.unreadCount > 0 ? 'font-bold' : 'font-medium'
+                          <div className="flex items-center space-x-2 min-w-0">
+                            <h3 className={`text-sm text-gray-900 dark:text-white truncate ${
+                              conversation.unreadCount > 0 ? 'font-bold' : 'font-medium'
+                            }`}>
+                              {getConversationName(conversation)}
+                            </h3>
+                            {/* Online status for groups - show online count excluding current user */}
+                            {conversation.isGroup && (
+                              <span className="text-xs text-green-600 dark:text-green-400 font-medium flex-shrink-0">
+                                {conversation.participants.filter(p => p.user.isOnline && p.user.id !== session?.user?.id).length} online
+                              </span>
+                            )}
+                            {/* Online status for DMs */}
+                            {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
+                              <span className={`text-xs font-medium flex-shrink-0 ${
+                                conversation.otherParticipants[0].user.isOnline 
+                                  ? 'text-green-600 dark:text-green-400' 
+                                  : 'text-gray-500 dark:text-gray-400'
+                              }`}>
+                                {conversation.otherParticipants[0].user.isOnline 
+                                  ? 'online' 
+                                  : `last seen ${formatTime(conversation.otherParticipants[0].user.lastSeen)}`
+                                }
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {conversation.unreadCount > 0 && (
+                              <span className="bg-blue-600 text-white text-xs rounded-full min-w-[1.2rem] h-5 flex items-center justify-center px-1 font-medium">
+                                {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
+                              </span>
+                            )}
+                            {lastMessage && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
+                                {formatTime(lastMessage.createdAt)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <p className={`text-sm text-gray-600 dark:text-gray-300 truncate break-words flex-1 ${
+                            conversation.unreadCount > 0 ? 'font-bold' : 'font-normal'
                           }`}>
-                            {getConversationName(conversation)}
-                          {/* Removed group member count for cleaner UI */}
-                          </h3>
-                          {lastMessage && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatTime(lastMessage.createdAt)}
+                            {messagePreview.content}
+                          </p>
+                          {messagePreview.status && (
+                            <span className={`text-xs flex-shrink-0 ${
+                              messagePreview.status === 'read' 
+                                ? 'text-blue-600 dark:text-blue-400' 
+                                : messagePreview.status === 'delivered'
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-gray-400 dark:text-gray-500'
+                            }`}>
+                              {messagePreview.status === 'read' ? '✓✓' : 
+                               messagePreview.status === 'delivered' ? '✓' : 
+                               '⏰'}
                             </span>
                           )}
                         </div>
-                        
-                        <p className={`text-sm text-gray-600 dark:text-gray-300 truncate break-words ${
-                          conversation.unreadCount > 0 ? 'font-bold' : 'font-normal'
-                        }`}>
-                          {getLastMessagePreview(conversation, session?.user?.id)}
-                        </p>
                       </div>
                     </div>
                   </button>

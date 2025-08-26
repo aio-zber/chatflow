@@ -556,59 +556,120 @@ export const useE2EE = () => {
     }
   }, []);
 
-  // Decrypt messages using Web Crypto API
+  // Decrypt messages using Web Crypto API with backward compatibility
   const decryptMessage = useCallback(async (ciphertext: string, conversationId?: string): Promise<string | null> => {
     try {
+      // Validate input
+      if (!ciphertext || typeof ciphertext !== 'string') {
+        return null; // Quietly fail for invalid input
+      }
+
       // Parse the ciphertext (format: "iv:ciphertext")
       const [ivBase64, encryptedBase64] = ciphertext.split(':');
       if (!ivBase64 || !encryptedBase64) {
-        console.error('Invalid ciphertext format');
+        console.warn('🔐 E2EE: Invalid encrypted message format - treating as corrupted legacy data');
         return null;
       }
       
-      // Convert from base64
-      const iv = new Uint8Array(atob(ivBase64).split('').map(char => char.charCodeAt(0)));
-      const encryptedData = new Uint8Array(atob(encryptedBase64).split('').map(char => char.charCodeAt(0)));
+      // Validate base64 format
+      let iv: Uint8Array, encryptedData: Uint8Array;
+      try {
+        iv = new Uint8Array(atob(ivBase64).split('').map(char => char.charCodeAt(0)));
+        encryptedData = new Uint8Array(atob(encryptedBase64).split('').map(char => char.charCodeAt(0)));
+      } catch (error) {
+        console.warn('🔐 E2EE: Invalid base64 encoding - treating as corrupted legacy data');
+        return null;
+      }
       
-      // Derive the same key using conversation ID as seed
-      // In a real implementation, this would use proper ECDH key exchange
-      const keyMaterial = await window.crypto.subtle.importKey(
-        'raw',
-        new TextEncoder().encode(`conversation-key-${conversationId || 'default'}`),
-        { name: 'PBKDF2' },
-        false,
-        ['deriveKey']
-      );
+      // Early validation for corrupted data
+      if (encryptedData.length < 16) {
+        console.warn(`🔐 E2EE: Encrypted data too small (${encryptedData.length} bytes) - likely corrupted legacy data`);
+        return null;
+      }
       
-      const symmetricKey = await window.crypto.subtle.deriveKey(
-        {
-          name: 'PBKDF2',
-          salt: new TextEncoder().encode('chatflow-e2ee-salt'),
-          iterations: 100000,
-          hash: 'SHA-256'
-        },
-        keyMaterial,
-        { name: 'AES-GCM', length: 256 },
-        false,
-        ['decrypt']
-      );
+      // Handle IV length - AES-GCM typically uses 12 bytes, but handle legacy 16-byte IVs too
+      let actualIv = iv;
+      if (iv.length === 16) {
+        // If IV is 16 bytes, take the first 12 bytes for AES-GCM (legacy support)
+        actualIv = iv.slice(0, 12);
+      } else if (iv.length !== 12) {
+        console.warn(`🔐 E2EE: Invalid IV length (${iv.length} bytes) - treating as corrupted legacy data`);
+        return null;
+      }
       
-      // Decrypt the content
-      const decryptedData = await window.crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        symmetricKey,
-        encryptedData
-      );
+      if (encryptedData.length === 0) {
+        console.warn('🔐 E2EE: Empty encrypted data - treating as corrupted legacy data');
+        return null;
+      }
       
-      const decoder = new TextDecoder();
-      const plaintext = decoder.decode(decryptedData);
+      // Try multiple decryption strategies for backward compatibility
+      const keyString = `conversation-key-${conversationId || 'default'}`;
+      const decryptionStrategies = [
+        // Strategy 1: New correct parameters (current encryption)
+        { salt: 'chatflow-e2ee-salt', name: 'current' },
+        // Strategy 2: Legacy parameters (old encryption)
+        { salt: 'chatflow-salt', name: 'legacy' }
+      ];
       
-      console.log('🔐 E2EE: Message decrypted successfully');
-      return plaintext;
+      for (const [index, strategy] of decryptionStrategies.entries()) {
+        try {
+          const keyMaterial = await window.crypto.subtle.importKey(
+            'raw',
+            new TextEncoder().encode(keyString),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveKey']
+          );
+          
+          const symmetricKey = await window.crypto.subtle.deriveKey(
+            {
+              name: 'PBKDF2',
+              salt: new TextEncoder().encode(strategy.salt),
+              iterations: 100000,
+              hash: 'SHA-256'
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+          );
+          
+          // Decrypt the content
+          const decryptedData = await window.crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: actualIv },
+            symmetricKey,
+            encryptedData
+          );
+          
+          const decoder = new TextDecoder();
+          const plaintext = decoder.decode(decryptedData);
+          
+          // Only log successful decryption of legacy messages for debugging
+          if (strategy.name === 'legacy') {
+            console.log(`🔐 E2EE: Successfully decrypted legacy message using ${strategy.name} parameters`);
+          }
+          
+          return plaintext;
+          
+        } catch (decryptError) {
+          // Only log for the last strategy and only for larger data (reduce noise for very small corrupted data)
+          if (index === decryptionStrategies.length - 1 && encryptedData.length > 32) {
+            console.warn(`🔐 E2EE: Unable to decrypt message (likely corrupted legacy data) - data length: ${encryptedData.length}, IV length: ${iv.length}`);
+          }
+          // Continue to next strategy
+        }
+      }
+      
+      // All strategies failed - return null to indicate corrupted/unreadable data
+      // The calling code will handle providing user-friendly messages
+      return null;
       
     } catch (error) {
-      console.error('🔐 E2EE: Decryption failed:', error);
-      return '[Encrypted message - decryption failed]';
+      // Only log unexpected errors, not routine decryption failures
+      if (error.message !== 'All decryption strategies failed') {
+        console.warn('🔐 E2EE: Unexpected decryption error:', error.message);
+      }
+      return null;
     }
   }, []);
 

@@ -12,7 +12,7 @@ export const config = {
   },
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB for videos and large media files
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -77,7 +77,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           if (isCloudinaryConfigured) {
             // Determine upload type based on mimetype
             const isImage = file.mimetype?.startsWith('image/')
-            const uploadType = isImage ? 'image' : 'file'
+            const isVideo = file.mimetype?.startsWith('video/')
+            const uploadType = isImage ? 'image' : isVideo ? 'video' : 'file'
             
             // Upload to Cloudinary
             const result = await uploadToCloudinary(
@@ -98,7 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               name: file.originalFilename || result.publicId,
               url: result.secureUrl,
               size: result.bytes,
-              type: isImage ? 'image' : 'file',
+              type: isImage ? 'image' : isVideo ? 'video' : 'file',
               mimetype: file.mimetype,
               cloudinaryPublicId: result.publicId,
               format: result.format
@@ -123,7 +124,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               name: file.originalFilename || filename,
               url: `/uploads/${filename}`,
               size: file.size,
-              type: file.mimetype?.startsWith('image/') ? 'image' : 'file',
+              type: file.mimetype?.startsWith('image/') ? 'image' : file.mimetype?.startsWith('video/') ? 'video' : 'file',
               mimetype: file.mimetype,
             }
           }
@@ -148,7 +149,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     if (error instanceof Error) {
       if (error.message.includes('maxFileSize')) {
-        return res.status(413).json({ error: 'File too large. Maximum size is 10MB.' })
+        return res.status(413).json({ error: 'File too large. Maximum size is 50MB.' })
       }
     }
     

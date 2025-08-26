@@ -42,6 +42,22 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
+  
+  /* Improve touch interactions */
+  .message-content {
+    -webkit-touch-callout: none;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    touch-action: manipulation;
+  }
+  
+  /* Better mobile message containers */
+  .message-bubble {
+    touch-action: manipulation;
+  }
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -132,14 +148,147 @@ body {
     }
     
     .message-content {
-      word-break: break-word;
-      hyphens: auto;
-      overflow-wrap: break-word;
+      word-break: break-word !important;
+      hyphens: auto !important;
+      overflow-wrap: break-word !important;
+      white-space: pre-wrap !important;
     }
     
     .reply-preview {
       max-width: 100% !important;
       min-width: 0;
+    }
+  }
+  
+  /* Emoji reactions layout fix */
+  .emoji-reactions-container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+  
+  .emoji-reaction-button {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Emoji picker layout fix - STRICT CONTAINER CONSTRAINTS */
+  .emoji-picker-container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: fit-content !important;
+    max-width: 280px !important;
+    overflow-x: auto !important;
+    padding: 0.25rem !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Force horizontal layout for ANY emoji container */
+  [class*="emoji"] [class*="grid"],
+  [class*="reaction"] [class*="grid"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: none !important;
+  }
+  
+  /* Mobile-specific emoji fixes */
+  @media (max-width: 768px) {
+    .emoji-picker-container {
+      gap: 4px !important;
+      padding: 0.25rem !important;
+      max-width: min(280px, calc(100vw - 8rem)) !important;
+      width: fit-content !important;
+      min-width: 0 !important;
+    }
+    
+    .emoji-reaction-button {
+      min-width: 32px !important;
+      min-height: 24px !important;
+      padding: 4px 8px !important;
+    }
+    
+    /* Override any grid layouts in emoji containers */
+    .emoji-picker-container > * {
+      flex: 0 0 auto !important;
+      display: inline-flex !important;
+    }
+
+    /* Prevent emoji picker from extending beyond viewport/container */
+    .message-bubble .emoji-picker-container {
+      max-width: min(280px, calc(100vw - 8rem)) !important;
+    }
+
+    /* Additional constraint for emoji picker panels */
+    [ref="reactionPanelRef"] {
+      max-width: min(280px, calc(100vw - 6rem)) !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Prevent message options from overflowing chat container */
+    .message-bubble .absolute {
+      contain: layout !important;
+    }
+    
+    /* Smart positioning fallback for topmost messages */
+    .message-bubble:first-child .absolute[class*="bottom-full"],
+    .message-bubble:nth-child(1) .absolute[class*="bottom-full"],
+    .message-bubble:nth-child(2) .absolute[class*="bottom-full"] {
+      position: absolute !important;
+      bottom: auto !important;
+      top: 100% !important;
+      margin-top: 0.5rem !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Prevent chat container horizontal scroll - but allow text overflow */
+    .message-bubble, 
+    [data-message-id] {
+      overflow-x: visible !important;
+    }
+    
+    .message-content {
+      overflow-x: visible !important;
+      overflow-y: visible !important;
+    }
+    
+
+    /* Emoji buttons should be smaller on mobile to fit better */
+    .emoji-picker-container button {
+      min-width: 28px !important;
+      min-height: 28px !important;
+      padding: 0.25rem !important;
+      font-size: 0.875rem !important;
+    }
+    
+    
+    /* Nuclear option - force ALL elements with emoji/reaction classes to be horizontal */
+    [class*="emoji"],
+    [class*="reaction"] {
+      display: flex !important;
+      flex-direction: row !important;
+    }
+    
+    /* Override Tailwind grid classes in emoji contexts */
+    [class*="emoji"] .grid,
+    [class*="reaction"] .grid,
+    .emoji-picker-container .grid {
+      display: flex !important;
+      grid-template-columns: none !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
     }
   }
   

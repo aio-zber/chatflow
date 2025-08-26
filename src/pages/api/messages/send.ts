@@ -15,7 +15,7 @@ const attachmentSchema = z.object({
 
 const sendMessageSchema = z.object({
   content: z.string().max(2000).optional(),
-  type: z.enum(['text', 'image', 'file', 'voice']).default('text'),
+  type: z.enum(['text', 'image', 'file', 'voice', 'system', 'call']).default('text'),
   conversationId: z.string().optional(),
   channelId: z.string().optional(),
   replyToId: z.string().optional(),

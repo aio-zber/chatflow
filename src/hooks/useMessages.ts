@@ -28,6 +28,7 @@ interface Message {
   content: string
   type: string
   status: string
+  isSystem: boolean
   senderId: string
   conversationId: string | null
   channelId: string | null
@@ -213,40 +214,42 @@ export const useMessages = (conversationId: string | null) => {
   // Debounced scroll to message to prevent multiple simultaneous calls
   const [scrollToMessageDebounce, setScrollToMessageDebounce] = useState<{[key: string]: number}>({})
 
-  // React to a message: only one reaction per user. If a different emoji is selected,
-  // replace the previous reaction. If same emoji is selected, remove it (toggle off).
+  // React to a message: Only one reaction per user - API handles replacement logic
   const reactToMessage = useCallback(async (messageId: string, emoji: string) => {
     if (!session?.user?.id) return
 
     const currentMessage = messages.find(m => m.id === messageId)
     if (!currentMessage) return
     
-    const existingForUser = currentMessage.reactions?.find(r => r.userId === session.user!.id) || null
+    // Check if user already has the same reaction
+    const existingEmojiReaction = currentMessage.reactions?.find(
+      r => r.userId === session.user!.id && r.emoji === emoji
+    ) || null
+
+    // Check if user has any reaction (to replace)
+    const existingUserReaction = currentMessage.reactions?.find(
+      r => r.userId === session.user!.id
+    ) || null
 
     // Optimistic update
     setMessages(prev => prev.map(msg => {
       if (msg.id !== messageId) return msg
-      if (!msg.reactions) return msg
+      if (!msg.reactions) msg.reactions = []
       
-      const userIdx = msg.reactions.findIndex(r => r.userId === session!.user!.id)
-      const hasExisting = userIdx !== -1
-      const isSameEmoji = hasExisting && msg.reactions[userIdx].emoji === emoji
-
-      if (isSameEmoji) {
-        // Remove existing reaction
+      if (existingEmojiReaction) {
+        // User clicked the same emoji they already reacted with - remove it
         return {
           ...msg,
-          reactions: msg.reactions.filter((_, i) => i !== userIdx)
+          reactions: msg.reactions.filter(r => !(r.userId === session!.user!.id && r.emoji === emoji))
         }
       }
 
-      // Replace or add new reaction
-      const reactionsWithoutUser = hasExisting
-        ? msg.reactions.filter((_, i) => i !== userIdx)
-        : msg.reactions
+      // Remove any existing reaction from this user first
+      const reactionsWithoutUser = msg.reactions.filter(r => r.userId !== session!.user!.id)
 
+      // Add new reaction
       const newReaction: MessageReaction = {
-        id: `temp-${messageId}-${session!.user!.id}-${Date.now()}`,
+        id: `temp-${messageId}-${session!.user!.id}-${emoji}-${Date.now()}`,
         emoji,
         userId: session!.user!.id,
         user: {
@@ -262,29 +265,12 @@ export const useMessages = (conversationId: string | null) => {
     }))
 
     try {
-      // Decide server calls based on initial state
-      if (existingForUser && existingForUser.emoji === emoji) {
-        // Toggle off
-        await fetch('/api/messages/reactions', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messageId, emoji })
-        })
-      } else {
-        // Replace existing with new emoji
-        if (existingForUser) {
-          await fetch('/api/messages/reactions', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messageId, emoji: existingForUser.emoji })
-          })
-        }
-        await fetch('/api/messages/reactions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messageId, emoji })
-        })
-      }
+      // API handles all the logic - just send the reaction request
+      await fetch('/api/messages/reactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageId, emoji })
+      })
     } catch (error) {
       console.error('Error updating reaction:', error)
       // Re-sync from server on error
@@ -380,12 +366,40 @@ export const useMessages = (conversationId: string | null) => {
     if (!socket || !conversationId) return
 
     const handleNewMessage = (message: Message) => {
-      if (message.conversationId === conversationId && message.senderId !== session?.user?.id) {
-        setMessages(prev => {
-          // Prevent duplicate messages by checking for existing ID
-          if (prev.some(m => m.id === message.id)) return prev
-          return [...prev, message]
-        })
+      if (message.conversationId === conversationId) {
+        // Always show system messages (like group member changes) regardless of sender
+        // For regular messages, only show if not from current user (to prevent duplicates)
+        const shouldShow = message.type === 'system' || message.senderId !== session?.user?.id
+        
+        if (shouldShow) {
+          setMessages(prev => {
+            // Prevent duplicate messages by checking for existing ID
+            if (prev.some(m => m.id === message.id)) {
+              console.log('📨 useMessages: Duplicate message ignored:', message.id)
+              return prev
+            }
+            
+            // Special logging for system messages
+            if (message.type === 'system') {
+              console.log('🔔 useMessages: Adding SYSTEM message:', message.content)
+              console.log('🔔 useMessages: System message details:', { 
+                id: message.id, 
+                type: message.type, 
+                senderId: message.senderId, 
+                conversationId: message.conversationId,
+                content: message.content
+              })
+            } else {
+              console.log('📨 useMessages: Adding regular message:', message.type, message.content.substring(0, 50))
+            }
+            
+            const newMessages = [...prev, message]
+            console.log('📨 useMessages: Total messages now:', newMessages.length)
+            return newMessages
+          })
+        } else {
+          console.log('❌ useMessages: Message not shown (shouldShow=false):', { type: message.type, senderId: message.senderId, currentUserId: session?.user?.id })
+        }
       }
     }
 

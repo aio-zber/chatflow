@@ -1,0 +1,1043 @@
+
+> chatflow@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.31
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · optimizeCss
+    · esmExternals
+    · scrollRestoration
+
+ ✓ Starting...
+ ✓ Ready in 1652ms
+ ✓ Compiled /api/socket/io in 197ms (67 modules)
+Socket.IO endpoint called: GET from Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb
+Initializing Socket.IO server...
+Socket.IO server successfully initialized
+Socket.IO server initialized successfully
+ GET /api/socket/io?EIO=4&transport=polling&t=ij66eh4i 200 in 285ms
+
+🔌 [SOCKET] NEW CONNECTION: iMihmNt9PmF8biAzAAAB
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb
+[SOCKET] Client IP: ::1
+[SOCKET] Connection time: 2025-08-20T05:09:10.744Z
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [ 'iMihmNt9PmF8biAzAAAB', 'user:cmeifml0h001okung0i95m8s6' ]
+
+👤 [SOCKET] JOIN-USER-ROOM: user:cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] User room has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [ 'iMihmNt9PmF8biAzAAAB', 'user:cmeifml0h001okung0i95m8s6' ]
+[SOCKET] Total sockets for user cmeifml0h001okung0i95m8s6: 1
+ ✓ Compiled /api/conversations in 291ms (78 modules)
+ GET /api/conversations 200 in 545ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 7ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 8ms
+ GET /api/conversations 200 in 15ms
+ GET /api/conversations 200 in 13ms
+
+💬 [SOCKET] JOIN-ROOM: conversation:cmeifnahq003ekungumhkl6ux
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] User ID: cmeifml0h001okung0i95m8s6
+[SOCKET] Conversation room has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ ✓ Compiled /api/users/blocked in 40ms (80 modules)
+ GET /api/users/blocked 200 in 58ms
+
+💬 [SOCKET] JOIN-ROOM: conversation:cmeifnahq003ekungumhkl6ux
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] User ID: cmeifml0h001okung0i95m8s6
+[SOCKET] Conversation room has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+🔌 [SOCKET] NEW CONNECTION: -cziyajX3-yHJiwGAAAD
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb
+[SOCKET] Client IP: ::1
+[SOCKET] Connection time: 2025-08-20T05:09:18.778Z
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [ '-cziyajX3-yHJiwGAAAD', 'user:cmeifn5qp002dkunge64m0xss' ]
+
+👤 [SOCKET] JOIN-USER-ROOM: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] User room has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [ '-cziyajX3-yHJiwGAAAD', 'user:cmeifn5qp002dkunge64m0xss' ]
+[SOCKET] Total sockets for user cmeifn5qp002dkunge64m0xss: 1
+ GET /api/conversations 200 in 26ms
+ GET /api/conversations 200 in 16ms
+ GET /api/conversations 200 in 13ms
+ GET /api/users/blocked 200 in 6ms
+ GET /api/conversations 200 in 14ms
+ GET /api/conversations 200 in 15ms
+ GET /api/conversations 200 in 7ms
+ GET /api/conversations 200 in 8ms
+ GET /api/users/blocked 200 in 5ms
+
+💬 [SOCKET] JOIN-ROOM: conversation:cmeifnahq003ekungumhkl6ux
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] User ID: cmeifn5qp002dkunge64m0xss
+[SOCKET] Conversation room has 2 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+💬 [SOCKET] JOIN-ROOM: conversation:cmeifnahq003ekungumhkl6ux
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] User ID: cmeifn5qp002dkunge64m0xss
+[SOCKET] Conversation room has 2 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 7ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 8ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 5ms
+
+🔌 [SOCKET] NEW CONNECTION: BHrZlLpjlP3IXZZSAAAG
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: node-XMLHttpRequest
+[SOCKET] Client IP: ::ffff:127.0.0.1
+[SOCKET] Connection time: 2025-08-20T05:09:38.067Z
+
+🔌 [SOCKET] NEW CONNECTION: BWiC-6f3_Z8HDm93AAAH
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: node-XMLHttpRequest
+[SOCKET] Client IP: ::ffff:127.0.0.1
+[SOCKET] Connection time: 2025-08-20T05:09:38.070Z
+
+👤 [SOCKET] USER-ONLINE: test-user-1
+[SOCKET] Socket ID: BHrZlLpjlP3IXZZSAAAG
+[SOCKET] Joined room: user:test-user-1
+[SOCKET] User room verification - user:test-user-1 has 1 members
+[SOCKET] Socket BHrZlLpjlP3IXZZSAAAG is now in rooms: [ 'BHrZlLpjlP3IXZZSAAAG', 'user:test-user-1' ]
+
+👤 [SOCKET] USER-ONLINE: test-user-2
+[SOCKET] Socket ID: BWiC-6f3_Z8HDm93AAAH
+[SOCKET] Joined room: user:test-user-2
+[SOCKET] User room verification - user:test-user-2 has 1 members
+[SOCKET] Socket BWiC-6f3_Z8HDm93AAAH is now in rooms: [ 'BWiC-6f3_Z8HDm93AAAH', 'user:test-user-2' ]
+Error updating user online status: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:149:25) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+Error updating user online status: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:149:25) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] JOIN-USER-ROOM: user:test-user-1
+[SOCKET] Socket ID: BHrZlLpjlP3IXZZSAAAG
+[SOCKET] User room has 1 members
+[SOCKET] Socket BHrZlLpjlP3IXZZSAAAG is now in rooms: [ 'BHrZlLpjlP3IXZZSAAAG', 'user:test-user-1' ]
+[SOCKET] Total sockets for user test-user-1: 1
+
+💬 [SOCKET] JOIN-ROOM: conversation:test-conversation
+[SOCKET] Socket ID: BHrZlLpjlP3IXZZSAAAG
+[SOCKET] User ID: test-user-1
+[SOCKET] Conversation room has 1 members
+[SOCKET] Socket BHrZlLpjlP3IXZZSAAAG is now in rooms: [
+  'BHrZlLpjlP3IXZZSAAAG',
+  'user:test-user-1',
+  'conversation:test-conversation'
+]
+
+👤 [SOCKET] JOIN-USER-ROOM: user:test-user-2
+[SOCKET] Socket ID: BWiC-6f3_Z8HDm93AAAH
+[SOCKET] User room has 1 members
+[SOCKET] Socket BWiC-6f3_Z8HDm93AAAH is now in rooms: [ 'BWiC-6f3_Z8HDm93AAAH', 'user:test-user-2' ]
+[SOCKET] Total sockets for user test-user-2: 1
+
+💬 [SOCKET] JOIN-ROOM: conversation:test-conversation
+[SOCKET] Socket ID: BWiC-6f3_Z8HDm93AAAH
+[SOCKET] User ID: test-user-2
+[SOCKET] Conversation room has 2 members
+[SOCKET] Socket BWiC-6f3_Z8HDm93AAAH is now in rooms: [
+  'BWiC-6f3_Z8HDm93AAAH',
+  'user:test-user-2',
+  'conversation:test-conversation'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 10ms
+
+📞 [CALL] INITIATE_CALL RECEIVED
+[CALL] Conversation: test-conversation
+[CALL] Caller: Test User 1 (ID: test-user-1)
+[CALL] Socket ID: BHrZlLpjlP3IXZZSAAAG
+[CALL] Call Type: voice
+[CALL] Is Group: false
+[CALL] Caller test-user-1 joined call room: call:call-1755666580076-je6xc1xwj
+[CALL] Broadcasting to room: conversation:test-conversation
+[CALL] Room conversation:test-conversation has 2 participants (including caller)
+[CALL] ✅ Call call-1755666580076-je6xc1xwj created and broadcast completed
+[CALL] Active calls now: 1
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 7ms
+
+🔥🔥🔥 [CALL] RESPONSE RECEIVED FROM CLIENT 🔥🔥🔥
+[CALL] Raw data received: {
+  "callId": "call-1755666580076-je6xc1xwj",
+  "conversationId": "test-conversation",
+  "accepted": true,
+  "participantId": "test-user-2"
+}
+[CALL] Response for call call-1755666580076-je6xc1xwj: accepted by test-user-2
+[CALL] Socket user ID: test-user-2
+[CALL] Socket ID: BWiC-6f3_Z8HDm93AAAH
+[CALL] Socket rooms: [
+  'BWiC-6f3_Z8HDm93AAAH',
+  'user:test-user-2',
+  'conversation:test-conversation'
+]
+[CALL] Active calls: []
+[CALL] Timestamp: 2025-08-20T05:09:43.086Z
+[CALL] ✅ Socket user ID matches participant ID: test-user-2
+[CALL] ❌ Call call-1755666580076-je6xc1xwj not found in active calls
+[CALL] Available calls: []
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 10ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 5ms
+User disconnected: BHrZlLpjlP3IXZZSAAAG
+[CALL] User test-user-1 disconnected during active call call-1755666580076-je6xc1xwj
+[CALL] Ending call call-1755666580076-je6xc1xwj due to disconnect - participants: 0
+Error updating user offline status on disconnect: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:718:29) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 4ms
+ GET /api/users/blocked 200 in 12ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 6ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 7ms
+ GET /api/users/blocked 200 in 10ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 8ms
+ GET /api/users/blocked 200 in 6ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 4ms
+ GET /api/users/blocked 200 in 8ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 4ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 10ms
+ ✓ Compiled in 120ms (73 modules)
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 9ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 5ms
+
+🔌 [SOCKET] NEW CONNECTION: Ex-TX8_MIYhxekX-AAAK
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: node-XMLHttpRequest
+[SOCKET] Client IP: ::ffff:127.0.0.1
+[SOCKET] Connection time: 2025-08-20T05:10:40.069Z
+
+🔌 [SOCKET] NEW CONNECTION: A_22fkqdX_OzbEJ_AAAL
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: node-XMLHttpRequest
+[SOCKET] Client IP: ::ffff:127.0.0.1
+[SOCKET] Connection time: 2025-08-20T05:10:40.072Z
+
+👤 [SOCKET] USER-ONLINE: test-user-1
+[SOCKET] Socket ID: Ex-TX8_MIYhxekX-AAAK
+[SOCKET] Joined room: user:test-user-1
+[SOCKET] User room verification - user:test-user-1 has 1 members
+[SOCKET] Socket Ex-TX8_MIYhxekX-AAAK is now in rooms: [ 'Ex-TX8_MIYhxekX-AAAK', 'user:test-user-1' ]
+Error updating user online status: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:149:25) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] USER-ONLINE: test-user-2
+[SOCKET] Socket ID: A_22fkqdX_OzbEJ_AAAL
+[SOCKET] Joined room: user:test-user-2
+[SOCKET] User room verification - user:test-user-2 has 2 members
+[SOCKET] Socket A_22fkqdX_OzbEJ_AAAL is now in rooms: [ 'A_22fkqdX_OzbEJ_AAAL', 'user:test-user-2' ]
+
+👤 [SOCKET] JOIN-USER-ROOM: user:test-user-1
+[SOCKET] Socket ID: Ex-TX8_MIYhxekX-AAAK
+[SOCKET] User room has 1 members
+[SOCKET] Socket Ex-TX8_MIYhxekX-AAAK is now in rooms: [ 'Ex-TX8_MIYhxekX-AAAK', 'user:test-user-1' ]
+[SOCKET] Total sockets for user test-user-1: 1
+
+💬 [SOCKET] JOIN-ROOM: conversation:test-conversation
+[SOCKET] Socket ID: Ex-TX8_MIYhxekX-AAAK
+[SOCKET] User ID: test-user-1
+[SOCKET] Conversation room has 2 members
+[SOCKET] Socket Ex-TX8_MIYhxekX-AAAK is now in rooms: [
+  'Ex-TX8_MIYhxekX-AAAK',
+  'user:test-user-1',
+  'conversation:test-conversation'
+]
+Error updating user online status: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:149:25) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] JOIN-USER-ROOM: user:test-user-2
+[SOCKET] Socket ID: A_22fkqdX_OzbEJ_AAAL
+[SOCKET] User room has 2 members
+[SOCKET] Socket A_22fkqdX_OzbEJ_AAAL is now in rooms: [ 'A_22fkqdX_OzbEJ_AAAL', 'user:test-user-2' ]
+[SOCKET] Total sockets for user test-user-2: 2
+
+💬 [SOCKET] JOIN-ROOM: conversation:test-conversation
+[SOCKET] Socket ID: A_22fkqdX_OzbEJ_AAAL
+[SOCKET] User ID: test-user-2
+[SOCKET] Conversation room has 3 members
+[SOCKET] Socket A_22fkqdX_OzbEJ_AAAL is now in rooms: [
+  'A_22fkqdX_OzbEJ_AAAL',
+  'user:test-user-2',
+  'conversation:test-conversation'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 7ms
+ GET /api/users/blocked 200 in 7ms
+
+📞 [CALL] INITIATE_CALL RECEIVED
+[CALL] Conversation: test-conversation
+[CALL] Caller: Test User 1 (ID: test-user-1)
+[CALL] Socket ID: Ex-TX8_MIYhxekX-AAAK
+[CALL] Call Type: voice
+[CALL] Is Group: false
+[CALL] Caller test-user-1 joined call room: call:call-1755666642075-rw99tqecl
+[CALL] Broadcasting to room: conversation:test-conversation
+[CALL] Room conversation:test-conversation has 3 participants (including caller)
+[CALL] ✅ Call call-1755666642075-rw99tqecl created and broadcast completed
+[CALL] Active calls now: 1
+
+🔥🔥🔥 [CALL] RESPONSE RECEIVED FROM CLIENT 🔥🔥🔥
+[CALL] Raw data received: {
+  "callId": "call-1755666642075-rw99tqecl",
+  "conversationId": "test-conversation",
+  "accepted": true,
+  "participantId": "test-user-2"
+}
+[CALL] Response for call call-1755666642075-rw99tqecl: accepted by test-user-2
+[CALL] Socket user ID: test-user-2
+[CALL] Socket ID: A_22fkqdX_OzbEJ_AAAL
+[CALL] Socket rooms: [
+  'A_22fkqdX_OzbEJ_AAAL',
+  'user:test-user-2',
+  'conversation:test-conversation'
+]
+[CALL] Active calls: []
+[CALL] Timestamp: 2025-08-20T05:10:43.084Z
+[CALL] ✅ Socket user ID matches participant ID: test-user-2
+[CALL] ❌ Call call-1755666642075-rw99tqecl not found in active calls
+[CALL] Available calls: []
+User disconnected: Ex-TX8_MIYhxekX-AAAK
+[CALL] User test-user-1 disconnected during active call call-1755666642075-rw99tqecl
+[CALL] Ending call call-1755666642075-rw99tqecl due to disconnect - participants: 0
+Error updating user offline status on disconnect: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:718:29) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 5ms
+ GET /api/users/blocked 200 in 10ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 6ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 9ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 6ms
+User disconnected: BWiC-6f3_Z8HDm93AAAH
+Error updating user offline status on disconnect: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:718:29) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 6ms
+ GET /api/users/blocked 200 in 6ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 4ms
+
+🔌 [SOCKET] NEW CONNECTION: EgbtdDh_7ALxsEOJAAAO
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: node-XMLHttpRequest
+[SOCKET] Client IP: ::ffff:127.0.0.1
+[SOCKET] Connection time: 2025-08-20T05:11:21.729Z
+
+🔌 [SOCKET] NEW CONNECTION: zGwPkHNECgpaDJyVAAAP
+[SOCKET] Available transports: polling
+[SOCKET] Socket handshake: node-XMLHttpRequest
+[SOCKET] Client IP: ::ffff:127.0.0.1
+[SOCKET] Connection time: 2025-08-20T05:11:21.730Z
+
+👤 [SOCKET] USER-ONLINE: test-user-1
+[SOCKET] Socket ID: EgbtdDh_7ALxsEOJAAAO
+[SOCKET] Joined room: user:test-user-1
+[SOCKET] User room verification - user:test-user-1 has 1 members
+[SOCKET] Socket EgbtdDh_7ALxsEOJAAAO is now in rooms: [ 'EgbtdDh_7ALxsEOJAAAO', 'user:test-user-1' ]
+
+👤 [SOCKET] USER-ONLINE: test-user-2
+[SOCKET] Socket ID: zGwPkHNECgpaDJyVAAAP
+[SOCKET] Joined room: user:test-user-2
+[SOCKET] User room verification - user:test-user-2 has 2 members
+[SOCKET] Socket zGwPkHNECgpaDJyVAAAP is now in rooms: [ 'zGwPkHNECgpaDJyVAAAP', 'user:test-user-2' ]
+Error updating user online status: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:149:25) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+Error updating user online status: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:149:25) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] JOIN-USER-ROOM: user:test-user-1
+[SOCKET] Socket ID: EgbtdDh_7ALxsEOJAAAO
+[SOCKET] User room has 1 members
+[SOCKET] Socket EgbtdDh_7ALxsEOJAAAO is now in rooms: [ 'EgbtdDh_7ALxsEOJAAAO', 'user:test-user-1' ]
+[SOCKET] Total sockets for user test-user-1: 1
+
+💬 [SOCKET] JOIN-ROOM: conversation:test-conversation
+[SOCKET] Socket ID: EgbtdDh_7ALxsEOJAAAO
+[SOCKET] User ID: test-user-1
+[SOCKET] Conversation room has 2 members
+[SOCKET] Socket EgbtdDh_7ALxsEOJAAAO is now in rooms: [
+  'EgbtdDh_7ALxsEOJAAAO',
+  'user:test-user-1',
+  'conversation:test-conversation'
+]
+
+👤 [SOCKET] JOIN-USER-ROOM: user:test-user-2
+[SOCKET] Socket ID: zGwPkHNECgpaDJyVAAAP
+[SOCKET] User room has 2 members
+[SOCKET] Socket zGwPkHNECgpaDJyVAAAP is now in rooms: [ 'zGwPkHNECgpaDJyVAAAP', 'user:test-user-2' ]
+[SOCKET] Total sockets for user test-user-2: 2
+
+💬 [SOCKET] JOIN-ROOM: conversation:test-conversation
+[SOCKET] Socket ID: zGwPkHNECgpaDJyVAAAP
+[SOCKET] User ID: test-user-2
+[SOCKET] Conversation room has 3 members
+[SOCKET] Socket zGwPkHNECgpaDJyVAAAP is now in rooms: [
+  'zGwPkHNECgpaDJyVAAAP',
+  'user:test-user-2',
+  'conversation:test-conversation'
+]
+
+📞 [CALL] INITIATE_CALL RECEIVED
+[CALL] Conversation: test-conversation
+[CALL] Caller: Test User 1 (ID: test-user-1)
+[CALL] Socket ID: EgbtdDh_7ALxsEOJAAAO
+[CALL] Call Type: voice
+[CALL] Is Group: false
+[CALL] Caller test-user-1 joined call room: call:call-1755666683739-c1by4c29k
+[CALL] Broadcasting to room: conversation:test-conversation
+[CALL] Room conversation:test-conversation has 3 participants (including caller)
+[CALL] ✅ Call call-1755666683739-c1by4c29k created and broadcast completed
+[CALL] Active calls now: 1
+
+🔥🔥🔥 [CALL] RESPONSE RECEIVED FROM CLIENT 🔥🔥🔥
+[CALL] Raw data received: {
+  "callId": "call-1755666683739-c1by4c29k",
+  "conversationId": "test-conversation",
+  "accepted": true,
+  "participantId": "test-user-2"
+}
+[CALL] Response for call call-1755666683739-c1by4c29k: accepted by test-user-2
+[CALL] Socket user ID: test-user-2
+[CALL] Socket ID: zGwPkHNECgpaDJyVAAAP
+[CALL] Socket rooms: [
+  'zGwPkHNECgpaDJyVAAAP',
+  'user:test-user-2',
+  'conversation:test-conversation'
+]
+[CALL] Active calls: []
+[CALL] Timestamp: 2025-08-20T05:11:24.750Z
+[CALL] ✅ Socket user ID matches participant ID: test-user-2
+[CALL] ❌ Call call-1755666683739-c1by4c29k not found in active calls
+[CALL] Available calls: []
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 5ms
+ GET /api/users/blocked 200 in 4ms
+User disconnected: EgbtdDh_7ALxsEOJAAAO
+[CALL] User test-user-1 disconnected during active call call-1755666683739-c1by4c29k
+[CALL] Ending call call-1755666683739-c1by4c29k due to disconnect - participants: 0
+Error updating user offline status on disconnect: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:718:29) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 7ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 13ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 6ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 9ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 10ms
+ GET /api/users/blocked 200 in 8ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 9ms
+User disconnected: A_22fkqdX_OzbEJ_AAAL
+Error updating user offline status on disconnect: PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation:
+
+
+An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+    at ri.handleRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:7459)
+    at ri.handleAndLogRequestError (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6784)
+    at ri.request (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:121:6491)
+    at async l (/home/aiofficer/Workspace/chatflow/node_modules/@prisma/client/runtime/library.js:130:9812)
+    at async Socket.eval (webpack-internal:///(api)/./src/lib/socket.ts:718:29) {
+  code: 'P2025',
+  meta: { modelName: 'User', cause: 'No record was found for an update.' },
+  clientVersion: '6.13.0'
+}
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 11ms
+ GET /api/users/blocked 200 in 5ms
+
+👤 [SOCKET] USER-ONLINE: cmeifn5qp002dkunge64m0xss
+[SOCKET] Socket ID: -cziyajX3-yHJiwGAAAD
+[SOCKET] Joined room: user:cmeifn5qp002dkunge64m0xss
+[SOCKET] User room verification - user:cmeifn5qp002dkunge64m0xss has 1 members
+[SOCKET] Socket -cziyajX3-yHJiwGAAAD is now in rooms: [
+  '-cziyajX3-yHJiwGAAAD',
+  'user:cmeifn5qp002dkunge64m0xss',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 6ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 7ms
+
+👤 [SOCKET] USER-ONLINE: cmeifml0h001okung0i95m8s6
+[SOCKET] Socket ID: iMihmNt9PmF8biAzAAAB
+[SOCKET] Joined room: user:cmeifml0h001okung0i95m8s6
+[SOCKET] User room verification - user:cmeifml0h001okung0i95m8s6 has 1 members
+[SOCKET] Socket iMihmNt9PmF8biAzAAAB is now in rooms: [
+  'iMihmNt9PmF8biAzAAAB',
+  'user:cmeifml0h001okung0i95m8s6',
+  'conversation:cmeifnahq003ekungumhkl6ux'
+]
+ GET /api/users/blocked 200 in 4ms
+[?25h

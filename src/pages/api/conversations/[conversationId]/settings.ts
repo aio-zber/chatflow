@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '../../auth/[...nextauth]'
+import { getIO } from '@/lib/socket'
 import { z } from 'zod'
 
 const updateGroupSchema = z.object({
@@ -143,6 +144,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               role: 'admin'
             }
           }
+        },
+        include: {
+          participants: {
+            select: {
+              userId: true
+            }
+          }
         }
       })
 
@@ -150,6 +158,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).json({ 
           error: 'Group not found or you do not have admin permissions' 
         })
+      }
+
+      // Emit group deletion event before deleting
+      const io = getIO()
+      if (io) {
+        const groupDeletedEvent = {
+          type: 'group_deleted',
+          conversationId,
+          deletedBy: {
+            id: session.user.id,
+            name: session.user.name,
+            username: session.user.email
+          },
+          reason: 'Admin deleted group'
+        }
+
+        // Emit to all participants
+        conversation.participants.forEach((participant) => {
+          io.to(`user:${participant.userId}`).emit('group-deleted', groupDeletedEvent)
+        })
+
+        io.to(`conversation:${conversationId}`).emit('group-deleted', groupDeletedEvent)
+        
+        console.log(`Emitted group-deleted event for conversation ${conversationId}`)
       }
 
       // Delete the conversation (cascade will handle participants and messages)

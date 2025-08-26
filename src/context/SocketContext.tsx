@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Socket, io } from 'socket.io-client'
+import { GlobalCallManager } from '@/components/GlobalCallManager'
 
 interface SocketContextType {
   socket: Socket | null
@@ -57,7 +58,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       console.log(`SocketContext: Socket connected: ${socket.connected}, Socket ID: ${socket.id}`)
       socket.emit('join-room', conversationId)
       setJoinedRooms(prev => new Set([...Array.from(prev), roomName]))
-      console.log(`SocketContext: Joined room: ${roomName}`)
+      console.log(`SocketContext: Successfully joined room: ${roomName}`)
+      console.log(`SocketContext: Total joined rooms: ${Array.from(joinedRooms).length + 1}`)
     } else {
       console.log(`SocketContext: Cannot join room - socket: ${!!socket}, connected: ${isConnected || (socket && socket.connected)}`)
     }
@@ -88,8 +90,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
             const conversations = data.conversations || []
             
             console.log(`SocketContext: Found ${conversations.length} conversations to join`)
-            conversations.forEach((conv: any) => {
-              console.log(`SocketContext: Auto-joining conversation: ${conv.id}`)
+            conversations.forEach((conv: { id: string; name?: string }, index: number) => {
+              console.log(`SocketContext: Auto-joining conversation ${index + 1}/${conversations.length}: ${conv.id} (${conv.name || 'Unnamed'})`)
               joinConversationRoom(conv.id)
             })
             
@@ -126,6 +128,69 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
   }, [socket, isConnected, currentUserId])
 
+  // Handle group member events
+  useEffect(() => {
+    if (!socket || !session?.user?.id) return
+
+    const handleGroupMemberAdded = (data: { conversationId: string; member: any; addedBy: any }) => {
+      console.log('SocketContext: Group member added event received:', data)
+      
+      // If current user was added to a group, automatically join the conversation room
+      if (data.member.userId === session.user.id) {
+        console.log(`SocketContext: Current user was added to group ${data.conversationId}, joining room`)
+        joinConversationRoom(data.conversationId)
+        
+        // Also refresh conversations to ensure the new group appears
+        setTimeout(async () => {
+          try {
+            const response = await fetch('/api/conversations')
+            if (response.ok) {
+              console.log('SocketContext: Refreshed conversations after being added to group')
+            }
+          } catch (error) {
+            console.error('SocketContext: Failed to refresh conversations:', error)
+          }
+        }, 200)
+      } else {
+        // For existing members, just log that someone new was added
+        console.log(`SocketContext: User ${data.member.user?.name || data.member.userId} was added to group ${data.conversationId} by ${data.addedBy?.name || 'admin'}`)
+      }
+    }
+
+    const handleGroupMemberLeft = (data: { conversationId: string; memberId: string }) => {
+      console.log('SocketContext: Group member left event received:', data)
+      
+      // If current user left the group, leave the conversation room
+      if (data.memberId === session.user.id) {
+        console.log(`SocketContext: Current user left group ${data.conversationId}, leaving room`)
+        leaveConversationRoom(data.conversationId)
+        
+        // Also refresh conversations to remove the group from the list
+        setTimeout(async () => {
+          try {
+            const response = await fetch('/api/conversations')
+            if (response.ok) {
+              console.log('SocketContext: Refreshed conversations after leaving group')
+            }
+          } catch (error) {
+            console.error('SocketContext: Failed to refresh conversations:', error)
+          }
+        }, 200)
+      } else {
+        // For existing members, just log that someone left
+        console.log(`SocketContext: User ${data.memberId} left group ${data.conversationId}`)
+      }
+    }
+
+    socket.on('group-member-added', handleGroupMemberAdded)
+    socket.on('group-member-left', handleGroupMemberLeft)
+
+    return () => {
+      socket.off('group-member-added', handleGroupMemberAdded)
+      socket.off('group-member-left', handleGroupMemberLeft)
+    }
+  }, [socket, session?.user?.id, joinConversationRoom, leaveConversationRoom])
+
   // Check for actual user changes (login/logout vs session updates)
   useEffect(() => {
     const newUserId = session?.user?.id || null
@@ -154,6 +219,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
       console.log('Initializing Socket.IO client connection for user:', currentUserId)
       setConnectionState('connecting')
+      
+      // Socket.IO server will be initialized automatically by the socket client connection
       
       const socketInstance = io(process.env.NODE_ENV === 'production' 
         ? process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin
@@ -189,7 +256,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
             
             // Also join user-specific room for targeted notifications
             socketInstance.emit('join-user-room', currentUserId)
-            console.log('SocketContext: Joined user-specific room:', `user:${currentUserId}`)
+            console.log('SocketContext: 👤 Emitted join-user-room for:', `user:${currentUserId}`)
           }
         }
       })
@@ -282,37 +349,149 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
   }, [currentUserId]) // Only reinitialize when user actually changes (login/logout)
 
-  // Handle page visibility changes
+  // Enhanced visibility and focus handling for better idle notification support
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (socket && currentUserId) {
         if (document.visibilityState === 'visible') {
+          console.log('SocketContext: Tab became visible, re-establishing connection')
+          // Re-establish connection when tab becomes visible
           socket.emit('user-online', currentUserId)
+          
+          // Ensure socket is still connected and reconnect if needed
+          if (!socket.connected) {
+            console.log('SocketContext: Socket disconnected during idle, attempting reconnect')
+            socket.connect()
+          }
+          
+          // Send additional heartbeats when becoming visible to ensure immediate presence update
+          setTimeout(() => {
+            if (socket.connected && currentUserId) {
+              socket.emit('user-online', currentUserId)
+              console.log('SocketContext: Additional heartbeat sent after becoming visible')
+            }
+          }, 1000)
         } else {
-          socket.emit('user-offline', currentUserId)
+          console.log('SocketContext: Tab became hidden, maintaining aggressive background connection')
+          // Send immediate heartbeat when going hidden to establish strong presence
+          if (socket.connected) {
+            socket.emit('user-online', currentUserId)
+          }
+        }
+      }
+    }
+
+    const handleFocus = () => {
+      if (socket && currentUserId) {
+        console.log('SocketContext: Window focused, refreshing connection')
+        socket.emit('user-online', currentUserId)
+        
+        // Additional connection check on focus
+        if (!socket.connected) {
+          console.log('SocketContext: Socket disconnected on focus, attempting reconnect')
+          socket.connect()
+        }
+      }
+    }
+
+    const handleBlur = () => {
+      if (socket && currentUserId) {
+        console.log('SocketContext: Window blurred, sending pre-blur heartbeat')
+        // Send heartbeat before blur to maintain strong presence
+        if (socket.connected) {
+          socket.emit('user-online', currentUserId)
+        }
+      }
+    }
+
+    // Handle page hide/show events for better mobile support
+    const handlePageHide = () => {
+      if (socket && currentUserId && socket.connected) {
+        console.log('SocketContext: Page hiding, sending final heartbeat')
+        socket.emit('user-online', currentUserId)
+      }
+    }
+
+    const handlePageShow = () => {
+      if (socket && currentUserId) {
+        console.log('SocketContext: Page showing, re-establishing connection')
+        if (!socket.connected) {
+          socket.connect()
+        } else {
+          socket.emit('user-online', currentUserId)
         }
       }
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+    window.addEventListener('blur', handleBlur)
+    window.addEventListener('pagehide', handlePageHide)
+    window.addEventListener('pageshow', handlePageShow)
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('blur', handleBlur)
+      window.removeEventListener('pagehide', handlePageHide)
+      window.removeEventListener('pageshow', handlePageShow)
     }
   }, [socket, currentUserId])
 
-  // Periodic heartbeat to maintain online status
+  // Enhanced periodic heartbeat to maintain online status and detect disconnections
   useEffect(() => {
     if (!socket || !currentUserId || !isConnected) return
 
     const heartbeat = setInterval(() => {
-      if (document.visibilityState === 'visible' && socket.connected) {
+      // Always send heartbeat if socket is connected, regardless of tab visibility
+      if (socket.connected) {
         socket.emit('user-online', currentUserId)
+        console.log('SocketContext: Heartbeat sent successfully')
+      } else {
+        console.warn('SocketContext: Socket disconnected during heartbeat, attempting reconnect')
+        // Attempt to reconnect if socket is disconnected
+        try {
+          socket.connect()
+        } catch (error) {
+          console.error('SocketContext: Failed to reconnect during heartbeat:', error)
+        }
       }
-    }, 30000) // Send heartbeat every 30 seconds
+    }, 20000) // Reduced to 20 seconds for better reliability during idle
+
+    // Additional shorter interval check specifically for background/idle scenarios
+    const idleCheck = setInterval(() => {
+      if (socket && currentUserId) {
+        if (!socket.connected) {
+          console.log('SocketContext: Idle check detected disconnection, attempting reconnect')
+          try {
+            socket.connect()
+          } catch (error) {
+            console.error('SocketContext: Failed to reconnect during idle check:', error)
+          }
+        } else {
+          // Always send heartbeat during idle check, regardless of visibility state
+          // This ensures continuous presence even when tab is hidden
+          socket.emit('user-online', currentUserId)
+          console.log('SocketContext: Idle heartbeat sent (visibility:', document.visibilityState, ')')
+        }
+      }
+    }, 45000) // Check every 45 seconds during idle (more frequent than server grace period)
+
+    // Additional aggressive heartbeat specifically for hidden/background tabs
+    const backgroundHeartbeat = setInterval(() => {
+      if (socket && currentUserId && socket.connected) {
+        if (document.visibilityState === 'hidden') {
+          // Send extra heartbeats when tab is hidden to prevent timeout
+          socket.emit('user-online', currentUserId)
+          console.log('SocketContext: Background heartbeat sent for hidden tab')
+        }
+      }
+    }, 15000) // Very frequent background heartbeats (every 15 seconds)
 
     return () => {
       clearInterval(heartbeat)
+      clearInterval(idleCheck)
+      clearInterval(backgroundHeartbeat)
     }
   }, [socket, currentUserId, isConnected])
 
@@ -320,7 +499,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (socket && currentUserId) {
-        socket.emit('user-offline', session.user.id)
+        socket.emit('user-offline', currentUserId)
       }
     }
 
@@ -334,6 +513,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   return (
     <SocketContext.Provider value={{ socket, isConnected, isFullyInitialized, connectionState, userStatuses, joinedRooms, joinConversationRoom, leaveConversationRoom }}>
       {children}
+      {/* Global call manager for handling incoming calls anywhere in the app */}
+      {isFullyInitialized && <GlobalCallManager />}
     </SocketContext.Provider>
   )
 }

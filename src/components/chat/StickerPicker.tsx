@@ -9,75 +9,86 @@ interface StickerPickerProps {
   onStickerSelect: (sticker: string) => void
 }
 
-// Predefined sticker sets
+// Proper sticker library with sticker data
 const stickerCategories = {
-  emotions: {
-    name: 'Emotions',
+  reactions: {
+    name: 'Reactions',
     stickers: [
-      '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂',
-      '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩',
-      '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪',
-      '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨',
-      '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥',
-      '😔', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩',
-      '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯',
-      '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓'
+      { id: 'thumbs_up', text: '👍 Thumbs Up!', emoji: '👍' },
+      { id: 'clap', text: '👏 Great Job!', emoji: '👏' },
+      { id: 'heart', text: '❤️ Love it!', emoji: '❤️' },
+      { id: 'laugh', text: '😂 LMAO!', emoji: '😂' },
+      { id: 'wow', text: '😮 Wow!', emoji: '😮' },
+      { id: 'sad', text: '😢 So sad...', emoji: '😢' },
+      { id: 'party', text: '🎉 Party time!', emoji: '🎉' },
+      { id: 'fire', text: '🔥 On fire!', emoji: '🔥' },
+      { id: 'hundred', text: '💯 Perfect!', emoji: '💯' },
+      { id: 'mind_blown', text: '🤯 Mind blown!', emoji: '🤯' },
+      { id: 'cool', text: '😎 So cool!', emoji: '😎' },
+      { id: 'thinking', text: '🤔 Hmm...', emoji: '🤔' }
     ]
   },
-  gestures: {
-    name: 'Gestures',
+  greetings: {
+    name: 'Greetings',
     stickers: [
-      '👍', '👎', '👌', '🤌', '🤏', '✌️', '🤞', '🤟',
-      '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️',
-      '👋', '🤚', '🖐️', '✋', '🖖', '👏', '🙌', '🤲',
-      '🤝', '🙏', '✍️', '💪', '🦾', '🦿', '🦵', '🦶'
+      { id: 'hello', text: '👋 Hello there!', emoji: '👋' },
+      { id: 'good_morning', text: '🌅 Good morning!', emoji: '🌅' },
+      { id: 'good_night', text: '🌙 Good night!', emoji: '🌙' },
+      { id: 'welcome', text: '🤗 Welcome!', emoji: '🤗' },
+      { id: 'bye', text: '👋 Goodbye!', emoji: '👋' },
+      { id: 'see_you', text: '👀 See you later!', emoji: '👀' },
+      { id: 'miss_you', text: '😘 Miss you!', emoji: '😘' },
+      { id: 'hugs', text: '🤗 Sending hugs!', emoji: '🤗' }
     ]
   },
-  hearts: {
-    name: 'Hearts & Love',
+  celebrations: {
+    name: 'Celebrations',
     stickers: [
-      '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍',
-      '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖',
-      '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️',
-      '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈'
+      { id: 'birthday', text: '🎂 Happy Birthday!', emoji: '🎂' },
+      { id: 'congrats', text: '🎊 Congratulations!', emoji: '🎊' },
+      { id: 'cheers', text: '🥂 Cheers!', emoji: '🥂' },
+      { id: 'winner', text: '🏆 You won!', emoji: '🏆' },
+      { id: 'success', text: '✨ Success!', emoji: '✨' },
+      { id: 'achievement', text: '🎯 Achievement unlocked!', emoji: '🎯' },
+      { id: 'celebration', text: '🎈 Let\'s celebrate!', emoji: '🎈' },
+      { id: 'gift', text: '🎁 Gift for you!', emoji: '🎁' }
     ]
   },
-  animals: {
-    name: 'Animals',
+  support: {
+    name: 'Support',
     stickers: [
-      '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼',
-      '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵',
-      '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤',
-      '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗'
+      { id: 'sorry', text: '😔 Sorry about that...', emoji: '😔' },
+      { id: 'support', text: '🤝 I\'m here for you', emoji: '🤝' },
+      { id: 'get_well', text: '🌟 Get well soon!', emoji: '🌟' },
+      { id: 'strength', text: '💪 Stay strong!', emoji: '💪' },
+      { id: 'peace', text: '☮️ Peace and love', emoji: '☮️' },
+      { id: 'prayer', text: '🙏 Thoughts and prayers', emoji: '🙏' },
+      { id: 'hope', text: '🌈 Hope things get better', emoji: '🌈' },
+      { id: 'care', text: '💝 Take care!', emoji: '💝' }
     ]
   },
-  food: {
-    name: 'Food & Drink',
+  fun: {
+    name: 'Fun & Games',
     stickers: [
-      '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓',
-      '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝',
-      '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑',
-      '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐'
-    ]
-  },
-  nature: {
-    name: 'Nature',
-    stickers: [
-      '🌱', '🌿', '🍀', '🍁', '🍂', '🍃', '🌾', '🌵',
-      '🌲', '🌳', '🌴', '🌸', '🌺', '🌻', '🌹', '🥀',
-      '🌷', '💐', '🌼', '🌙', '🌛', '🌜', '🌚', '🌕',
-      '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '⭐'
+      { id: 'gaming', text: '🎮 Game time!', emoji: '🎮' },
+      { id: 'music', text: '🎵 Good vibes!', emoji: '🎵' },
+      { id: 'dance', text: '💃 Let\'s dance!', emoji: '💃' },
+      { id: 'coffee', text: '☕ Coffee break!', emoji: '☕' },
+      { id: 'pizza', text: '🍕 Pizza party!', emoji: '🍕' },
+      { id: 'vacation', text: '🏖️ Vacation mode!', emoji: '🏖️' },
+      { id: 'weekend', text: '🛋️ Weekend vibes!', emoji: '🛋️' },
+      { id: 'movie', text: '🎬 Movie night!', emoji: '🎬' }
     ]
   }
 }
 
 export function StickerPicker({ isOpen, onClose, onStickerSelect }: StickerPickerProps) {
-  const [activeCategory, setActiveCategory] = useState<keyof typeof stickerCategories>('emotions')
+  const [activeCategory, setActiveCategory] = useState<keyof typeof stickerCategories>('reactions')
 
   if (!isOpen) return null
 
-  const handleStickerClick = (sticker: string) => {
-    onStickerSelect(sticker)
+  const handleStickerClick = (stickerText: string) => {
+    onStickerSelect(stickerText)
     onClose()
   }
 
@@ -115,15 +126,20 @@ export function StickerPicker({ isOpen, onClose, onStickerSelect }: StickerPicke
 
       {/* Stickers Grid */}
       <div className="p-3 h-64 overflow-y-auto">
-        <div className="grid grid-cols-8 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {stickerCategories[activeCategory].stickers.map((sticker, index) => (
             <button
-              key={index}
-              onClick={() => handleStickerClick(sticker)}
-              className="w-8 h-8 text-xl hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              title={`Send ${sticker} sticker`}
+              key={sticker.id}
+              onClick={() => handleStickerClick(sticker.text)}
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-left"
+              title={`Send "${sticker.text}" sticker`}
             >
-              {sticker}
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl">{sticker.emoji}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300 font-medium truncate">
+                  {sticker.text.split(' ').slice(1).join(' ')}
+                </span>
+              </div>
             </button>
           ))}
         </div>

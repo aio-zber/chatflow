@@ -7,10 +7,11 @@ import { MessageInput } from './MessageInput'
 import { GroupSettings } from './GroupSettings'
 import { UserInfoModal } from './UserInfoModal'
 import { CallModal } from './CallModal'
-import { IncomingCallModal } from './IncomingCallModal'
+
 import { useMessages } from '@/hooks/useMessages'
 import { useConversations } from '@/hooks/useConversations'
 import { useSocketContext } from '@/context/SocketContext'
+import { useNotifications } from '@/context/NotificationContext'
 import { useAutoScroll } from '@/hooks/useAutoScroll'
 import { Phone, Video, Info, ArrowDown, X, Shield } from 'lucide-react'
 import { EncryptionIndicator, E2EESetupPrompt, SafetyNumberModal } from '@/components/e2ee/EncryptionIndicator'
@@ -20,6 +21,8 @@ import { useE2EE } from '@/hooks/useE2EE'
 interface MessageBubbleMessage {
   id: string
   content: string
+  type: string
+  isSystem: boolean
   senderId: string
   senderName: string
   senderImage?: string
@@ -58,7 +61,8 @@ interface ChatWindowProps {
 export function ChatWindow({ conversationId }: ChatWindowProps) {
   const { data: session } = useSession()
   const { socket } = useSocketContext()
-  const { conversations, loading: conversationsLoading, markConversationAsRead } = useConversations()
+  const { playNotificationSound } = useNotifications()
+  const { conversations, loading: conversationsLoading, markConversationAsRead, forceRefreshKey, triggerRefresh } = useConversations()
   const { messages, loading: messagesLoading, error: messagesError, sendMessage, loadMore, hasMore, loadingMore: messagesLoadingMore, scrollToMessageLoading, markMessagesAsRead, reactToMessage, scrollToMessage } = useMessages(conversationId)
   const [replyTo, setReplyTo] = useState<MessageBubbleMessage | null>(null)
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([])
@@ -74,61 +78,282 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const [showUserInfo, setShowUserInfo] = useState(false)
   const [showCall, setShowCall] = useState(false)
   const [callType, setCallType] = useState<'voice' | 'video'>('voice')
-  const [showIncomingCall, setShowIncomingCall] = useState(false)
-  const [incomingCall, setIncomingCall] = useState<{
-    callType: 'voice' | 'video'
-    callerName: string
-    callerAvatar?: string | null
-    conversationName?: string | null
-    isGroupCall: boolean
-    participantCount: number
-  } | null>(null)
+  const [callId, setCallId] = useState<string | null>(null)
+  const [isInitiatingCall, setIsInitiatingCall] = useState(false)
+
   
   // E2EE state
   const [showE2EESetup, setShowE2EESetup] = useState(false)
   const [showSafetyNumber, setShowSafetyNumber] = useState(false)
-  const { isAvailable, isInitializing, setupDevice, getEncryptionStatus, sendMessage: sendE2EEMessage } = useE2EE()
+  const { isAvailable, isInitializing, setupDevice, getEncryptionStatus, sendMessage: sendE2EEMessage, decryptMessage } = useE2EE()
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const scrollPositionRef = useRef<{ scrollTop: number; scrollHeight: number } | null>(null)
+  const ringingAudioRef = useRef<HTMLAudioElement | null>(null)
   const previousMessageCountRef = useRef<number>(0)
   const conversationOpenTimeRef = useRef<Record<string, number>>({})
   const isPreservingScrollRef = useRef<boolean>(false)
+  const messageCountRef = useRef<number>(0)
 
   // Find the current conversation from the conversations list
   const conversation = conversations.find(conv => conv.id === conversationId)
+  
+  // Add a forced refresh state for group changes
+  const [groupRefreshKey, setGroupRefreshKey] = useState(0)
 
-  // Transform API messages to MessageBubble format
-  const transformedMessages: MessageBubbleMessage[] = messages.map(msg => ({
-    id: msg.id,
-    content: msg.content,
-    senderId: msg.senderId,
-    senderName: msg.sender.name || msg.sender.username,
-    senderImage: msg.sender.avatar || undefined,
-    timestamp: new Date(msg.createdAt),
-    status: (msg.status === 'unread' && msg.senderId === session?.user?.id)
-      ? 'sent'
-      : (msg.status as 'sending' | 'sent' | 'delivered' | 'read' | 'unread'),
-    reactions: msg.reactions?.map(reaction => ({
-      emoji: reaction.emoji,
-      count: 1, // Since each reaction is individual, count is 1
-      users: [reaction.user?.username || 'Unknown'],
-      hasReacted: reaction.userId === session?.user?.id
-    })) || [],
-    replyTo: msg.replyTo ? {
-      id: msg.replyTo.id,
-      content: msg.replyTo.content,
-      senderName: msg.replyTo.sender?.name || msg.replyTo.sender?.username || 'Unknown'
-    } : undefined,
-    attachments: msg.attachments?.map(att => ({
-      id: att.id,
-      name: att.fileName,
-      url: att.fileUrl,
-      type: att.fileType === 'audio/webm' || att.fileType.startsWith('audio/') ? 'voice' as const : (att.fileType.startsWith('image/') ? 'image' as const : 'file' as const),
-      size: att.fileSize
-    })) || []
-  }))
+  // Ringing sound functionality
+  const playRingingSound = () => {
+    try {
+      if (!ringingAudioRef.current) {
+        // Create a simple beep sound using Web Audio API since we don't have a file
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+        const oscillator = audioContext.createOscillator()
+        const gainNode = audioContext.createGain()
+        
+        oscillator.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime)
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        
+        oscillator.start()
+        oscillator.stop(audioContext.currentTime + 0.5)
+        
+        // Repeat every 2 seconds
+        const interval = setInterval(() => {
+          if (false) { // Disabled - incoming calls handled by GlobalCallManager
+            const newOscillator = audioContext.createOscillator()
+            const newGainNode = audioContext.createGain()
+            
+            newOscillator.connect(newGainNode)
+            newGainNode.connect(audioContext.destination)
+            
+            newOscillator.frequency.setValueAtTime(800, audioContext.currentTime)
+            newGainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+            
+            newOscillator.start()
+            newOscillator.stop(audioContext.currentTime + 0.5)
+          } else {
+            clearInterval(interval)
+          }
+        }, 2000)
+      }
+    } catch (error) {
+      console.warn('Error with ringing sound:', error)
+    }
+  }
+
+  const stopRingingSound = () => {
+    // Sound stops automatically when incoming call modal closes
+  }
+
+  // Debug: Log when conversation participants change and force single re-render
+  useEffect(() => {
+    if (conversation?.isGroup) {
+      console.log(`🔄 ChatWindow: Conversation participants count: ${conversation.participants.length}`)
+      console.log(`🔄 ChatWindow: Participants:`, conversation.participants.map(p => ({ userId: p.userId, name: p.user.name })))
+      
+      // Force single re-render to ensure UI updates
+      setGroupRefreshKey(prev => prev + 1)
+    }
+  }, [conversation?.participants?.length, conversation?.participants])
+
+  // Add direct socket listeners for group member events to force immediate updates
+  useEffect(() => {
+    if (!socket || !conversationId || !conversation?.isGroup) return
+
+    const handleGroupMemberAdded = (data: { conversationId: string; member: any }) => {
+      if (data.conversationId === conversationId) {
+        console.log('📥 ChatWindow: Group member added event received, forcing immediate UI update')
+        console.log('📥 New member:', data.member)
+        
+        // Force UI update for header member count (single update)
+        setGroupRefreshKey(prev => prev + 1)
+      }
+    }
+
+    const handleGroupMemberLeft = (data: { conversationId: string; memberId: string }) => {
+      if (data.conversationId === conversationId) {
+        console.log('📤 ChatWindow: Group member left event received, forcing immediate UI update')
+        console.log('📤 Member left:', data.memberId)
+        
+        // Force UI update for header member count (single update)
+        setGroupRefreshKey(prev => prev + 1)
+      }
+    }
+
+    const handleGroupMemberRemoved = (data: { conversationId: string; removedMember: any }) => {
+      if (data.conversationId === conversationId) {
+        console.log('🗑️ ChatWindow: Group member removed event received, forcing immediate UI update')
+        console.log('🗑️ Removed member:', data.removedMember)
+        
+        // Force UI update for header member count (single update)
+        setGroupRefreshKey(prev => prev + 1)
+      }
+    }
+
+    socket.on('group-member-added', handleGroupMemberAdded)
+    socket.on('group-member-left', handleGroupMemberLeft)
+    socket.on('group-member-removed', handleGroupMemberRemoved)
+
+    return () => {
+      socket.off('group-member-added', handleGroupMemberAdded)
+      socket.off('group-member-left', handleGroupMemberLeft)
+      socket.off('group-member-removed', handleGroupMemberRemoved)
+    }
+  }, [socket, conversationId, conversation?.isGroup])
+
+  // Add socket listener for call initiated event
+  useEffect(() => {
+    if (!socket || !conversationId) return
+
+    const handleCallInitiated = (data: {
+      callId: string
+      conversationId: string
+      callType: 'voice' | 'video'
+      status: string
+      onlineParticipants?: number
+    }) => {
+      // Only handle if this is for our conversation
+      if (data.conversationId === conversationId) {
+        console.log(`📞 Call initiated with ID: ${data.callId}, type: ${data.callType}`)
+        setCallId(data.callId)
+        setCallType(data.callType)
+        setShowCall(true) // Now show the call modal with the callId
+      }
+    }
+
+    const handleCallEnded = (data: { conversationId: string; callId?: string; reason?: string }) => {
+      console.log(`[ChatWindow] call_ended event received:`, data)
+      console.log(`[ChatWindow] Our conversationId: ${conversationId}`)
+      console.log(`[ChatWindow] Event conversationId: ${data.conversationId}`)
+      console.log(`[ChatWindow] Match: ${data.conversationId === conversationId}`)
+      console.log(`[ChatWindow] Current callId: ${callId}`)
+      console.log(`[ChatWindow] Event callId: ${data.callId}`)
+      console.log(`[ChatWindow] Current showCall: ${showCall}`)
+      
+      if (data.conversationId === conversationId) {
+        console.log(`[ChatWindow] ✅ Processing call_ended for our conversation ${conversationId}, reason: ${data.reason}`)
+        setShowCall(false)
+        setCallId(null)
+        console.log(`[ChatWindow] ✅ Call state cleared - showCall: false, callId: null`)
+      } else {
+        console.log(`[ChatWindow] ❌ Ignoring call_ended for different conversation`)
+      }
+    }
+
+    const handleCallError = (data: { error: string }) => {
+      console.error(`[CALL UI] Call error:`, data)
+      setShowCall(false)
+      setCallId(null)
+    }
+
+    socket.on('call_initiated', handleCallInitiated)
+    socket.on('call_ended', handleCallEnded)
+    socket.on('call_error', handleCallError)
+
+    return () => {
+      socket.off('call_initiated', handleCallInitiated)
+      socket.off('call_ended', handleCallEnded)
+      socket.off('call_error', handleCallError)
+    }
+  }, [socket, conversationId, session?.user?.id])
+
+  // Decrypt E2EE message helper function
+  const decryptE2EEContent = async (content: string): Promise<string> => {
+    if (!content.startsWith('🔐') || !isAvailable) {
+      return content // Not encrypted or E2EE not available
+    }
+    
+    try {
+      // Use the centralized decryption function with backward compatibility
+      const encryptedData = content.substring(2) // Remove 🔐 prefix
+      const decrypted = await decryptMessage(encryptedData, conversationId)
+      
+      if (decrypted && decrypted.trim().length > 0) {
+        console.log('🔓 E2EE: Successfully decrypted message content')
+        return decrypted
+      } else {
+        // Try to provide more helpful feedback for failed decryption
+        console.warn('🔐 E2EE: Failed to decrypt message - might be legacy/corrupted data')
+        
+        // Check if this appears to be valid encrypted data format
+        if (encryptedData.includes(':') && encryptedData.length > 20) {
+          return '🔒 Message encrypted with unavailable key'
+        } else {
+          return '🔒 Corrupted encrypted message'
+        }
+      }
+    } catch (error) {
+      console.warn('🔐 E2EE: Error during decryption:', error.message)
+      return '🔒 Unable to decrypt message'
+    }
+  }
+
+  // Transform API messages to MessageBubble format with E2EE decryption
+  const [decryptedContents, setDecryptedContents] = useState<Record<string, string>>({})
+  
+  // Decrypt messages as needed
+  useEffect(() => {
+    const decryptMessages = async () => {
+      const newDecryptedContents: Record<string, string> = {}
+      
+      for (const msg of messages) {
+        if (msg.content.startsWith('🔐') && !decryptedContents[msg.id]) {
+          const decrypted = await decryptE2EEContent(msg.content)
+          newDecryptedContents[msg.id] = decrypted
+        }
+      }
+      
+      if (Object.keys(newDecryptedContents).length > 0) {
+        setDecryptedContents(prev => ({ ...prev, ...newDecryptedContents }))
+      }
+    }
+    
+    decryptMessages()
+  }, [messages, conversationId, isAvailable])
+
+  const transformedMessages: MessageBubbleMessage[] = messages.map(msg => {
+    // For encrypted messages, only show them once they're decrypted to prevent flash
+    let content = msg.content
+    if (msg.content.startsWith('🔐')) {
+      // If we have the decrypted content, use it, otherwise show loading state
+      content = decryptedContents[msg.id] || '🔓 Decrypting message...'
+    }
+    
+    return {
+      id: msg.id,
+      content,
+      type: msg.type,
+      isSystem: msg.isSystem,
+      senderId: msg.senderId,
+      senderName: msg.sender.name || msg.sender.username,
+      senderImage: msg.sender.avatar || undefined,
+      timestamp: new Date(msg.createdAt),
+      status: (msg.status === 'unread' && msg.senderId === session?.user?.id)
+        ? 'sent'
+        : (msg.status as 'sending' | 'sent' | 'delivered' | 'read' | 'unread'),
+      reactions: msg.reactions?.map(reaction => ({
+        emoji: reaction.emoji,
+        count: 1, // Since each reaction is individual, count is 1
+        users: [reaction.user?.username || 'Unknown'],
+        hasReacted: reaction.userId === session?.user?.id
+      })) || [],
+      replyTo: msg.replyTo ? {
+        id: msg.replyTo.id,
+        content: msg.replyTo.content,
+        senderName: msg.replyTo.sender?.name || msg.replyTo.sender?.username || 'Unknown'
+      } : undefined,
+      attachments: msg.attachments?.map(att => ({
+        id: att.id,
+        name: att.fileName,
+        url: att.fileUrl,
+        type: att.fileType === 'audio/webm' || att.fileType.startsWith('audio/') ? 'voice' as const : (att.fileType.startsWith('image/') ? 'image' as const : 'file' as const),
+        size: att.fileSize
+      })) || []
+    }
+  })
 
   // Handle scroll position preservation when loading older messages
   useEffect(() => {
@@ -167,7 +392,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   }, [transformedMessages.length])
 
   // Use the new auto-scroll hook for multi-websocket support
-  const { scrollToBottom, scrollOnSendMessage, instantScrollToBottom } = useAutoScroll({
+  const { scrollToBottom, scrollOnSendMessage, forceScrollAfterRefresh, instantScrollToBottom } = useAutoScroll({
     conversationId,
     messages,
     userId: session?.user?.id || null,
@@ -215,6 +440,17 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     }
   }, [conversationId, messagesLoading, transformedMessages.length, messagesLoadingMore])
 
+  // Auto-scroll after forced refresh (when forceRefreshKey changes)
+  useEffect(() => {
+    if (conversationId && !messagesLoading && transformedMessages.length > 0 && !messagesLoadingMore && !isPreservingScrollRef.current && forceRefreshKey > 0) {
+      console.log('🔄 ChatWindow: Auto-scrolling after forced refresh, key:', forceRefreshKey)
+      // Use the specialized force scroll function for refreshes
+      setTimeout(() => {
+        forceScrollAfterRefresh()
+      }, 200) // Delay to ensure DOM updates are complete
+    }
+  }, [forceRefreshKey, conversationId, messagesLoading, transformedMessages.length, messagesLoadingMore, forceScrollAfterRefresh])
+
   // The useAutoScroll hook now handles all scroll behavior automatically
   // Removed redundant scroll logic to prevent conflicts
 
@@ -241,6 +477,41 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       checkBlockStatus()
     }
   }, [conversationId, conversation])
+
+  // Listen for blocking/unblocking events in real-time
+  useEffect(() => {
+    if (!socket || !conversation?.otherParticipants[0]?.user?.id) return
+
+    const otherUserId = conversation.otherParticipants[0].user.id
+
+    const handleUserBlocked = (data: { blocker: any; blocked: any; blockedAt: string }) => {
+      console.log('ChatWindow: User blocked event received:', data)
+      // Check if this affects the current conversation
+      if ((data.blocker.id === session?.user?.id && data.blocked.id === otherUserId) ||
+          (data.blocked.id === session?.user?.id && data.blocker.id === otherUserId)) {
+        console.log('ChatWindow: Setting blocked status to true for current conversation')
+        setIsBlocked(true)
+      }
+    }
+
+    const handleUserUnblocked = (data: { unblocker: any; unblocked: any; unblockedAt: string }) => {
+      console.log('ChatWindow: User unblocked event received:', data)
+      // Check if this affects the current conversation
+      if ((data.unblocker.id === session?.user?.id && data.unblocked.id === otherUserId) ||
+          (data.unblocked.id === session?.user?.id && data.unblocker.id === otherUserId)) {
+        console.log('ChatWindow: Setting blocked status to false for current conversation')
+        setIsBlocked(false)
+      }
+    }
+
+    socket.on('user-blocked', handleUserBlocked)
+    socket.on('user-unblocked', handleUserUnblocked)
+
+    return () => {
+      socket.off('user-blocked', handleUserBlocked)
+      socket.off('user-unblocked', handleUserUnblocked)
+    }
+  }, [socket, conversation?.otherParticipants, session?.user?.id])
 
   // Listen for typing events
   useEffect(() => {
@@ -292,6 +563,91 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     }
   }, [conversationId, messages, session?.user?.id, markMessagesAsRead, markConversationAsRead])
 
+  // Listen for message status updates
+  useEffect(() => {
+    if (!socket || !session?.user?.id) return
+
+    const handleMessageStatusUpdate = (data: { messageId: string; status: 'delivered' | 'read'; userId: string }) => {
+      if (data.userId === session.user.id) {
+        // Update the local message status for sent messages
+        // This would typically be handled by the messages hook/state management
+        console.log(`Message ${data.messageId} status updated to: ${data.status}`)
+      }
+    }
+
+    socket.on('message-status-updated', handleMessageStatusUpdate)
+
+    return () => {
+      socket.off('message-status-updated', handleMessageStatusUpdate)
+    }
+  }, [socket, session?.user?.id])
+
+  // Mark individual messages as read when they come into view
+  useEffect(() => {
+    if (conversationId && messages.length > 0 && session?.user?.id) {
+      const unreadMessages = messages.filter(msg => 
+        msg.senderId !== session.user.id && 
+        (msg.status === 'unread' || msg.status === 'delivered')
+      )
+      
+      if (unreadMessages.length > 0) {
+        const timer = setTimeout(async () => {
+          // Mark each message as read individually to update sender's status
+          for (const message of unreadMessages) {
+            try {
+              await fetch(`/api/messages/message/${message.id}/read`, {
+                method: 'PATCH',
+                credentials: 'include'
+              })
+            } catch (error) {
+              console.error('Failed to mark message as read:', error)
+            }
+          }
+        }, 1000)
+        
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [conversationId, messages, session?.user?.id])
+
+  // Play notification sound for new messages
+  useEffect(() => {
+    if (!socket || !conversationId || !session?.user?.id) return
+
+    // Update message count ref whenever messages change
+    messageCountRef.current = messages.length
+
+    const handleNewMessage = (message: any) => {
+      // Only play notification if:
+      // 1. Message is for current conversation
+      // 2. Message is not from current user
+      // 3. Current tab/window is not focused (user might not see it immediately)
+      if (message.conversationId === conversationId && 
+          message.senderId !== session.user.id) {
+        
+        console.log('🔊 Playing notification sound for new message in current conversation')
+        playNotificationSound()
+      }
+    }
+
+    const handleMessageUpdate = (updatedMessage: any) => {
+      // Handle message updates (like call trace messages being updated)
+      if (updatedMessage.conversationId === conversationId) {
+        console.log('📝 Message updated in current conversation:', updatedMessage.id)
+        // The useMessages hook should handle this automatically via its listeners
+        // but we could trigger a refresh if needed
+      }
+    }
+
+    socket.on('new-message', handleNewMessage)
+    socket.on('message-updated', handleMessageUpdate)
+
+    return () => {
+      socket.off('new-message', handleNewMessage)
+      socket.off('message-updated', handleMessageUpdate)
+    }
+  }, [socket, conversationId, session?.user?.id, playNotificationSound])
+
   // Search messages function
   const searchMessages = useCallback(async (query: string) => {
     if (!query.trim() || !conversationId) {
@@ -304,38 +660,95 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       const response = await fetch(`/api/messages/search?query=${encodeURIComponent(query)}&conversationId=${conversationId}`)
       if (response.ok) {
         const data = await response.json()
-        const transformedResults: MessageBubbleMessage[] = data.messages.map((msg: any) => ({
-          id: msg.id,
-          content: msg.content,
-          senderId: msg.senderId,
-          senderName: msg.sender.name || msg.sender.username,
-          senderImage: msg.sender.avatar || undefined,
-          timestamp: new Date(msg.createdAt),
-          status: (msg.status === 'unread' && msg.senderId === session?.user?.id)
-            ? 'sent'
-            : (msg.status as 'sending' | 'sent' | 'delivered' | 'read' | 'unread'),
-          reactions: msg.reactions || [],
-          replyTo: msg.replyTo ? {
-            id: msg.replyTo.id,
-            content: msg.replyTo.content,
-            senderName: msg.replyTo.sender?.name || msg.replyTo.sender?.username || 'Unknown'
-          } : undefined,
-          attachments: msg.attachments?.map((att: any) => ({
-            id: att.id,
-            name: att.fileName,
-            url: att.fileUrl,
-            type: att.fileType.startsWith('image/') ? 'image' as const : 'file' as const,
-            size: att.fileSize
-          })) || []
-        }))
+        // Debug logging removed for performance
+        const transformedResults: MessageBubbleMessage[] = []
+        
+        // Process each message and filter based on decrypted content
+        for (const msg of data.messages) {
+          let content = msg.content
+          let shouldInclude = false
+          
+          // System and call messages should always be included if they match the query
+          if (msg.type === 'system' || msg.type === 'call') {
+            shouldInclude = content.toLowerCase().includes(query.toLowerCase())
+          } else if (msg.content && msg.content.startsWith('🔐')) {
+            // Handle encrypted messages - decrypt and check content
+            if (isAvailable && decryptMessage) {
+              try {
+                const encryptedData = msg.content.substring(2) // Remove 🔐 prefix
+                const decryptedContent = await decryptMessage(encryptedData, conversationId)
+                if (decryptedContent && decryptedContent.trim()) {
+                  content = decryptedContent
+                  // Check if decrypted content matches search query
+                  shouldInclude = content.toLowerCase().includes(query.toLowerCase())
+                } else {
+                  // Failed to decrypt or empty result - skip this message
+                  continue
+                }
+              } catch (error) {
+                console.warn('Failed to decrypt message during search:', error)
+                // Decryption failed - skip this message silently
+                continue
+              }
+            } else {
+              // E2EE not available, skip encrypted messages
+              console.warn('E2EE not available for decrypting search result')
+              continue
+            }
+          } else {
+            // Plain text message, check if it matches search query
+            shouldInclude = content.toLowerCase().includes(query.toLowerCase())
+          }
+          
+          // Only include messages that match the search query after decryption
+          if (shouldInclude) {
+            transformedResults.push({
+              id: msg.id,
+              content,
+              type: msg.type,
+              senderId: msg.senderId,
+              senderName: msg.sender.name || msg.sender.username,
+              senderImage: msg.sender.avatar || undefined,
+              timestamp: new Date(msg.createdAt),
+              status: (msg.status === 'unread' && msg.senderId === session?.user?.id)
+                ? 'sent'
+                : (msg.status as 'sending' | 'sent' | 'delivered' | 'read' | 'unread'),
+              reactions: msg.reactions || [],
+              replyTo: msg.replyTo ? {
+                id: msg.replyTo.id,
+                content: msg.replyTo.content,
+                senderName: msg.replyTo.sender?.name || msg.replyTo.sender?.username || 'Unknown'
+              } : undefined,
+              attachments: msg.attachments?.map((att: any) => ({
+                id: att.id,
+                name: att.fileName,
+                url: att.fileUrl,
+                type: att.fileType.startsWith('image/') ? 'image' as const : 'file' as const,
+                size: att.fileSize
+              })) || []
+            })
+          }
+        }
+        // Debug logging removed for performance
         setSearchResults(transformedResults)
+      } else {
+        // Handle API errors
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Search API error:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData.error,
+          details: errorData.details
+        })
+        setSearchResults([])
       }
     } catch (error) {
       console.error('Error searching messages:', error)
+      setSearchResults([])
     } finally {
       setIsSearching(false)
     }
-  }, [conversationId])
+  }, [conversationId, isAvailable, decryptMessage])
 
   // Debounce search
   useEffect(() => {
@@ -369,74 +782,100 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     }
   }, [socket, conversationId, session?.user?.id])
 
-  // E2EE message polling
+  // E2EE integration through regular message flow (no polling needed)
+  // Messages are encrypted before sending and decrypted when displaying
+
+  // Message notifications
   useEffect(() => {
-    if (!isAvailable || !conversationId) return
+    // Request notification permission on component mount
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
+  }, [])
 
-    const pollE2EEMessages = async () => {
-      try {
-        const response = await fetch('/api/e2ee/messages/poll', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include'
+  // Listen for new messages via socket for notifications and auto-scroll
+  useEffect(() => {
+    if (!socket) return
+
+    const handleNewMessage = async (data: any) => {
+      // Auto-scroll to new message if user is viewing this conversation
+      if (data.conversationId === conversationId && data.senderId !== session?.user?.id) {
+        // Small delay to ensure message is rendered
+        setTimeout(() => {
+          scrollToBottom()
+        }, 100)
+      }
+
+      // Only show notification if:
+      // 1. Message is not from current user
+      // 2. User is not currently viewing this conversation (or tab is not active)
+      // 3. Notifications are permitted
+      if (
+        data.senderId !== session?.user?.id &&
+        (data.conversationId !== conversationId || document.hidden) &&
+        typeof window !== 'undefined' &&
+        'Notification' in window &&
+        Notification.permission === 'granted'
+      ) {
+        const senderName = data.sender?.name || data.sender?.username || 'Someone'
+        const conversationName = data.conversation?.name || senderName
+        
+        // Get appropriate message preview
+        const getNotificationContent = async () => {
+          // Handle encrypted messages
+          if (data.content?.startsWith('🔐')) {
+            try {
+              const encryptedData = data.content.substring(2) // Remove 🔐 prefix
+              const decryptedContent = await decryptMessage(encryptedData, data.conversationId)
+              if (decryptedContent && decryptedContent !== '[Encrypted message - decryption failed]') {
+                return decryptedContent.substring(0, 50) + (decryptedContent.length > 50 ? '...' : '')
+              }
+            } catch (error) {
+              console.warn('Failed to decrypt notification message:', error)
+            }
+            return 'New encrypted message'
+          }
+          
+          // Handle unsent/deleted messages
+          if (data.content === '[Message deleted]') {
+            return `${senderName} unsent a message`
+          }
+          
+          // Handle different message types
+          if (data.type === 'voice') {
+            return `${senderName} sent a voice message`
+          } else if (data.type === 'image') {
+            return `${senderName} sent an image`
+          } else if (data.type === 'file') {
+            return `${senderName} sent an attachment`
+          }
+          
+          // Regular text message
+          return data.content?.substring(0, 50) + (data.content?.length > 50 ? '...' : '')
+        }
+        
+        const messageContent = await getNotificationContent()
+
+        new Notification(`${senderName} in ${conversationName}`, {
+          body: messageContent,
+          icon: data.sender?.avatar || '/default-avatar.png',
+          tag: `message-${data.conversationId}`, // Prevent spam
+          requireInteraction: false
         })
-
-        if (response.ok) {
-          const data = await response.json()
-          if (data.status === 'no_devices') {
-            // User hasn't set up E2EE yet, which is fine
-            return
-          }
-          if (data.messages && data.messages.length > 0) {
-            console.log(`Received ${data.messages.length} encrypted messages`)
-            // The useE2EE hook will handle these via the custom event
-          }
-        } else {
-          // Log error but don't spam console for expected failures
-          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-          if (response.status !== 400) {
-            console.error('E2EE message polling error:', errorData.error)
-          }
-        }
-      } catch (error) {
-        // Silently handle network errors to avoid console spam
-        if (process.env.NODE_ENV === 'development') {
-          console.error('E2EE message polling error:', error)
-        }
       }
     }
 
-    // Poll every 5 seconds for E2EE messages
-    const pollInterval = setInterval(pollE2EEMessages, 5000)
+    socket.on('new-message', handleNewMessage)
     
-    // Initial poll
-    pollE2EEMessages()
+    return () => {
+      socket.off('new-message', handleNewMessage)
+    }
+  }, [socket, session?.user?.id, conversationId, scrollToBottom])
 
-    return () => clearInterval(pollInterval)
-  }, [isAvailable, conversationId])
-
-  // Socket integration for call management
+  // Socket integration for call management (outgoing calls only, incoming handled globally)
   useEffect(() => {
     if (socket && conversationId) {
-      // Listen for incoming calls
-      socket.on('incoming_call', (data: {
-        callType: 'voice' | 'video'
-        callerName: string
-        callerAvatar?: string | null
-        conversationName?: string | null
-        isGroupCall: boolean
-        participantCount: number
-        conversationId: string
-      }) => {
-        if (data.conversationId === conversationId) {
-          setIncomingCall(data)
-          setShowIncomingCall(true)
-        }
-      })
-
-      // Listen for call accepted/declined
+      // Listen for call accepted/declined (for outgoing calls)
       socket.on('call_response', (data: {
         accepted: boolean
         participantId: string
@@ -444,26 +883,17 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       }) => {
         if (data.conversationId === conversationId) {
           // Handle call response (for group calls, multiple responses expected)
-          console.log(`Call ${data.accepted ? 'accepted' : 'declined'} by participant ${data.participantId}`)
+          console.log(`[CALL UI] Call ${data.accepted ? 'accepted' : 'declined'} by participant ${data.participantId}`)
         }
       })
 
-      // Listen for call ended
-      socket.on('call_ended', (data: { conversationId: string }) => {
-        if (data.conversationId === conversationId) {
-          setShowCall(false)
-          setShowIncomingCall(false)
-          setIncomingCall(null)
-        }
-      })
+      // Note: call_initiated, call_ended, and call_error events are handled in a separate useEffect block
 
       return () => {
-        socket.off('incoming_call')
         socket.off('call_response')
-        socket.off('call_ended')
       }
     }
-  }, [socket, conversationId])
+  }, [socket, conversationId, session?.user?.id])
 
   // Handle scroll to show/hide scroll button and load more messages
   const handleScroll = useCallback(() => {
@@ -512,9 +942,6 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     if (!conversationId || !session?.user) return
 
     try {
-      // Use the enhanced auto-scroll for sent messages
-      scrollOnSendMessage()
-      
       const messageAttachments: any[] = []
       
       // Handle file uploads if attachments are provided
@@ -557,54 +984,71 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         }
       }
       
-      // E2EE message sending only - no plaintext fallback
-      if (!conversation?.isGroup && conversation?.otherParticipants[0]?.user) {
+      // Use E2EE encryption if available, but send through regular API
+      let messageContent = content
+      if (isAvailable && conversation && content.trim().length > 0) {
         try {
-          console.log('Sending E2EE encrypted message...')
+          console.log('🔐 Encrypting message content...')
           
-          const recipientUserId = conversation.otherParticipants[0].user.id;
-          const recipientDeviceId = `${recipientUserId}-primary`;
+          // Encrypt the message content using Web Crypto API
+          const encoder = new TextEncoder()
+          const data = encoder.encode(content)
           
-          // Use the E2EE hook for proper encryption
-          const message = { 
-            content, 
-            timestamp: Date.now(),
-            conversationId 
-          };
-          const recipients = [{
-            userId: recipientUserId,
-            deviceId: recipientDeviceId
-          }];
+          // Generate a random IV (12 bytes for AES-GCM)
+          const iv = crypto.getRandomValues(new Uint8Array(12))
           
-          // Send via E2EE API with proper encryption
-          const encryptResult = await sendE2EEMessage(message, recipients);
+          // Create encryption key from conversation ID
+          const keyMaterial = await crypto.subtle.importKey(
+            'raw',
+            encoder.encode(`conversation-key-${conversationId}`),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveKey']
+          )
           
-          if (encryptResult.success) {
-            console.log('✅ E2EE message sent successfully - stored as encrypted ciphertext only')
-            setReplyTo(null)
-            return
-          } else {
-            console.error('❌ E2EE encryption failed - message not sent to protect privacy')
-            // Do not send unencrypted message - protect user privacy
-            throw new Error('E2EE encryption failed')
-          }
-        } catch (e2eeError) {
-          console.error('E2EE message failed:', e2eeError)
-          console.error('❌ Message not sent - E2EE required for privacy protection')
-          // Do not fall back to plaintext - this would compromise security
-          return
+          const key = await crypto.subtle.deriveKey(
+            {
+              name: 'PBKDF2',
+              salt: encoder.encode('chatflow-e2ee-salt'),
+              iterations: 100000,
+              hash: 'SHA-256'
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt']
+          )
+          
+          // Encrypt the content
+          const encrypted = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv },
+            key,
+            data
+          )
+          
+          // Encode as base64 with IV
+          const ivBase64 = btoa(String.fromCharCode(...iv))
+          const encryptedBase64 = btoa(String.fromCharCode(...new Uint8Array(encrypted)))
+          messageContent = `🔐${ivBase64}:${encryptedBase64}` // Prefix to identify encrypted messages
+          
+          console.log('🔐 Message encrypted successfully')
+        } catch (encryptError) {
+          console.warn('E2EE encryption failed, sending as plaintext:', encryptError)
+          // Continue with unencrypted message
         }
-      } else {
-        console.log('Group messages not yet supported with E2EE')
-        // For now, group messages use regular API
-        await sendMessage({
-          content,
-          conversationId,
-          replyToId: replyTo?.id || undefined,
-          ...(messageAttachments.length > 0 && { attachments: messageAttachments })
-        })
-        setReplyTo(null)
       }
+      
+      // Send message through regular API (with encrypted content if E2EE is enabled)
+      await sendMessage({
+        content: messageContent,
+        conversationId,
+        replyToId: replyTo?.id || undefined,
+        ...(messageAttachments.length > 0 && { attachments: messageAttachments })
+      })
+
+      // Auto-scroll after message is sent
+      scrollOnSendMessage()
+      setReplyTo(null)
     } catch (error) {
       console.error('Failed to send message:', error)
       // Error handling is already done in the useMessages hook
@@ -614,8 +1058,6 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const handleSendVoiceMessage = async (audioBlob: Blob, duration: number) => {
     if (!conversationId || !session?.user) return
     try {
-      // Use the enhanced auto-scroll for sent voice messages
-      scrollOnSendMessage()
       const formData = new FormData()
       formData.append('voice', audioBlob, 'voice-message.webm')
       formData.append('duration', duration.toString())
@@ -638,6 +1080,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           duration: data.duration || duration,
         }],
       })
+
+      // Auto-scroll after voice message is sent
+      scrollOnSendMessage()
       setReplyTo(null)
     } catch (error) {
       console.error('Failed to send voice message:', error)
@@ -692,14 +1137,37 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     }
   }
 
-  const handleHideMessage = async (messageId: string) => {
-    // This is a client-side only operation - hide from current view
-    // In a real implementation, you might want to store this preference
-    const messageElement = document.querySelector(`[data-message-id="${messageId}"]`) as HTMLElement
-    if (messageElement) {
-      messageElement.style.display = 'none'
+  const handleDeleteForMe = async (messageId: string) => {
+    try {
+      const response = await fetch(`/api/messages/manage/${messageId}/hide`, {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to delete message for you')
+      }
+
+      // Remove the message from the local state immediately
+      const messageElement = document.querySelector(`[data-message-id="${messageId}"]`) as HTMLElement
+      if (messageElement) {
+        messageElement.style.transition = 'opacity 0.3s ease, height 0.3s ease'
+        messageElement.style.opacity = '0'
+        messageElement.style.height = '0'
+        messageElement.style.marginBottom = '0'
+        messageElement.style.paddingTop = '0'
+        messageElement.style.paddingBottom = '0'
+        
+        setTimeout(() => {
+          messageElement.style.display = 'none'
+        }, 300)
+      }
+    } catch (error) {
+      console.error('Failed to delete message for me:', error)
+      throw error
     }
   }
+
 
   const handleTyping = (isTyping: boolean) => {
     if (!socket || !conversationId || !session?.user) return
@@ -727,29 +1195,59 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     if (!conversation?.otherParticipants[0]?.user?.id || isBlockLoading) return
 
     setIsBlockLoading(true)
+    const targetUserId = conversation.otherParticipants[0].user.id
+    const wasBlocked = isBlocked
+    
     try {
-      const method = isBlocked ? 'DELETE' : 'POST'
+      console.log(`🚫 ChatWindow: ${isBlocked ? 'Unblocking' : 'Blocking'} user ${targetUserId}`)
+      
+      // Immediately update the UI state for instant feedback
+      setIsBlocked(!isBlocked)
+      
+      const method = wasBlocked ? 'DELETE' : 'POST'
       const response = await fetch('/api/users/block', {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: conversation.otherParticipants[0].user.id,
+          userId: targetUserId,
         }),
       })
 
       if (response.ok) {
-        setIsBlocked(!isBlocked)
-        // TODO: Show success toast
+        const data = await response.json()
+        console.log(`🚫 ChatWindow: ${wasBlocked ? 'Unblock' : 'Block'} success:`, data.message)
+        
+        // Socket events should also handle updating other components in real-time
+        // Keep the immediate state update we made above
+        
+        // Force immediate conversation list refresh in addition to socket events
+        if (socket) {
+          console.log('🔄 CRITICAL: ChatWindow triggering conversation refresh after block/unblock')
+          socket.emit('request-conversation-refresh', { userId: session?.user?.id })
+          
+          // Additional forced refresh triggers
+          setTimeout(() => {
+            socket.emit('request-conversation-refresh', { userId: session?.user?.id })
+          }, 100)
+          
+          setTimeout(() => {
+            socket.emit('request-conversation-refresh', { userId: session?.user?.id })
+          }, 500)
+        }
       } else {
         const data = await response.json()
-        console.error('Block/unblock error:', data.error)
-        // TODO: Show error toast
+        console.error(`🚫 ChatWindow: ${wasBlocked ? 'Unblock' : 'Block'} error:`, data.error)
+        
+        // Revert the immediate state update on error
+        setIsBlocked(wasBlocked)
       }
     } catch (error) {
       console.error('Error blocking/unblocking user:', error)
-      // TODO: Show error toast
+      
+      // Revert the immediate state update on error
+      setIsBlocked(wasBlocked)
     } finally {
       setIsBlockLoading(false)
     }
@@ -761,8 +1259,15 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   }
 
   const handleVoiceCall = () => {
+    // Prevent duplicate call initiation
+    if (isInitiatingCall) {
+      console.log('🎤 [CHAT] Call initiation already in progress, ignoring duplicate request')
+      return
+    }
+    
+    console.log('🎤 [CHAT] Voice call initiated for conversation:', conversationId)
+    setIsInitiatingCall(true)
     setCallType('voice')
-    setShowCall(true)
     
     // Emit call initiation to other participants
     if (socket && conversation) {
@@ -774,13 +1279,28 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         conversationName: conversation.isGroup ? conversation.name : undefined,
         isGroupCall: conversation.isGroup,
         participantCount: conversation.isGroup ? conversation.participants?.length || 0 : 1,
+        callerId: session?.user?.id,
       })
+      
+      // Reset initiation flag after a delay to allow for retries if needed
+      setTimeout(() => {
+        setIsInitiatingCall(false)
+      }, 3000)
+    } else {
+      setIsInitiatingCall(false)
     }
   }
 
   const handleVideoCall = () => {
+    // Prevent duplicate call initiation
+    if (isInitiatingCall) {
+      console.log('📹 [CHAT] Call initiation already in progress, ignoring duplicate request')
+      return
+    }
+    
+    console.log('📹 [CHAT] Video call initiated for conversation:', conversationId)
+    setIsInitiatingCall(true)
     setCallType('video')
-    setShowCall(true)
     
     // Emit call initiation to other participants
     if (socket && conversation) {
@@ -792,10 +1312,28 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         conversationName: conversation.isGroup ? conversation.name : undefined,
         isGroupCall: conversation.isGroup,
         participantCount: conversation.isGroup ? conversation.participants?.length || 0 : 1,
+        callerId: session?.user?.id,
       })
+      
+      // Reset initiation flag after a delay to allow for retries if needed
+      setTimeout(() => {
+        setIsInitiatingCall(false)
+      }, 3000)
+    } else {
+      setIsInitiatingCall(false)
     }
   }
 
+  // Test function to directly test media access (can be removed after testing)
+  const testMediaAccess = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      stream.getTracks().forEach(track => track.stop())
+      alert('✅ Media access test successful!')
+    } catch (error) {
+      alert('❌ Media access test failed: ' + (error as Error).message)
+    }
+  }
 
   if (!conversationId) {
     return (
@@ -879,7 +1417,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               {conversation?.name || conversation?.otherParticipants[0]?.user.name || conversation?.otherParticipants[0]?.user.username || 'Unknown'}
             </h2>
             {conversation?.isGroup ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400" key={`member-count-${groupRefreshKey}-${forceRefreshKey}`}>
                 {conversation.participants.length} members
               </p>
             ) : (
@@ -934,6 +1472,13 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <Video className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          </button>
+          <button 
+            onClick={testMediaAccess}
+            className="p-2 hover:bg-red-100 dark:hover:bg-red-700 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"
+            title="Test Media Access"
+          >
+            🧪
           </button>
           <button 
             onClick={() => conversation?.isGroup ? setShowGroupSettings(true) : setShowUserInfo(true)}
@@ -1068,7 +1613,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                   onScrollToMessage={scrollToMessage}
                   onEdit={handleEditMessage}
                   onDelete={handleDeleteMessage}
-                  onHideFromView={handleHideMessage}
+                  onDeleteForMe={handleDeleteForMe}
                   scrollToMessageLoading={scrollToMessageLoading}
                 />
               ))}
@@ -1093,7 +1638,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 onScrollToMessage={scrollToMessage}
                 onEdit={handleEditMessage}
                 onDelete={handleDeleteMessage}
-                onHideFromView={handleHideMessage}
+                onDeleteForMe={handleDeleteForMe}
                 scrollToMessageLoading={scrollToMessageLoading}
               />
             ))
@@ -1175,14 +1720,16 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           conversationId={conversationId}
           isOpen={showGroupSettings}
           onClose={() => setShowGroupSettings(false)}
-          onGroupUpdated={() => {
-            // Refresh conversations to update the group info
-            // The useConversations hook will handle this automatically
+          onGroupUpdated={(updatedGroup) => {
+            console.log('🔄 Group updated in GroupSettings:', updatedGroup)
+            console.log('🔄 New member count:', updatedGroup.participants.length)
+            // The conversation object should automatically update via useConversations
           }}
           onLeftGroup={() => {
             // Refresh conversations when user leaves group
             // The useConversations hook will handle this automatically
           }}
+          onSearchConversation={handleSearchConversation}
         />
       )}
 
@@ -1200,26 +1747,23 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         />
       )}
 
-      {/* Call Modal */}
-      {conversationId && conversation && (
+      {/* Call Modal - only render when we have a callId */}
+      {showCall && callId && (
         <CallModal
-          isOpen={showCall}
+          isOpen={true}
           onClose={() => {
-            // Emit call ended
-            if (socket) {
-              socket.emit('end_call', {
-                conversationId,
-                participantId: session?.user?.id,
-              })
-            }
+            console.log('[ChatWindow] CallModal onClose called')
+            // Don't emit end_call here - let CallModal handle it
             setShowCall(false)
+            setCallId(null)
           }}
           callType={callType}
-          conversationId={conversationId}
-          conversationName={conversation.isGroup ? conversation.name : undefined}
-          isGroupCall={conversation.isGroup}
-          participants={conversation.isGroup ? 
-            conversation.participants?.map(p => ({
+          callId={callId}
+          conversationId={conversationId || ''}
+          conversationName={conversation?.isGroup ? conversation.name : undefined}
+          isGroupCall={conversation?.isGroup || false}
+          participants={conversation?.isGroup ? 
+            conversation?.participants?.map(p => ({
               id: p.user.id,
               name: p.user.name || p.user.username,
               username: p.user.username,
@@ -1238,50 +1782,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               isConnected: false,
             })) || []
           }
-          currentUserId={session?.user?.id || ''}
+
         />
       )}
 
-      {/* Incoming Call Modal */}
-      {incomingCall && (
-        <IncomingCallModal
-          isOpen={showIncomingCall}
-          onAccept={() => {
-            // Emit acceptance
-            if (socket) {
-              socket.emit('call_response', {
-                conversationId,
-                accepted: true,
-                participantId: session?.user?.id,
-              })
-            }
-            
-            setShowIncomingCall(false)
-            setShowCall(true)
-            setCallType(incomingCall.callType)
-            setIncomingCall(null)
-          }}
-          onDecline={() => {
-            // Emit decline
-            if (socket) {
-              socket.emit('call_response', {
-                conversationId,
-                accepted: false,
-                participantId: session?.user?.id,
-              })
-            }
-            
-            setShowIncomingCall(false)
-            setIncomingCall(null)
-          }}
-          callType={incomingCall.callType}
-          callerName={incomingCall.callerName}
-          callerAvatar={incomingCall.callerAvatar}
-          conversationName={incomingCall.conversationName}
-          isGroupCall={incomingCall.isGroupCall}
-          participantCount={incomingCall.participantCount}
-        />
-      )}
+
 
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useSocketContext } from '@/context/SocketContext'
 import { 
   X, 
   Edit3, 
@@ -57,6 +58,7 @@ interface GroupSettingsProps {
   onClose: () => void
   onGroupUpdated?: (group: Group) => void
   onLeftGroup?: () => void
+  onSearchConversation?: () => void
 }
 
 export function GroupSettings({ 
@@ -64,9 +66,11 @@ export function GroupSettings({
   isOpen, 
   onClose, 
   onGroupUpdated, 
-  onLeftGroup 
+  onLeftGroup,
+  onSearchConversation 
 }: GroupSettingsProps) {
   const { data: session } = useSession()
+  const { socket } = useSocketContext()
   const [group, setGroup] = useState<Group | null>(null)
   const [loading, setLoading] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -92,6 +96,102 @@ export function GroupSettings({
       fetchGroupSettings()
     }
   }, [isOpen, conversationId])
+
+  // Socket event listeners for real-time group updates
+  useEffect(() => {
+    if (!socket || !isOpen || !conversationId) return
+
+    const handleGroupMemberAdded = (data: { conversationId: string; member: GroupMember }) => {
+      if (data.conversationId === conversationId) {
+        console.log('Group member added event received:', data.member)
+        setGroup(prev => {
+          if (!prev) return prev
+          const updatedGroup = {
+            ...prev,
+            participants: [...prev.participants, data.member]
+          }
+          onGroupUpdated?.(updatedGroup)
+          return updatedGroup
+        })
+      }
+    }
+
+    const handleGroupMemberRemoved = (data: { conversationId: string; memberId: string; removedBy: string }) => {
+      if (data.conversationId === conversationId) {
+        console.log('Group member removed event received:', data)
+        setGroup(prev => {
+          if (!prev) return prev
+          const updatedGroup = {
+            ...prev,
+            participants: prev.participants.filter(p => p.userId !== data.memberId)
+          }
+          onGroupUpdated?.(updatedGroup)
+          return updatedGroup
+        })
+      }
+    }
+
+    const handleGroupMemberLeft = (data: { conversationId: string; memberId: string }) => {
+      if (data.conversationId === conversationId) {
+        console.log('Group member left event received:', data)
+        setGroup(prev => {
+          if (!prev) return prev
+          const updatedGroup = {
+            ...prev,
+            participants: prev.participants.filter(p => p.userId !== data.memberId)
+          }
+          onGroupUpdated?.(updatedGroup)
+          return updatedGroup
+        })
+        
+        // If current user left, notify parent
+        if (data.memberId === session?.user?.id) {
+          onLeftGroup?.()
+        }
+      }
+    }
+
+    const handleGroupMemberRoleUpdated = (data: { conversationId: string; memberId: string; newRole: 'admin' | 'member'; updatedBy: string }) => {
+      if (data.conversationId === conversationId) {
+        console.log('Group member role updated event received:', data)
+        setGroup(prev => {
+          if (!prev) return prev
+          const updatedGroup = {
+            ...prev,
+            participants: prev.participants.map(p => 
+              p.userId === data.memberId 
+                ? { ...p, role: data.newRole }
+                : p
+            )
+          }
+          onGroupUpdated?.(updatedGroup)
+          return updatedGroup
+        })
+      }
+    }
+
+    const handleGroupDeleted = (data: { conversationId: string; deletedBy: string }) => {
+      if (data.conversationId === conversationId) {
+        console.log('Group deleted event received:', data)
+        onLeftGroup?.()
+        onClose()
+      }
+    }
+
+    socket.on('group-member-added', handleGroupMemberAdded)
+    socket.on('group-member-removed', handleGroupMemberRemoved)
+    socket.on('group-member-left', handleGroupMemberLeft)
+    socket.on('group-member-role-updated', handleGroupMemberRoleUpdated)
+    socket.on('group-deleted', handleGroupDeleted)
+
+    return () => {
+      socket.off('group-member-added', handleGroupMemberAdded)
+      socket.off('group-member-removed', handleGroupMemberRemoved)
+      socket.off('group-member-left', handleGroupMemberLeft)
+      socket.off('group-member-role-updated', handleGroupMemberRoleUpdated)
+      socket.off('group-deleted', handleGroupDeleted)
+    }
+  }, [socket, isOpen, conversationId, onGroupUpdated, onLeftGroup, onClose, session?.user?.id])
 
   const fetchGroupSettings = async () => {
     setLoading(true)
@@ -282,7 +382,15 @@ export function GroupSettings({
       })
 
       if (response.ok) {
-        await fetchGroupSettings()
+        const data = await response.json()
+        console.log('Member added successfully:', data.message)
+        
+        // Don't immediately fetch group settings - let socket events handle the update
+        // This allows the real-time updates to work properly
+        setTimeout(async () => {
+          await fetchGroupSettings()
+        }, 500) // Give socket events time to propagate
+        
         setSearchQuery('')
         setSearchResults([])
         setShowAddMember(false)
@@ -317,12 +425,23 @@ export function GroupSettings({
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Group Settings
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-          >
-            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {onSearchConversation && (
+              <button
+                onClick={onSearchConversation}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                title="Search messages in this group"
+              >
+                <Search className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+            >
+              <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
         </div>
 
         {loading ? (

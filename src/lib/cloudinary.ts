@@ -34,6 +34,15 @@ export const uploadOptions = {
       { width: 200, height: 200, crop: 'fill', gravity: 'face' }
     ]
   },
+  video: {
+    folder: 'chatflow/videos',
+    resource_type: 'video' as const,
+    transformation: [
+      { quality: 'auto' },
+      { width: 1280, height: 720, crop: 'limit' }, // Limit video size for performance
+      { fetch_format: 'auto' }
+    ]
+  },
   voice: {
     folder: 'chatflow/voice',
     resource_type: 'video' as const, // Audio files use video resource type
@@ -48,6 +57,21 @@ export const uploadOptions = {
 /**
  * Upload a buffer to Cloudinary
  */
+// Helper function to sanitize filename for Cloudinary public_id
+function sanitizePublicId(filename: string): string {
+  // Remove file extension
+  const nameWithoutExt = filename.replace(/\.[^/.]+$/, '')
+  
+  // Replace special characters, emojis, and non-ASCII characters with safe alternatives
+  return nameWithoutExt
+    .replace(/[^\w\s-_.]/g, '') // Remove all non-word characters except spaces, hyphens, underscores, dots
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+    .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
+    .slice(0, 100) // Limit length to 100 characters
+    || 'file' // Fallback if string becomes empty
+}
+
 export async function uploadToCloudinary(
   buffer: Buffer, 
   filename: string,
@@ -66,12 +90,16 @@ export async function uploadToCloudinary(
 
   try {
     const options = uploadOptions[type]
+    const sanitizedFilename = sanitizePublicId(filename)
+    const publicId = `${Date.now()}-${sanitizedFilename}`
+    
+    console.log('Cloudinary upload:', { originalFilename: filename, sanitizedFilename, publicId })
     
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           ...options,
-          public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}`, // Remove extension as Cloudinary handles it
+          public_id: publicId,
           overwrite: false
         },
         (error, result) => {

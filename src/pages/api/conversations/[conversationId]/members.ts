@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '../../auth/[...nextauth]'
+import { getIO, getSocketInstance } from '@/lib/socket'
 import { z } from 'zod'
 
 const addMemberSchema = z.object({
@@ -100,6 +101,83 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       })
 
+      // Create system message for member addition
+      const adminUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { name: true, username: true }
+      })
+
+      const systemMessage = await prisma.message.create({
+        data: {
+          content: `${adminUser?.name || adminUser?.username || 'Admin'} added ${userToAdd.name || userToAdd.username} to the group`,
+          type: 'system',
+          status: 'sent',
+          senderId: session.user.id,
+          conversationId,
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+              avatar: true,
+            }
+          },
+          attachments: true,
+        }
+      })
+
+      // Emit socket event for real-time updates - ensure socket is initialized
+      let io = getIO()
+      if (!io) {
+        console.log('👥 CRITICAL: Socket not initialized, attempting to initialize...')
+        io = getSocketInstance(req, res)
+      }
+      console.log('👥 CRITICAL: Group member add API - Socket instance available:', !!io)
+      if (io) {
+        const memberAddedEvent = {
+          type: 'member_added',
+          conversationId,
+          member: {
+            id: newMember.id,
+            userId: newMember.userId,
+            role: newMember.role,
+            joinedAt: newMember.joinedAt,
+            user: newMember.user
+          },
+          addedBy: {
+            id: session.user.id,
+            name: session.user.name,
+            username: session.user.email // or username if available
+          }
+        }
+
+        console.log('👥 CRITICAL: About to emit group-member-added event:', memberAddedEvent)
+
+        // Emit to all existing participants
+        conversation.participants.forEach((participant) => {
+          console.log(`👥 CRITICAL: Emitting to user:${participant.userId}`)
+          io.to(`user:${participant.userId}`).emit('group-member-added', memberAddedEvent)
+        })
+
+        // Also emit to the conversation room
+        console.log(`👥 CRITICAL: Emitting to conversation:${conversationId}`)
+        io.to(`conversation:${conversationId}`).emit('group-member-added', memberAddedEvent)
+
+        // Emit to the newly added member
+        console.log(`👥 CRITICAL: Emitting to newly added user:${userId}`)
+        io.to(`user:${userId}`).emit('group-member-added', memberAddedEvent)
+
+        // Emit system message for real-time chat updates
+        console.log(`👥 CRITICAL: Emitting system message to conversation:${conversationId}`)
+        io.to(`conversation:${conversationId}`).emit('new-message', systemMessage)
+        
+        console.log(`👥 CRITICAL: Successfully emitted group-member-added event for conversation ${conversationId}`)
+      } else {
+        console.error('👥 CRITICAL: Socket.IO instance not available for group-member-added event!')
+      }
+
       return res.status(201).json({
         success: true,
         member: newMember,
@@ -139,6 +217,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       })
 
+      // Emit socket event for role update
+      const io = getIO()
+      if (io) {
+        const roleUpdateEvent = {
+          type: 'member_role_updated',
+          conversationId,
+          member: {
+            id: updatedMember.id,
+            userId: updatedMember.userId,
+            role: updatedMember.role,
+            user: updatedMember.user
+          },
+          updatedBy: {
+            id: session.user.id,
+            name: session.user.name,
+            username: session.user.email
+          },
+          oldRole: member.role,
+          newRole: role
+        }
+
+        // Emit to all participants
+        conversation.participants.forEach((participant) => {
+          io.to(`user:${participant.userId}`).emit('group-member-role-updated', roleUpdateEvent)
+        })
+
+        io.to(`conversation:${conversationId}`).emit('group-member-role-updated', roleUpdateEvent)
+        
+        console.log(`Emitted group-member-role-updated event for conversation ${conversationId}`)
+      }
+
       return res.status(200).json({
         success: true,
         member: updatedMember,
@@ -170,6 +279,81 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         }
       })
+
+      // Create system message for member removal
+      const adminUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { name: true, username: true }
+      })
+
+      const systemMessage = await prisma.message.create({
+        data: {
+          content: `${adminUser?.name || adminUser?.username || 'Admin'} removed ${member.user.name || member.user.username} from the group`,
+          type: 'system',
+          status: 'sent',
+          senderId: session.user.id,
+          conversationId,
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+              avatar: true,
+            }
+          },
+          attachments: true,
+        }
+      })
+
+      // Emit socket event for member removal - ensure socket is initialized
+      let io = getIO()
+      if (!io) {
+        console.log('🗑️ CRITICAL: Socket not initialized, attempting to initialize...')
+        io = getSocketInstance(req, res)
+      }
+      console.log('🗑️ CRITICAL: Group member remove API - Socket instance available:', !!io)
+      if (io) {
+        const memberRemovedEvent = {
+          type: 'member_removed',
+          conversationId,
+          removedMember: {
+            userId: member.userId,
+            user: member.user
+          },
+          removedBy: {
+            id: session.user.id,
+            name: session.user.name,
+            username: session.user.email
+          }
+        }
+
+        console.log('🗑️ CRITICAL: About to emit group-member-removed event:', memberRemovedEvent)
+
+        // Emit to all remaining participants
+        conversation.participants.forEach((participant) => {
+          if (participant.userId !== userId) { // Don't emit to removed member
+            console.log(`🗑️ CRITICAL: Emitting to user:${participant.userId}`)
+            io.to(`user:${participant.userId}`).emit('group-member-removed', memberRemovedEvent)
+          }
+        })
+
+        console.log(`🗑️ CRITICAL: Emitting to conversation:${conversationId}`)
+        io.to(`conversation:${conversationId}`).emit('group-member-removed', memberRemovedEvent)
+
+        // Emit to the removed member so they know they were removed
+        console.log(`🗑️ CRITICAL: Emitting to removed user:${userId}`)
+        io.to(`user:${userId}`).emit('group-member-removed', memberRemovedEvent)
+
+        // Emit system message for real-time chat updates
+        console.log(`🗑️ CRITICAL: Emitting system message to conversation:${conversationId}`)
+        io.to(`conversation:${conversationId}`).emit('new-message', systemMessage)
+        
+        console.log(`🗑️ CRITICAL: Successfully emitted group-member-removed event for conversation ${conversationId}`)
+      } else {
+        console.error('🗑️ CRITICAL: Socket.IO instance not available for group-member-removed event!')
+      }
 
       return res.status(200).json({
         success: true,

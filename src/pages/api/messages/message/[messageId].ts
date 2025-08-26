@@ -11,14 +11,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const { id } = req.query
-    if (!id || typeof id !== 'string') {
+    const { messageId } = req.query
+    if (!messageId || typeof messageId !== 'string') {
       return res.status(400).json({ error: 'Message ID is required' })
     }
 
     // Verify the message exists and user has permission
     const message = await prisma.message.findUnique({
-      where: { id: id },
+      where: { id: messageId },
       include: {
         sender: {
           select: {
@@ -230,6 +230,7 @@ async function handleDeleteMessage(
   }
 
   try {
+    // Instead of deleting, update the message to show it was deleted
     // Delete related data first (due to foreign key constraints)
     await prisma.messageReaction.deleteMany({
       where: { messageId: message.id },
@@ -239,15 +240,55 @@ async function handleDeleteMessage(
       where: { messageId: message.id },
     })
 
-    // Update any messages that reply to this one
+    // Update any messages that reply to this one to reference the deleted message
     await prisma.message.updateMany({
       where: { replyToId: message.id },
       data: { replyToId: null },
     })
 
-    // Delete the message
-    await prisma.message.delete({
+    // Update the message to show it was deleted instead of removing it
+    const updatedMessage = await prisma.message.update({
       where: { id: message.id },
+      data: {
+        content: '',
+        type: 'deleted',
+        status: 'sent',
+        updatedAt: new Date(),
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            avatar: true,
+          },
+        },
+        replyTo: {
+          include: {
+            sender: {
+              select: {
+                id: true,
+                username: true,
+                name: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        reactions: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                name: true,
+              },
+            },
+          },
+        },
+        attachments: true,
+      },
     })
 
     // Emit socket event for real-time updates
@@ -267,33 +308,74 @@ async function handleDeleteMessage(
     
     console.log('API: Socket IO instance available for delete:', !!io)
     if (io) {
-      console.log('API: Emitting message-deleted event for message:', message.id)
+      console.log('API: Emitting message-updated event for deleted message:', updatedMessage.id)
       console.log('API: Delete conversation ID:', message.conversationId)
       console.log('API: Socket.IO connected clients count:', io.engine.clientsCount)
       
-      const deleteEvent = {
-        messageId: message.id,
-        conversationId: message.conversationId,
+      // Transform the message to match frontend interface
+      const transformedMessage = {
+        id: updatedMessage.id,
+        content: updatedMessage.content,
+        type: updatedMessage.type,
+        status: updatedMessage.status,
+        senderId: updatedMessage.senderId,
+        conversationId: updatedMessage.conversationId,
+        channelId: updatedMessage.channelId,
+        replyToId: updatedMessage.replyToId,
+        createdAt: updatedMessage.createdAt,
+        updatedAt: updatedMessage.updatedAt,
+        sender: {
+          id: updatedMessage.sender.id,
+          username: updatedMessage.sender.username,
+          name: updatedMessage.sender.name,
+          avatar: updatedMessage.sender.avatar,
+        },
+        replyTo: updatedMessage.replyTo ? {
+          id: updatedMessage.replyTo.id,
+          content: updatedMessage.replyTo.content,
+          sender: {
+            id: updatedMessage.replyTo.sender.id,
+            username: updatedMessage.replyTo.sender.username,
+            name: updatedMessage.replyTo.sender.name,
+          }
+        } : undefined,
+        reactions: updatedMessage.reactions.map((reaction: any) => ({
+          id: reaction.id,
+          emoji: reaction.emoji,
+          userId: reaction.userId,
+          user: {
+            id: reaction.user.id,
+            username: reaction.user.username,
+          }
+        })),
+        attachments: updatedMessage.attachments.map((attachment: any) => ({
+          id: attachment.id,
+          fileName: attachment.fileName,
+          fileSize: attachment.fileSize,
+          fileType: attachment.fileType,
+          fileUrl: attachment.fileUrl,
+          duration: attachment.duration,
+        }))
       }
       
       // Emit to all participants in the conversation
       message.conversation.participants.forEach((participant: any) => {
-        console.log(`API: Emitting message-deleted to user room: user:${participant.userId}`)
-        io.to(`user:${participant.userId}`).emit('message-deleted', deleteEvent)
+        console.log(`API: Emitting message-updated to user room: user:${participant.userId}`)
+        io.to(`user:${participant.userId}`).emit('message-updated', transformedMessage)
       })
 
       // Also emit to the conversation room
-      console.log(`API: Emitting message-deleted to conversation room: conversation:${message.conversationId}`)
-      io.to(`conversation:${message.conversationId}`).emit('message-deleted', deleteEvent)
+      console.log(`API: Emitting message-updated to conversation room: conversation:${message.conversationId}`)
+      io.to(`conversation:${message.conversationId}`).emit('message-updated', transformedMessage)
       
       // Log room members for debugging
       const conversationRoom = io.sockets.adapter.rooms.get(`conversation:${message.conversationId}`)
       console.log(`API: Conversation room members for delete:`, conversationRoom ? Array.from(conversationRoom) : 'none')
     } else {
-      console.warn('Socket.IO instance not available for message-deleted event')
+      console.warn('Socket.IO instance not available for message-updated event')
     }
 
-    return res.status(200).json({ success: true })
+    return res.status(200).json({ message: updatedMessage })
   } catch (error) {
     console.error('Error deleting message:', error)
     return res.status(500).json({ error: 'Failed to delete message' })

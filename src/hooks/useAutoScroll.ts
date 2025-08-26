@@ -36,24 +36,22 @@ export const useAutoScroll = ({
   // Stable scroll timeout reference
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Auto-scroll function with improved timing and reliability
+  // Simplified and more reliable auto-scroll function
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
       try {
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
-        // Schedule setAutoScroll for next tick to avoid state updates during render
-        setTimeout(() => setAutoScroll(true), 0)
-      } catch (error) {
-        // Fallback scroll method
-        try {
-          const container = messagesEndRef.current.parentElement
-          if (container) {
-            container.scrollTop = container.scrollHeight
-            setTimeout(() => setAutoScroll(true), 0)
-          }
-        } catch (fallbackError) {
-          // Silent fallback failure
+        // First try direct container scroll which is more reliable
+        const container = messagesEndRef.current.parentElement
+        if (container) {
+          container.scrollTop = container.scrollHeight
+          setTimeout(() => setAutoScroll(true), 0)
+        } else {
+          // Fallback to scrollIntoView
+          messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+          setTimeout(() => setAutoScroll(true), 0)
         }
+      } catch (error) {
+        console.warn('Auto-scroll failed:', error)
       }
     }
   }, [messagesEndRef, setAutoScroll])
@@ -94,63 +92,50 @@ export const useAutoScroll = ({
   useEffect(() => {
     if (!conversationId || !messages || messages.length === 0 || !userId) return
 
-    // Don't auto-scroll if we're currently loading more messages or preserving scroll position
-    if (loadingMore || (isPreservingScrollRef?.current)) return
+    // Only skip auto-scroll if we're preserving scroll position (loading older messages)
+    // Don't skip for initial loading of a conversation
+    if (isPreservingScrollRef?.current) return
 
     // Only proceed if we haven't scrolled for this conversation yet
     if (hasInitialScrolledRef.current[conversationId]) return
 
-    // Wait a bit longer to ensure messages are rendered
-    const scrollTimeout = setTimeout(() => {
-      if (!hasInitialScrolledRef.current[conversationId] && !loadingMore && !(isPreservingScrollRef?.current)) {
-        // Mark as scrolled immediately to prevent multiple attempts
-        hasInitialScrolledRef.current[conversationId] = true
-        
-        // Scroll to bottom when opening conversation
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView({ behavior: 'instant', block: 'end' })
-          // Schedule setAutoScroll for next tick to avoid state updates during render
+    // Mark as scrolled immediately to prevent multiple attempts
+    hasInitialScrolledRef.current[conversationId] = true
+
+    // Wait for messages to be fully rendered before scrolling
+    const attemptScroll = (attempt: number = 1) => {
+      if (messagesEndRef.current && !(isPreservingScrollRef?.current)) {
+        const container = messagesEndRef.current.parentElement
+        if (container) {
+          // Force scroll to absolute bottom
+          container.scrollTop = container.scrollHeight
           setTimeout(() => setAutoScroll(true), 0)
+          console.log(`Auto-scroll: Successfully scrolled to bottom for conversation ${conversationId}`)
+        } else if (attempt < 5) {
+          // Retry if container not found, with more attempts for conversations with many messages
+          setTimeout(() => attemptScroll(attempt + 1), 100 * attempt)
         }
       }
-    }, 200) // Increased delay to ensure message rendering
-    
-    return () => clearTimeout(scrollTimeout)
-  }, [conversationId, messages.length, userId, messagesEndRef, setAutoScroll, loadingMore, isPreservingScrollRef])
-
-  // Enhanced fallback scroll mechanism - only if initial scroll failed
-  useEffect(() => {
-    if (!conversationId || !messages || messages.length === 0) return
-    
-    // Don't run fallback if we're currently loading more messages or preserving scroll position
-    if (loadingMore || (isPreservingScrollRef?.current)) return
-    
-    // Only run fallbacks if initial scroll hasn't happened yet
-    if (hasInitialScrolledRef.current[conversationId]) return
-    
-    // Fallback with longer timeout to ensure messages are rendered
-    const fallbackTimeout = setTimeout(() => {
-      if (messagesEndRef.current && !hasInitialScrolledRef.current[conversationId] && !loadingMore && !(isPreservingScrollRef?.current)) {
-        hasInitialScrolledRef.current[conversationId] = true
-        
-        try {
-          messagesEndRef.current.scrollIntoView({ behavior: 'instant', block: 'end' })
-          setTimeout(() => setAutoScroll(true), 0)
-        } catch (error) {
-          // Try container scroll as backup
-          const container = messagesEndRef.current.parentElement
-          if (container) {
-            container.scrollTop = container.scrollHeight
-            setTimeout(() => setAutoScroll(true), 0)
-          }
-        }
-      }
-    }, 400) // Increased timeout to ensure messages are rendered
-
-    return () => {
-      clearTimeout(fallbackTimeout)
     }
-  }, [conversationId, messages.length, messagesEndRef, setAutoScroll, loadingMore, isPreservingScrollRef])
+
+    // Use progressive delays to handle conversations with many messages
+    const scrollWithProgression = () => {
+      // First attempt immediately
+      attemptScroll(1)
+      
+      // Additional attempts with longer delays for conversations with many messages
+      if (messages.length > 50) {
+        setTimeout(() => attemptScroll(2), 200)
+        setTimeout(() => attemptScroll(3), 500)
+      }
+    }
+
+    // Start with a small delay to ensure DOM is ready
+    setTimeout(scrollWithProgression, 100)
+    
+  }, [conversationId, messages.length, userId, messagesEndRef, setAutoScroll, isPreservingScrollRef])
+
+  // Remove the complex fallback mechanism to prevent conflicts
 
   // Listen for new messages from ALL conversations and auto-scroll if currently viewing
   useEffect(() => {
@@ -199,9 +184,14 @@ export const useAutoScroll = ({
   // Auto-scroll when user sends a message
   const scrollOnSendMessage = useCallback(() => {
     setTimeout(() => setAutoScroll(true), 0)
-    // Immediate scroll for user's own messages
+    // Immediate scroll for user's own messages using container scroll
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+      const container = messagesEndRef.current.parentElement
+      if (container) {
+        container.scrollTop = container.scrollHeight
+      } else {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+      }
     }
   }, [messagesEndRef, setAutoScroll])
 
@@ -213,28 +203,97 @@ export const useAutoScroll = ({
     }
   }, [messagesEndRef, setAutoScroll])
 
-  // Scroll to bottom when conversation changes - with proper timing
+  // Special scroll for forced refresh scenarios - more aggressive and immediate
+  const forceScrollAfterRefresh = useCallback(() => {
+    if (!conversationId || (isPreservingScrollRef?.current)) return
+    
+    console.log('useAutoScroll: Force scrolling after refresh for conversation:', conversationId)
+    
+    // Clear any existing scroll state
+    hasInitialScrolledRef.current[conversationId] = false
+    
+    // More aggressive scroll approach for refreshes
+    const aggressiveScroll = (attempt: number = 1, maxAttempts: number = 8) => {
+      if (messagesEndRef.current && !(isPreservingScrollRef?.current)) {
+        const container = messagesEndRef.current.parentElement
+        if (container) {
+          // Force immediate scroll to bottom
+          container.scrollTop = container.scrollHeight
+          
+          // Use requestAnimationFrame for better timing
+          requestAnimationFrame(() => {
+            // Double check and force again if needed
+            if (container.scrollTop < container.scrollHeight - container.clientHeight - 5) {
+              // Still not at bottom, try multiple approaches
+              container.scrollTop = container.scrollHeight
+              messagesEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' })
+              
+              // Retry with increasing delays for DOM updates
+              if (attempt < maxAttempts) {
+                setTimeout(() => aggressiveScroll(attempt + 1, maxAttempts), 50 * attempt)
+              } else {
+                console.warn('useAutoScroll: Failed to reach bottom after max attempts')
+              }
+            } else {
+              // Successfully scrolled to bottom
+              setAutoScroll(true)
+              hasInitialScrolledRef.current[conversationId] = true
+              console.log(`useAutoScroll: Successfully scrolled to bottom after refresh (attempt ${attempt})`)
+            }
+          })
+        } else {
+          // No container found, retry later
+          if (attempt < maxAttempts) {
+            setTimeout(() => aggressiveScroll(attempt + 1, maxAttempts), 100 * attempt)
+          }
+        }
+      }
+    }
+    
+    // Start immediately, then with small delay for DOM updates
+    aggressiveScroll(1, 8)
+    setTimeout(() => aggressiveScroll(2, 8), 100)
+    setTimeout(() => aggressiveScroll(3, 8), 300)
+  }, [messagesEndRef, setAutoScroll, conversationId, isPreservingScrollRef])
+
+  // Enhanced instant scroll for conversation changes, especially with many messages
   const instantScrollToBottom = useCallback(() => {
     if (!conversationId || (isPreservingScrollRef?.current)) return
     
     // Clear the initial scroll flag to allow fresh scroll
     hasInitialScrolledRef.current[conversationId] = false
     
-    // Wait for messages to be rendered before scrolling
-    const scrollWithDelay = () => {
+    // Enhanced scroll with multiple attempts for conversations with many messages
+    const scrollWithRetries = (attempt: number = 1, maxAttempts: number = 5) => {
       if (messagesEndRef.current && !(isPreservingScrollRef?.current)) {
-        messagesEndRef.current.scrollIntoView({ behavior: 'instant', block: 'end' })
-        setTimeout(() => setAutoScroll(true), 0)
-        hasInitialScrolledRef.current[conversationId] = true
+        const container = messagesEndRef.current.parentElement
+        if (container) {
+          // Use both scrollTop and scrollIntoView for maximum reliability
+          container.scrollTop = container.scrollHeight
+          
+          // Double-check scroll position and retry if needed
+          requestAnimationFrame(() => {
+            if (container.scrollTop < container.scrollHeight - container.clientHeight - 10) {
+              // Still not at bottom, try scrollIntoView as backup
+              messagesEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' })
+              
+              // Retry if we haven't reached max attempts
+              if (attempt < maxAttempts) {
+                setTimeout(() => scrollWithRetries(attempt + 1, maxAttempts), 100 * attempt)
+              }
+            } else {
+              // Successfully at bottom
+              setTimeout(() => setAutoScroll(true), 0)
+              hasInitialScrolledRef.current[conversationId] = true
+              console.log(`Instant scroll: Successfully reached bottom for conversation ${conversationId}`)
+            }
+          })
+        }
       }
     }
     
-    // Use requestAnimationFrame to ensure DOM updates are complete
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollWithDelay()
-      })
-    })
+    // Start with immediate attempt, then progressive delays
+    setTimeout(() => scrollWithRetries(1, 5), 50)
   }, [messagesEndRef, setAutoScroll, conversationId, isPreservingScrollRef])
 
   // Cleanup timeouts on unmount
@@ -250,6 +309,7 @@ export const useAutoScroll = ({
     scrollToBottom,
     scrollOnSendMessage,
     forceScrollToBottom,
+    forceScrollAfterRefresh,
     instantScrollToBottom,
   }
 }

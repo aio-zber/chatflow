@@ -23,6 +23,8 @@ interface AttachmentPreview {
   file: File
   url: string
   type: 'image' | 'file'
+  uploading?: boolean
+  uploadProgress?: number
 }
 
 export function MessageInput({ 
@@ -40,14 +42,46 @@ export function MessageInput({
   const [showStickerPicker, setShowStickerPicker] = useState(false)
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
+  const [isSending, setIsSending] = useState(false)
   
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
 
-  // Common emojis for quick access
-  const commonEmojis = ['😊', '😂', '❤️', '👍', '👎', '😮', '😢', '😡', '🎉', '🔥', '💯', '👀']
+  // Enhanced emoji collection with categories from the old stickers
+  const emojiCategories = {
+    popular: ['😊', '😂', '❤️', '👍', '👎', '😮', '😢', '😡', '🎉', '🔥', '💯', '👀'],
+    emotions: [
+      '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂',
+      '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩',
+      '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪',
+      '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨',
+      '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥',
+      '😔', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩',
+      '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯',
+      '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓'
+    ],
+    gestures: [
+      '👍', '👎', '👌', '🤌', '🤏', '✌️', '🤞', '🤟',
+      '🤘', '🤙', '👈', '👉', '👆', '👇', '☝️',
+      '👋', '🤚', '🖐️', '✋', '🖖', '👏', '🙌', '🤲',
+      '🤝', '🙏', '✍️', '💪', '🦾', '🦿', '🦵', '🦶'
+    ],
+    hearts: [
+      '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍',
+      '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖',
+      '💘', '💝', '💟', '☮️'
+    ],
+    nature: [
+      '🌱', '🌿', '🍀', '🍁', '🍂', '🍃', '🌾', '🌵',
+      '🌲', '🌳', '🌴', '🌸', '🌺', '🌻', '🌹', '🥀',
+      '🌷', '💐', '🌼', '🌙', '🌛', '🌜', '🌚', '🌕',
+      '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '⭐'
+    ]
+  }
+  
+  const [currentEmojiCategory, setCurrentEmojiCategory] = useState<keyof typeof emojiCategories>('popular')
 
   const handleInputChange = useCallback((value: string) => {
     setMessage(value)
@@ -79,10 +113,15 @@ export function MessageInput({
     }
   }
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmedMessage = message.trim()
     
     if (!trimmedMessage && attachments.length === 0) {
+      return
+    }
+
+    // Don't send if already sending
+    if (isSending) {
       return
     }
 
@@ -95,13 +134,56 @@ export function MessageInput({
       onTyping?.(false)
     }
 
-    // Send message
-    const attachmentFiles = attachments.map(a => a.file)
-    onSendMessage(trimmedMessage, attachmentFiles.length > 0 ? attachmentFiles : undefined)
+    // Set sending state
+    setIsSending(true)
 
-    // Clear input
-    setMessage('')
-    setAttachments([])
+    // If there are attachments, show uploading state
+    if (attachments.length > 0) {
+      setAttachments(prev => prev.map(att => ({ ...att, uploading: true, uploadProgress: 0 })))
+      
+      // Simulate upload progress for visual feedback
+      const progressInterval = setInterval(() => {
+        setAttachments(prev => prev.map(att => ({
+          ...att,
+          uploadProgress: Math.min((att.uploadProgress || 0) + Math.random() * 30, 90)
+        })))
+      }, 200)
+
+      try {
+        // Send message
+        const attachmentFiles = attachments.map(a => a.file)
+        await onSendMessage(trimmedMessage, attachmentFiles.length > 0 ? attachmentFiles : undefined)
+        
+        // Complete the progress
+        setAttachments(prev => prev.map(att => ({ ...att, uploadProgress: 100 })))
+        
+        // Wait a bit to show completion
+        setTimeout(() => {
+          clearInterval(progressInterval)
+          // Clear input
+          setMessage('')
+          setAttachments([])
+          setIsSending(false)
+        }, 500)
+      } catch (error) {
+        clearInterval(progressInterval)
+        setAttachments(prev => prev.map(att => ({ ...att, uploading: false, uploadProgress: 0 })))
+        setIsSending(false)
+        console.error('Failed to send message:', error)
+      }
+    } else {
+      try {
+        // Send text message
+        await onSendMessage(trimmedMessage)
+        
+        // Clear input
+        setMessage('')
+        setIsSending(false)
+      } catch (error) {
+        setIsSending(false)
+        console.error('Failed to send message:', error)
+      }
+    }
     
     // Reset textarea height
     if (textareaRef.current) {
@@ -120,6 +202,7 @@ export function MessageInput({
       if (file.size > maxSize) {
         // TODO: Show error toast
         console.error(`File too large: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`)
+        alert(`File too large: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size: ${isLargeMediaFile ? '50MB' : '10MB'}`)
         return
       }
 
@@ -128,8 +211,8 @@ export function MessageInput({
       
       if (type) {
         fileType = type
-      } else if (file.type.startsWith('image/')) {
-        fileType = 'image'
+      } else if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+        fileType = 'image' // Treat videos as visual media like images for UI purposes
       }
       
       setAttachments(prev => [...prev, { file, url, type: fileType }])
@@ -154,7 +237,6 @@ export function MessageInput({
     const newMessage = message.slice(0, start) + emoji + message.slice(end)
     
     setMessage(newMessage)
-    setShowEmojiPicker(false)
     
     // Set cursor position after emoji
     setTimeout(() => {
@@ -230,39 +312,104 @@ export function MessageInput({
               <div key={`attachment-${attachment.file.name}-${attachment.file.size}-${index}`} className="relative group">
                 {attachment.type === 'image' ? (
                   <div className="relative">
-                    <img
-                      src={attachment.url}
-                      alt={attachment.file.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
+                    {attachment.file.type.startsWith('video/') ? (
+                      <video
+                        src={attachment.url}
+                        className={`w-16 h-16 object-cover rounded-lg transition-opacity ${
+                          attachment.uploading ? 'opacity-60' : 'opacity-100'
+                        }`}
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={attachment.url}
+                        alt={attachment.file.name}
+                        className={`w-16 h-16 object-cover rounded-lg transition-opacity ${
+                          attachment.uploading ? 'opacity-60' : 'opacity-100'
+                        }`}
+                      />
+                    )}
+                    {/* Show video indicator */}
+                    {attachment.file.type.startsWith('video/') && (
+                      <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 rounded">
+                        📹
+                      </div>
+                    )}
                     {/* Show GIF indicator */}
                     {attachment.file.type === 'image/gif' && (
                       <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 rounded">
                         GIF
                       </div>
                     )}
+                    {/* Upload progress overlay */}
+                    {attachment.uploading && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mb-1" />
+                          <div className="text-xs text-white font-medium">
+                            {Math.round(attachment.uploadProgress || 0)}%
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {/* Upload progress bar */}
+                    {attachment.uploading && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-gray-200 rounded-b-lg overflow-hidden">
+                        <div 
+                          className="h-1 bg-blue-500 transition-all duration-300 ease-out"
+                          style={{ width: `${attachment.uploadProgress || 0}%` }}
+                        />
+                      </div>
+                    )}
                     <button
                       onClick={() => removeAttachment(index)}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100"
+                      disabled={attachment.uploading}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label="Remove attachment"
                     >
                       <X className="w-3 h-3" />
                     </button>
                   </div>
                 ) : (
-                  <div className="relative flex items-center space-x-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                    <File className="w-8 h-8 text-gray-500 dark:text-gray-400" />
-                    <div className="min-w-0">
+                  <div className={`relative flex items-center space-x-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg transition-opacity ${
+                    attachment.uploading ? 'opacity-60' : 'opacity-100'
+                  }`}>
+                    <div className="flex-shrink-0">
+                      {attachment.uploading ? (
+                        <div className="w-8 h-8 border-2 border-gray-400 border-t-blue-500 rounded-full animate-spin" />
+                      ) : (
+                        <File className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-32">
                         {attachment.file.name}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {(attachment.file.size / 1024 / 1024).toFixed(1)} MB
-                      </p>
+                      <div className="flex items-center space-x-2">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {(attachment.file.size / 1024 / 1024).toFixed(1)} MB
+                        </p>
+                        {attachment.uploading && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                            {Math.round(attachment.uploadProgress || 0)}%
+                          </p>
+                        )}
+                      </div>
+                      {/* Upload progress bar */}
+                      {attachment.uploading && (
+                        <div className="mt-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden h-1">
+                          <div 
+                            className="h-full bg-blue-500 transition-all duration-300 ease-out"
+                            style={{ width: `${attachment.uploadProgress || 0}%` }}
+                          />
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={() => removeAttachment(index)}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100"
+                      disabled={attachment.uploading}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label="Remove attachment"
                     >
                       <X className="w-3 h-3" />
@@ -358,18 +505,38 @@ export function MessageInput({
                 onClick={() => setShowEmojiPicker(false)}
                 aria-hidden="true"
               />
-              <div className="absolute bottom-full right-0 mb-2 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
-                <div className="grid grid-cols-6 gap-2">
-                  {commonEmojis.map((emoji) => (
+              <div className="absolute bottom-full right-0 mb-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+                {/* Emoji Category Tabs */}
+                <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+                  {Object.entries(emojiCategories).map(([key, emojis]) => (
                     <button
-                      key={emoji}
-                      onClick={() => insertEmoji(emoji)}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg hover:scale-110 transition-transform"
-                      aria-label={`Insert ${emoji} emoji`}
+                      key={key}
+                      onClick={() => setCurrentEmojiCategory(key as keyof typeof emojiCategories)}
+                      className={`px-3 py-2 text-xs font-medium whitespace-nowrap border-b-2 focus:outline-none ${
+                        currentEmojiCategory === key
+                          ? 'text-blue-600 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+                          : 'text-gray-500 border-transparent hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                      }`}
                     >
-                      {emoji}
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
                     </button>
                   ))}
+                </div>
+                
+                {/* Emoji Grid */}
+                <div className="p-3 h-48 overflow-y-auto">
+                  <div className="grid grid-cols-8 gap-2">
+                    {emojiCategories[currentEmojiCategory].map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => insertEmoji(emoji)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg hover:scale-110 transition-transform"
+                        aria-label={`Insert ${emoji} emoji`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </>
@@ -395,11 +562,15 @@ export function MessageInput({
         {/* Send button */}
         <button
           onClick={handleSend}
-          disabled={disabled || (!message.trim() && attachments.length === 0)}
+          disabled={disabled || (!message.trim() && attachments.length === 0) || isSending}
           className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Send message"
         >
-          <Send className="w-5 h-5" />
+          {isSending ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Send className="w-5 h-5" />
+          )}
         </button>
       </div>
 
@@ -418,7 +589,7 @@ export function MessageInput({
         type="file"
         multiple
         className="hidden"
-        accept="image/*,.gif"
+        accept="image/*,video/*,.gif"
         onChange={(e) => handleFileUpload(e.target.files, 'image')}
       />
 

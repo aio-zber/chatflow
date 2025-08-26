@@ -55,6 +55,7 @@ export const useConversations = () => {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [forceRefreshKey, setForceRefreshKey] = useState(0)
 
   const fetchConversations = useCallback(async () => {
     if (!session?.user?.id) return
@@ -80,6 +81,24 @@ export const useConversations = () => {
       setLoading(false)
     }
   }, [session?.user?.id])
+
+  const [refreshPending, setRefreshPending] = useState(false)
+
+  const triggerRefresh = useCallback(() => {
+    if (refreshPending) {
+      console.log('🔄 useConversations: Refresh already pending, skipping duplicate')
+      return
+    }
+    
+    console.log('🔄 useConversations: Triggering forced refresh')
+    setRefreshPending(true)
+    setForceRefreshKey(prev => prev + 1)
+    
+    // Clear pending flag after fetch completes
+    fetchConversations().finally(() => {
+      setTimeout(() => setRefreshPending(false), 100) // Small delay to prevent rapid successive calls
+    })
+  }, [fetchConversations, refreshPending])
 
   const createConversation = useCallback(async (userId: string) => {
     console.log('createConversation called with:', { userId, sessionUserId: session?.user?.id })
@@ -190,16 +209,26 @@ export const useConversations = () => {
   }, [socket, fetchConversations])
 
   useEffect(() => {
-    if (!socket) {
-      console.log('useConversations: Socket not available yet for event listeners')
+    if (!socket || !isFullyInitialized) {
+      console.log('useConversations: Socket not fully available yet for event listeners', { socket: !!socket, isFullyInitialized })
       return
     }
+    
+    console.log('🚀 useConversations: Setting up socket event listeners');
 
     const handleNewMessage = (message: Message) => {
+      console.log('useConversations: Received new-message event:', message.id, 'for conversation:', message.conversationId)
       setConversations(prev => {
+        console.log('useConversations: Current conversations count:', prev.length)
         // Find the conversation with the new message
         const targetConvIndex = prev.findIndex(conv => conv.id === message.conversationId)
-        if (targetConvIndex === -1) return prev // Conversation not found
+        console.log('useConversations: Target conversation index:', targetConvIndex)
+        if (targetConvIndex === -1) {
+          console.log('useConversations: Conversation not found, fetching fresh conversation list...')
+          // If conversation not found, it might be a new conversation - refetch immediately
+          fetchConversations()
+          return prev
+        }
         
         // Update the conversation with the new message
         const updatedConv = {
@@ -208,6 +237,9 @@ export const useConversations = () => {
           updatedAt: new Date(message.createdAt),
           unreadCount: message.senderId === session?.user?.id ? prev[targetConvIndex].unreadCount : prev[targetConvIndex].unreadCount + 1
         }
+        
+        console.log('useConversations: Updated conversation:', updatedConv.id, 'with message:', message.id)
+        console.log('useConversations: New unread count:', updatedConv.unreadCount)
         
         // Create new array with the updated conversation moved to the top
         const newConversations = [updatedConv]
@@ -219,8 +251,18 @@ export const useConversations = () => {
           }
         }
         
+        console.log('useConversations: Reordered conversations, moved conversation to top')
+        console.log('useConversations: New conversation order:', newConversations.map(c => c.id))
         return newConversations
       })
+    }
+
+    // Handle forced refresh requests from notification system
+    const handleConversationRefreshRequest = (data: { userId: string }) => {
+      if (data.userId === session?.user?.id) {
+        console.log('🔄 useConversations: Received refresh request from notification system')
+        fetchConversations()
+      }
     }
 
     const handleMessageUpdate = (updatedMessage: Message) => {
@@ -324,23 +366,41 @@ export const useConversations = () => {
       }
     }
 
-    const handleMessageStatusUpdated = (data: { messageId: string; status: string; updatedAt: string }) => {
-      console.log('Message status updated event received:', data)
-      if (data.status === 'read') {
-        // Find which conversation this message belongs to and update unread count
-        setConversations(prev => {
-          const updated = prev.map(conv => {
-            // Check if this message belongs to this conversation
-            const hasMessage = conv.messages.some(msg => msg.id === data.messageId)
-            if (hasMessage && conv.unreadCount > 0) {
-              console.log(`Reducing unread count for conversation ${conv.id} due to message ${data.messageId} being read`)
-              return { ...conv, unreadCount: Math.max(0, conv.unreadCount - 1) }
+    const handleMessageStatusUpdated = (data: { messageId: string; status: string; userId: string }) => {
+      console.log('useConversations: Message status updated event received:', data)
+      
+      // Update the message status in conversations (important for showing delivery/read indicators)
+      setConversations(prev => {
+        return prev.map(conv => {
+          // Check if this message belongs to this conversation
+          const messageExists = conv.messages.some(msg => msg.id === data.messageId)
+          if (messageExists) {
+            console.log(`useConversations: Updating message ${data.messageId} status to ${data.status} in conversation ${conv.id}`)
+            const updatedMessages = conv.messages.map(msg => {
+              if (msg.id === data.messageId) {
+                return { ...msg, status: data.status }
+              }
+              return msg
+            })
+            
+            // If message was marked as read and the current user didn't send it, decrease unread count
+            if (data.status === 'read' && conv.unreadCount > 0) {
+              const message = conv.messages.find(msg => msg.id === data.messageId)
+              if (message && message.senderId !== session?.user?.id) {
+                console.log(`useConversations: Reducing unread count for conversation ${conv.id} due to message ${data.messageId} being read`)
+                return { 
+                  ...conv, 
+                  messages: updatedMessages, 
+                  unreadCount: Math.max(0, conv.unreadCount - 1) 
+                }
+              }
             }
-            return conv
-          })
-          return updated
+            
+            return { ...conv, messages: updatedMessages }
+          }
+          return conv
         })
-      }
+      })
     }
 
     const handleUserProfileUpdated = (data: { userId: string; avatar?: string; name?: string; username?: string }) => {
@@ -415,6 +475,175 @@ export const useConversations = () => {
       })
     }
 
+    const handleUserStatusUpdate = (data: { userId: string; isOnline: boolean; lastSeen?: Date }) => {
+      // Reduced logging for performance - only log occasionally
+      if (Math.random() < 0.1) console.log('User status update received:', data)
+      setConversations(prev => {
+        return prev.map(conv => {
+          // Update participants in this conversation
+          const updatedParticipants = conv.participants.map(participant => {
+            if (participant.userId === data.userId) {
+              return {
+                ...participant,
+                user: {
+                  ...participant.user,
+                  isOnline: data.isOnline,
+                  ...(data.lastSeen && { lastSeen: new Date(data.lastSeen) })
+                }
+              }
+            }
+            return participant
+          })
+
+          // Update otherParticipants too
+          const updatedOtherParticipants = conv.otherParticipants.map(participant => {
+            if (participant.userId === data.userId) {
+              return {
+                ...participant,
+                user: {
+                  ...participant.user,
+                  isOnline: data.isOnline,
+                  ...(data.lastSeen && { lastSeen: new Date(data.lastSeen) })
+                }
+              }
+            }
+            return participant
+          })
+
+          const hasChanges = 
+            updatedParticipants.some((p, i) => p !== conv.participants[i]) ||
+            updatedOtherParticipants.some((p, i) => p !== conv.otherParticipants[i])
+
+          if (hasChanges) {
+            // Reduced logging for performance
+            if (Math.random() < 0.05) console.log(`Updated online status for user ${data.userId} in conversation ${conv.id}`)
+            return {
+              ...conv,
+              participants: updatedParticipants,
+              otherParticipants: updatedOtherParticipants
+            }
+          }
+          
+          return conv
+        })
+      })
+    }
+
+    const handleGroupMemberAdded = (data: { conversationId: string; member: any; addedBy: any }) => {
+      console.log('👥 CRITICAL: Group member added event received:', data)
+      
+      // FORCE IMMEDIATE REFRESH for group member addition 
+      console.log('👥 CRITICAL: Forcing immediate conversation refresh due to member addition')
+      triggerRefresh()
+    }
+
+    const handleGroupMemberRemoved = (data: { conversationId: string; removedMember: any; removedBy: any }) => {
+      console.log('👥 CRITICAL: Group member removed event received:', data)
+      
+      // FORCE IMMEDIATE REFRESH for group member removal
+      console.log('👥 CRITICAL: Forcing immediate conversation refresh due to member removal')
+      triggerRefresh()
+    }
+
+    const handleGroupMemberLeft = (data: { conversationId: string; memberId: string }) => {
+      console.log('👥 CRITICAL: Group member left event received:', data)
+      
+      // If current user left the group, remove the conversation entirely
+      if (data.memberId === session?.user?.id) {
+        console.log(`👥 CRITICAL: Current user left group ${data.conversationId}, removing conversation`)
+        setConversations(prev => prev.filter(conv => conv.id !== data.conversationId))
+        return
+      }
+      
+      // FORCE IMMEDIATE REFRESH for group member left
+      console.log('👥 CRITICAL: Forcing immediate conversation refresh due to member leaving')
+      triggerRefresh()
+    }
+
+    const handleGroupMemberRoleUpdated = (data: { conversationId: string; member: any; oldRole: string; newRole: string }) => {
+      console.log('Group member role updated event received:', data)
+      setConversations(prev => {
+        return prev.map(conv => {
+          if (conv.id === data.conversationId) {
+            return {
+              ...conv,
+              participants: conv.participants.map(p => 
+                p.userId === data.member.userId 
+                  ? { ...p, role: data.member.role }
+                  : p
+              ),
+              otherParticipants: conv.otherParticipants.map(p => 
+                p.userId === data.member.userId 
+                  ? { ...p, role: data.member.role }
+                  : p
+              )
+            }
+          }
+          return conv
+        })
+      })
+    }
+
+    const handleGroupDeleted = (data: { conversationId: string; deletedBy: any; reason: string }) => {
+      console.log('Group deleted event received:', data)
+      setConversations(prev => {
+        return prev.filter(conv => conv.id !== data.conversationId)
+      })
+    }
+
+    const handleUserBlocked = (data: { blocker: any; blocked: any; blockedAt: string }) => {
+      console.log('🚫 CRITICAL: User blocked event received in conversations:', data)
+      console.log('🔍 Current user ID:', session?.user?.id)
+      console.log('🔍 Blocker ID:', data.blocker?.id)
+      console.log('🔍 Blocked ID:', data.blocked?.id)
+      
+      // FORCE IMMEDIATE UI UPDATE for blocking events
+      if (data.blocker.id === session?.user?.id || data.blocked.id === session?.user?.id) {
+        console.log('🚫 CRITICAL: Current user involved in blocking - forcing immediate UI update')
+        
+        // Get the other user ID to filter out their conversation
+        const otherUserId = data.blocker.id === session?.user?.id ? data.blocked.id : data.blocker.id
+        
+        // Immediately filter out conversations with the blocked user from current state
+        setConversations(prevConversations => {
+          const filteredConversations = prevConversations.filter(conv => {
+            // Keep group conversations
+            if (conv.isGroup) return true
+            
+            // Filter out direct conversations with the blocked user
+            const hasBlockedUser = conv.participants.some(p => p.userId === otherUserId)
+            if (hasBlockedUser) {
+              console.log(`🚫 CRITICAL: Removing conversation ${conv.id} with blocked user ${otherUserId}`)
+              return false
+            }
+            
+            return true
+          })
+          
+          console.log(`🚫 CRITICAL: Filtered conversations: ${prevConversations.length} -> ${filteredConversations.length}`)
+          return filteredConversations
+        })
+        
+        // Force immediate refresh for reliability
+        triggerRefresh()
+      }
+    }
+
+    const handleUserUnblocked = async (data: { unblocker: any; unblocked: any; unblockedAt: string }) => {
+      console.log('✅ CRITICAL: User unblocked event received in conversations:', data)
+      console.log('🔍 Current user ID:', session?.user?.id)
+      console.log('🔍 Unblocker ID:', data.unblocker?.id)
+      console.log('🔍 Unblocked ID:', data.unblocked?.id)
+      
+      // FORCE IMMEDIATE REFETCH for unblocking events
+      if (data.unblocker.id === session?.user?.id || data.unblocked.id === session?.user?.id) {
+        console.log('✅ CRITICAL: Current user involved in unblocking - forcing immediate conversation refetch')
+        
+        // For unblocking, we need to refetch from backend since conversations might reappear
+        triggerRefresh()
+      }
+    }
+
     socket.on('new-message', handleNewMessage)
     socket.on('conversation-read', handleConversationRead)
     socket.on('message-status-updated', handleMessageStatusUpdated)
@@ -423,6 +652,15 @@ export const useConversations = () => {
     socket.on('new-conversation', handleNewConversation)
     socket.on('conversation-updated', handleConversationUpdate)
     socket.on('user-profile-updated', handleUserProfileUpdated)
+    socket.on('user-status-change', handleUserStatusUpdate)
+    socket.on('group-member-added', handleGroupMemberAdded)
+    socket.on('group-member-removed', handleGroupMemberRemoved)
+    socket.on('group-member-left', handleGroupMemberLeft)
+    socket.on('group-member-role-updated', handleGroupMemberRoleUpdated)
+    socket.on('group-deleted', handleGroupDeleted)
+    socket.on('user-blocked', handleUserBlocked)
+    socket.on('user-unblocked', handleUserUnblocked)
+    socket.on('conversation-refresh-request', handleConversationRefreshRequest)
 
     return () => {
       socket.off('new-message', handleNewMessage)
@@ -433,8 +671,17 @@ export const useConversations = () => {
       socket.off('new-conversation', handleNewConversation)
       socket.off('conversation-updated', handleConversationUpdate)
       socket.off('user-profile-updated', handleUserProfileUpdated)
+      socket.off('user-status-change', handleUserStatusUpdate)
+      socket.off('group-member-added', handleGroupMemberAdded)
+      socket.off('group-member-removed', handleGroupMemberRemoved)
+      socket.off('group-member-left', handleGroupMemberLeft)
+      socket.off('group-member-role-updated', handleGroupMemberRoleUpdated)
+      socket.off('group-deleted', handleGroupDeleted)
+      socket.off('user-blocked', handleUserBlocked)
+      socket.off('user-unblocked', handleUserUnblocked)
+      socket.off('conversation-refresh-request', handleConversationRefreshRequest)
     }
-  }, [socket, session?.user?.id])
+  }, [socket, isFullyInitialized, session?.user?.id, fetchConversations, triggerRefresh])
 
   const markConversationAsRead = useCallback((conversationId: string) => {
     console.log('Manually marking conversation as read:', conversationId)
@@ -451,7 +698,9 @@ export const useConversations = () => {
     conversations,
     loading,
     error,
+    forceRefreshKey,
     refetch: fetchConversations,
+    triggerRefresh,
     createConversation,
     createGroupConversation,
     markConversationAsRead,

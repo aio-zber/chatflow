@@ -61,6 +61,8 @@ model User {
   blockedUsers    UserBlock[] @relation("BlockedBy")
   blockedBy       UserBlock[] @relation("Blocked")
   callRecords     CallRecord[]
+  activeCalls     ActiveCall[]
+  hiddenMessages  MessageHidden[]
   
   // E2EE relationships
   devices         Device[]
@@ -85,6 +87,7 @@ model Message {
   content        String   @db.Text
   type           String   @default("text")
   status         String   @default("unread")
+  isSystem       Boolean  @default(false)
   senderId       String
   receiverId     String?
   conversationId String?
@@ -102,6 +105,7 @@ model Message {
   replies      Message[]     @relation("MessageReplies")
   reactions    MessageReaction[]
   attachments  MessageAttachment[]
+  hiddenBy     MessageHidden[]
 
   @@index([conversationId])
   @@index([channelId])
@@ -133,6 +137,18 @@ model MessageAttachment {
   message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
+model MessageHidden {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+}
+
 model Conversation {
   id           String    @id @default(cuid())
   name         String?
@@ -145,6 +161,7 @@ model Conversation {
   participants ConversationParticipant[]
   messages     Message[]
   callRecords  CallRecord[]
+  activeCalls  ActiveCall[]
   encryptedMessages EncryptedMessage[]
 }
 
@@ -220,6 +237,35 @@ model CallRecord {
   
   @@index([conversationId])
   @@index([callerId])
+}
+
+model ActiveCall {
+  id             String   @id @default(cuid())
+  callId         String   @unique // The call-{timestamp}-{random} format
+  conversationId String
+  callerId       String
+  callType       String   // 'voice' or 'video'
+  callerName     String
+  callerAvatar   String?
+  conversationName String?
+  isGroupCall    Boolean  @default(false)
+  participantCount Int    @default(0)
+  status         String   // 'dialing', 'ringing', 'connecting', 'connected', 'expired'
+  participants   String[] // Array of current participant user IDs
+  calleeParticipants String[] // Array of invited callee user IDs
+  startTime      BigInt   // JavaScript timestamp
+  connectedTime  BigInt?  // JavaScript timestamp when call connected
+  traceMessageId String?  // ID of the trace message created for this call
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime // When this call should expire (for cleanup)
+  
+  caller         User         @relation(fields: [callerId], references: [id], onDelete: Cascade)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([callId])
+  @@index([conversationId])
+  @@index([callerId])
+  @@index([expiresAt]) // For cleanup queries
 }
 
 // E2EE Models

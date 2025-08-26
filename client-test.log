@@ -1,0 +1,22 @@
+🚀 Starting call flow test...
+📞 User 1 (Caller) connected: 6bHqV1VYx7gmel3XAAAU
+📱 User 2 (Recipient) connected: 2n3udIfWjVmUuOtmAAAV
+📞 User 1: Initiating call...
+✅ User 1: Call initiated: {
+  callId: 'call-1755666503341-poeeki9mn',
+  conversationId: 'test-conversation',
+  callType: 'voice'
+}
+📞 User 2: Incoming call: {
+  conversationId: 'test-conversation',
+  callType: 'voice',
+  callerName: 'Test User 1',
+  callerAvatar: null,
+  conversationName: 'Test Conversation',
+  isGroupCall: false,
+  participantCount: 2,
+  callId: 'call-1755666503341-poeeki9mn',
+  callerId: 'test-user-1'
+}
+✅ User 2: Accepting call...
+🛑 Test completed. Cleaning up...
