@@ -15,27 +15,37 @@ const createConversationSchema = z.object({
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Log all incoming requests for debugging
-  console.log(`🌐 API REQUEST: ${req.method} ${req.url}`, {
-    method: req.method,
-    headers: {
+  try {
+    // CRITICAL: Log every single request that reaches this handler
+    console.log(`🚨 CONVERSATIONS API CALLED: ${req.method} ${req.url}`)
+    console.log(`🚨 REQUEST BODY:`, req.body)
+    console.log(`🚨 REQUEST HEADERS:`, {
       'content-type': req.headers['content-type'],
       'user-agent': req.headers['user-agent']?.substring(0, 50),
-      'origin': req.headers.origin
-    },
-    hasBody: !!req.body,
-    timestamp: new Date().toISOString()
-  })
-
-  // Handle CORS
-  if (corsMiddleware(req, res)) {
-    return // CORS preflight handled
+      'origin': req.headers.origin,
+      'cookie': req.headers.cookie ? 'Present' : 'Missing'
+    })
+    console.log(`🚨 TIMESTAMP:`, new Date().toISOString())
+    
+    // Handle CORS
+    if (corsMiddleware(req, res)) {
+      console.log(`🚨 CORS PREFLIGHT HANDLED`)
+      return // CORS preflight handled
+    }
+  } catch (topLevelError: any) {
+    console.error('🚨 CRITICAL ERROR AT API ENTRY POINT:', topLevelError)
+    return res.status(500).json({ 
+      error: 'Critical API entry error',
+      details: topLevelError?.message,
+      timestamp: new Date().toISOString()
+    })
   }
 
-  let session: any
-  let user: any
-
   try {
+    let session: any
+    let user: any
+
+    try {
     session = await getServerSession(req, res, authOptions)
     
     // Enhanced session debugging for Railway
@@ -424,6 +434,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     }
   } else {
+    console.log(`🚨 METHOD NOT ALLOWED: ${req.method}`)
     res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  } catch (handlerError: any) {
+    console.error('🚨 UNHANDLED ERROR IN CONVERSATIONS API:', {
+      error: handlerError?.message,
+      stack: handlerError?.stack,
+      method: req.method,
+      url: req.url,
+      timestamp: new Date().toISOString()
+    })
+    
+    // Ensure we always send a response
+    if (!res.headersSent) {
+      return res.status(500).json({ 
+        error: 'Unhandled server error',
+        details: process.env.NODE_ENV !== 'production' ? handlerError?.message : 'Internal server error',
+        timestamp: new Date().toISOString()
+      })
+    }
   }
 }
