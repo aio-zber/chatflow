@@ -328,8 +328,7 @@ const nextConfig = {
     esmExternals: 'loose'
   },
   
-  // Output optimization - only use standalone for production builds
-  ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
+  // Output optimization - disabled for Railway deployment compatibility
   
   // Enable gzip compression
   async rewrites() {

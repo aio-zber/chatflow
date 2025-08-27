@@ -191,22 +191,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         method: req.method
       })
       
-      const { userId, isGroup, name, description } = createConversationSchema.parse(req.body)
+      const validationResult = createConversationSchema.safeParse(req.body)
       
-      console.log('Parsed data:', { userId, isGroup, name, description })
+      if (!validationResult.success) {
+        console.error('Validation failed:', validationResult.error.issues)
+        return res.status(400).json({ 
+          error: 'Invalid input', 
+          details: validationResult.error.issues 
+        })
+      }
+
+      const { userId, isGroup, name, description } = validationResult.data
       
-      // Check if target user exists
-      const targetUser = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true, username: true, name: true }
-      })
+      console.log('Parsed data:', { userId, isGroup, name, description, currentUserId: user.id })
       
-      if (!targetUser) {
-        console.error('Target user not found:', userId)
-        return res.status(404).json({ error: 'User not found' })
+      // Prevent users from creating conversations with themselves
+      if (!isGroup && userId === user.id) {
+        console.error('User attempting to create conversation with themselves:', user.id)
+        return res.status(400).json({ error: 'Cannot create conversation with yourself' })
       }
       
-      console.log('Target user found:', targetUser)
+      // Check if target user exists
+      try {
+        console.log('Checking if target user exists:', userId)
+        const targetUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { id: true, username: true, name: true }
+        })
+        
+        if (!targetUser) {
+          console.error('Target user not found:', userId)
+          return res.status(404).json({ error: 'User not found' })
+        }
+        
+        console.log('Target user found:', targetUser)
+      } catch (dbError: any) {
+        console.error('Database error while finding target user:', {
+          error: dbError?.message,
+          userId,
+          timestamp: new Date().toISOString()
+        })
+        throw dbError
+      }
 
       if (!isGroup) {
         // Check if either user has blocked the other
@@ -235,11 +261,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const existingConversation = await prisma.conversation.findFirst({
           where: {
             isGroup: false,
-            participants: {
-              every: {
-                userId: { in: [user.id, userId] }
+            AND: [
+              {
+                participants: {
+                  some: { userId: user.id }
+                }
+              },
+              {
+                participants: {
+                  some: { userId: userId }
+                }
               }
-            }
+            ]
           },
           include: {
             participants: true
@@ -251,39 +284,68 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      const conversation = await prisma.conversation.create({
-        data: {
-          name,
-          description,
-          isGroup,
-          participants: {
-            create: [
-              { userId: user.id, role: isGroup ? 'admin' : 'member' },
-              { userId, role: 'member' }
-            ]
-          }
-        },
-        include: {
-          participants: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  name: true,
-                  avatar: true,
-                  isOnline: true,
-                  lastSeen: true,
+      console.log('Creating new conversation between users:', { currentUserId: user.id, targetUserId: userId, isGroup })
+      
+      let conversation
+      try {
+        conversation = await prisma.conversation.create({
+          data: {
+            name,
+            description,
+            isGroup,
+            participants: {
+              create: [
+                { 
+                  userId: user.id, 
+                  role: isGroup ? 'admin' : 'member',
+                  lastReadAt: new Date()
+                },
+                { 
+                  userId, 
+                  role: 'member',
+                  lastReadAt: new Date()
                 }
-              }
+              ]
             }
           },
-          messages: {
-            orderBy: { createdAt: 'desc' },
-            take: 1,
+          include: {
+            participants: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                    name: true,
+                    avatar: true,
+                    isOnline: true,
+                    lastSeen: true,
+                  }
+                }
+              }
+            },
+            messages: {
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+            }
           }
-        }
-      })
+        })
+        
+        console.log('Conversation created successfully:', { 
+          conversationId: conversation.id, 
+          participantCount: conversation.participants.length 
+        })
+      } catch (dbError: any) {
+        console.error('Database error during conversation creation:', {
+          error: dbError?.message,
+          code: dbError?.code,
+          meta: dbError?.meta,
+          currentUserId: user.id,
+          targetUserId: userId,
+          isGroup,
+          timestamp: new Date().toISOString()
+        })
+        throw dbError
+      }
 
       // Emit socket event to all participants
       try {
@@ -301,11 +363,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           otherParticipants: conversation.participants.filter(p => p.userId !== user.id)
         }
 
-        // Emit to each participant
+        // Emit to each participant using their user room
         conversation.participants.forEach(participant => {
           if (participant.userId !== user.id) {
-            console.log(`Emitting new-conversation to participant: ${participant.userId}`)
-            io.emit('new-conversation', {
+            console.log(`Emitting new-conversation to participant room: user:${participant.userId}`)
+            io.to(`user:${participant.userId}`).emit('new-conversation', {
               ...conversationWithExtras,
               otherParticipants: conversation.participants.filter(p => p.userId !== participant.userId)
             })
@@ -328,25 +390,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       console.error('Create conversation error:', error)
       
-      // Enhanced error logging for Railway debugging
-      console.error('Error details:', {
+      // Enhanced error logging for production debugging
+      console.error('POST Error details:', {
         name: error?.name,
         message: error?.message,
-        stack: error?.stack,
+        stack: error?.stack?.substring(0, 500), // Truncate stack trace
         code: error?.code,
-        meta: error?.meta
+        meta: error?.meta,
+        userId: user?.id,
+        requestBody: req.body,
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV
       })
       
-      // Return more specific error information in development
-      if (process.env.NODE_ENV !== 'production') {
-        return res.status(500).json({ 
-          error: 'Internal server error', 
-          details: error?.message,
-          type: error?.constructor?.name
-        })
-      }
-      
-      res.status(500).json({ error: 'Internal server error' })
+      // Return error details in all environments for debugging production issues
+      return res.status(500).json({ 
+        error: 'Internal server error', 
+        details: process.env.NODE_ENV !== 'production' ? error?.message : 'Conversation creation failed',
+        type: error?.constructor?.name,
+        timestamp: new Date().toISOString()
+      })
     }
   } else {
     res.status(405).json({ error: 'Method not allowed' })
