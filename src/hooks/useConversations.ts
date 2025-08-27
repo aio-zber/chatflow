@@ -143,6 +143,7 @@ export const useConversations = () => {
       
       const response = await fetch('/api/conversations', {
         method: 'POST',
+        credentials: 'include', // Ensure cookies are included for authentication
         headers: {
           'Content-Type': 'application/json',
         },
@@ -152,8 +153,22 @@ export const useConversations = () => {
       console.log('API response status:', response.status, response.statusText)
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create conversation')
+        let errorData
+        try {
+          errorData = await response.json()
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError)
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` }
+        }
+        
+        console.error('Conversation creation failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorData,
+          timestamp: new Date().toISOString()
+        })
+        
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to create conversation`)
       }
 
       const data = await response.json()
@@ -188,6 +203,7 @@ export const useConversations = () => {
     try {
       const response = await fetch('/api/conversations/group', {
         method: 'POST',
+        credentials: 'include', // Ensure cookies are included for authentication
         headers: {
           'Content-Type': 'application/json',
         },

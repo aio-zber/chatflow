@@ -15,6 +15,18 @@ const createConversationSchema = z.object({
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Log all incoming requests for debugging
+  console.log(`🌐 API REQUEST: ${req.method} ${req.url}`, {
+    method: req.method,
+    headers: {
+      'content-type': req.headers['content-type'],
+      'user-agent': req.headers['user-agent']?.substring(0, 50),
+      'origin': req.headers.origin
+    },
+    hasBody: !!req.body,
+    timestamp: new Date().toISOString()
+  })
+
   // Handle CORS
   if (corsMiddleware(req, res)) {
     return // CORS preflight handled

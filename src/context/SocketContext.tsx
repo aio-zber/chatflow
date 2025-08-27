@@ -84,7 +84,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       const joinAllUserConversations = async () => {
         try {
           console.log('Auto-joining all user conversations...')
-          const response = await fetch('/api/conversations')
+          const response = await fetch('/api/conversations', { credentials: 'include' })
           if (response.ok) {
             const data = await response.json()
             const conversations = data.conversations || []
@@ -143,7 +143,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         // Also refresh conversations to ensure the new group appears
         setTimeout(async () => {
           try {
-            const response = await fetch('/api/conversations')
+            const response = await fetch('/api/conversations', { credentials: 'include' })
             if (response.ok) {
               console.log('SocketContext: Refreshed conversations after being added to group')
             }
@@ -168,7 +168,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         // Also refresh conversations to remove the group from the list
         setTimeout(async () => {
           try {
-            const response = await fetch('/api/conversations')
+            const response = await fetch('/api/conversations', { credentials: 'include' })
             if (response.ok) {
               console.log('SocketContext: Refreshed conversations after leaving group')
             }
