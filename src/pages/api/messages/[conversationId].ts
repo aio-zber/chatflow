@@ -46,7 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         content: true,
         type: true,
         status: true,
-        isSystem: true,
         senderId: true,
         conversationId: true,
         channelId: true,

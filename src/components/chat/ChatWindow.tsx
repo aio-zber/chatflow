@@ -22,7 +22,7 @@ interface MessageBubbleMessage {
   id: string
   content: string
   type: string
-  isSystem: boolean
+  isSystem?: boolean
   senderId: string
   senderName: string
   senderImage?: string
@@ -326,7 +326,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       id: msg.id,
       content,
       type: msg.type,
-      isSystem: msg.isSystem,
+      isSystem: msg.isSystem ?? false,
       senderId: msg.senderId,
       senderName: msg.sender.name || msg.sender.username,
       senderImage: msg.sender.avatar || undefined,

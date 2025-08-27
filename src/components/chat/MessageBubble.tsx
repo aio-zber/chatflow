@@ -24,7 +24,7 @@ interface Message {
   content: string
   type: string
   status: 'sending' | 'sent' | 'delivered' | 'read' | 'unread'
-  isSystem: boolean
+  isSystem?: boolean
   senderId: string
   senderName: string
   senderImage?: string
@@ -260,8 +260,8 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
   }, [showReactions, showMoreOptions, showActions])
 
   const isOwnMessage = message.senderId === session?.user?.id
-  const isSystemMessage = message.type === 'system' || (message.type === 'call' && message.isSystem)
-  const isCallMessage = message.type === 'call' && !message.isSystem
+  const isSystemMessage = message.type === 'system' || (message.type === 'call' && (message.isSystem ?? false))
+  const isCallMessage = message.type === 'call' && !(message.isSystem ?? false)
   const isCallTrace = message.type === 'call_trace'
   const commonReactions = ['❤️', '👍', '😂', '😮', '😢', '😡']
 
