@@ -182,7 +182,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
     let io = res.socket?.server?.io
     if (!io) {
       console.log('Socket.IO server not found, initializing...')
-      const { getSocketInstance } = require('@/lib/socket')
+      const { getSocketInstance } = await import('@/lib/socket')
       io = getSocketInstance(req, res)
     }
 

@@ -34,7 +34,7 @@ export class ScreenShareManager {
 
       // Add system audio if supported and requested
       if (options.systemAudio && 'getDisplayMedia' in navigator.mediaDevices) {
-        // @ts-ignore - systemAudio is experimental
+        // @ts-expect-error - systemAudio is experimental
         constraints.audio = {
           ...constraints.audio,
           systemAudio: 'include'
