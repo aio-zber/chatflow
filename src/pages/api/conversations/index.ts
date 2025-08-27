@@ -15,6 +15,9 @@ const createConversationSchema = z.object({
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // CRITICAL: Immediate logging before ANY processing
+  console.log(`🚨🚨🚨 HANDLER ENTRY: ${req.method} ${req.url} AT ${new Date().toISOString()}`)
+  
   try {
     // CRITICAL: Log every single request that reaches this handler
     console.log(`🚨 CONVERSATIONS API CALLED: ${req.method} ${req.url}`)
