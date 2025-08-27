@@ -62,13 +62,37 @@ export const useConversations = () => {
 
     try {
       setLoading(true)
-      const response = await fetch('/api/conversations')
+      console.log('🔍 fetchConversations: Starting fetch with session:', {
+        hasSession: !!session,
+        userId: session.user?.id,
+        userEmail: session.user?.email
+      })
+      
+      const response = await fetch('/api/conversations', {
+        method: 'GET',
+        credentials: 'include', // Ensure cookies are included
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      
+      console.log('🔍 fetchConversations: Response received:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      })
       
       if (!response.ok) {
-        throw new Error('Failed to fetch conversations')
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('🔍 fetchConversations: Error response:', errorData)
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('🔍 fetchConversations: Success data:', { 
+        conversationsCount: data.conversations?.length || 0 
+      })
+      
       // Sort conversations by updatedAt timestamp (most recent first)
       const sortedConversations = (data.conversations || []).sort((a: Conversation, b: Conversation) => 
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -76,7 +100,9 @@ export const useConversations = () => {
       setConversations(sortedConversations)
       setError(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch conversations')
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch conversations'
+      console.error('🔍 fetchConversations: Final error:', errorMsg)
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }

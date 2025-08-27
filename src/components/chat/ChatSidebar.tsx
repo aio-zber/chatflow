@@ -390,7 +390,13 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
     return (
       <div className="p-4 text-center text-red-600 dark:text-red-400">
         <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">{error}</p>
+        <p className="text-sm mb-3">{error}</p>
+        <button
+          onClick={() => setForceRefreshKey(prev => prev + 1)}
+          className="px-3 py-1 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+        >
+          Try Again
+        </button>
       </div>
     )
   }

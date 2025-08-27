@@ -132,7 +132,7 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
         cors: {
           origin: process.env.NODE_ENV === 'production' 
             ? [process.env.NEXTAUTH_URL, process.env.NEXT_PUBLIC_SOCKET_URL].filter(Boolean)
-            : ['http://localhost:3000', 'http://localhost:3001'],
+            : ['http://localhost:3000'],
           methods: ['GET', 'POST'],
           credentials: false,
           allowedHeaders: ['Content-Type'],
