@@ -69,6 +69,7 @@ export default function SignIn() {
               id="email"
               type="email"
               required
+              autoComplete="email"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
               placeholder="Enter your email"
               value={formData.email}
@@ -85,6 +86,7 @@ export default function SignIn() {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 required
+                autoComplete="current-password"
                 className="block w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 placeholder="Enter your password"
                 value={formData.password}

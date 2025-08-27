@@ -57,10 +57,10 @@ const nextConfig = {
       "frame-ancestors 'none'"
     ].join('; ');
 
-    // Production CSP - more restrictive but still functional
+    // Production CSP - functional for Next.js with security
     const prodCSP = [
       "default-src 'self'",
-      "script-src 'self' 'wasm-unsafe-eval'", // Only WASM for libsignal in production
+      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'", // Need unsafe-inline for Next.js runtime
       "style-src 'self' 'unsafe-inline'", // Tailwind CSS
       "img-src 'self' data: blob: https:",
       "media-src 'self' blob:",

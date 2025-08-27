@@ -205,6 +205,7 @@ const CreateBackupTab: React.FC = () => {
                   setUseGeneratedPassphrase(false);
                 }}
                 placeholder="Enter a strong passphrase (min 12 characters)"
+                autoComplete="new-password"
                 className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
               <button
@@ -221,6 +222,7 @@ const CreateBackupTab: React.FC = () => {
               value={confirmPassphrase}
               onChange={(e) => setConfirmPassphrase(e.target.value)}
               placeholder="Confirm passphrase"
+              autoComplete="new-password"
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
@@ -378,6 +380,7 @@ const RestoreBackupTab: React.FC = () => {
               value={passphrase}
               onChange={(e) => setPassphrase(e.target.value)}
               placeholder="Enter your backup passphrase"
+              autoComplete="current-password"
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
             <button
