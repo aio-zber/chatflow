@@ -108,8 +108,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { updatedAt: 'desc' }
       })
       
+      // Transform conversations to include otherParticipants for backward compatibility
+      const transformedConversations = conversations.map(conv => ({
+        ...conv,
+        otherParticipants: conv.participants.filter(p => p.userId !== user.id)
+      }))
+      
       console.log(`🚨 GET CONVERSATIONS SUCCESS: ${conversations.length} found`)
-      return res.json({ conversations })
+      return res.json({ conversations: transformedConversations })
       
     } else if (req.method === 'POST') {
       console.log(`🚨 PROCESSING POST REQUEST`)
@@ -139,6 +145,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       
       console.log(`🚨 TARGET USER FOUND:`, targetUser.id)
+      
+      // Check if conversation already exists between these users (prevent duplicates)
+      const existingConversation = await prisma.conversation.findFirst({
+        where: {
+          AND: [
+            { isGroup: false },
+            {
+              participants: {
+                some: { userId: user.id }
+              }
+            },
+            {
+              participants: {
+                some: { userId: userId }
+              }
+            }
+          ]
+        },
+        include: {
+          participants: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  name: true,
+                  avatar: true,
+                  isOnline: true,
+                  lastSeen: true,
+                }
+              }
+            }
+          }
+        }
+      })
+      
+      if (existingConversation) {
+        console.log(`🚨 EXISTING CONVERSATION FOUND:`, existingConversation.id)
+        // Transform conversation to include otherParticipants
+        const transformedConversation = {
+          ...existingConversation,
+          otherParticipants: existingConversation.participants.filter(p => p.userId !== user.id)
+        }
+        return res.status(200).json({ conversation: transformedConversation })
+      }
       
       // Create conversation
       const conversation = await prisma.conversation.create({
@@ -179,8 +230,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       })
       
+      // Transform conversation to include otherParticipants
+      const transformedConversation = {
+        ...conversation,
+        otherParticipants: conversation.participants.filter(p => p.userId !== user.id)
+      }
+      
       console.log(`🚨 CONVERSATION CREATED SUCCESS:`, conversation.id)
-      return res.status(201).json({ conversation })
+      return res.status(201).json({ conversation: transformedConversation })
       
     } else {
       console.log(`🚨 METHOD NOT ALLOWED: ${req.method}`)
