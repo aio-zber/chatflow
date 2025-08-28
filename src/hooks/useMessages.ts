@@ -28,7 +28,6 @@ interface Message {
   content: string
   type: string
   status: string
-  isSystem?: boolean
   senderId: string
   conversationId: string | null
   channelId: string | null

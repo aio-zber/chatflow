@@ -122,6 +122,16 @@ export const authOptions: AuthOptions = {
     maxAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Always redirect to the base URL after logout to prevent redirect loops
+      if (url.includes('signout') || url.includes('signin')) {
+        return baseUrl
+      }
+      // For other redirects, ensure we stay within our domain
+      if (url.startsWith('/')) return `${baseUrl}${url}`
+      if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
@@ -230,6 +240,24 @@ export const authOptions: AuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
+  },
+  events: {
+    async signOut({ token, session }) {
+      // Mark user as offline when they sign out
+      if (token?.id) {
+        try {
+          await prisma.user.update({
+            where: { id: token.id as string },
+            data: { 
+              isOnline: false,
+              lastSeen: new Date()
+            }
+          })
+        } catch (error) {
+          console.error('Error updating user offline status on signOut:', error)
+        }
+      }
+    }
   },
 }
 

@@ -67,7 +67,7 @@ async function createCallTrace(call: any, status: 'missed' | 'completed' | 'decl
       traceContent = `${callTypeIcon} ${call.callType} call - Cancelled`
     }
     
-    // Create trace message as regular message from caller (not system message)
+    // Create trace message as regular message from caller
     const traceMessage = await prisma.message.create({
       data: {
         conversationId: call.conversationId,

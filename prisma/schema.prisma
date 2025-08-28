@@ -13,15 +13,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -35,39 +34,36 @@ model Session {
 }
 
 model User {
-  id              String    @id @default(cuid())
-  email           String    @unique
-  username        String    @unique
-  password        String?
-  name            String?
-  avatar          String?
-  bio             String?
-  status          String    @default("offline")
-  lastSeen        DateTime  @default(now())
-  isOnline        Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  emailVerified   DateTime?
-  
-  accounts        Account[]
-  sessions        Session[]
-  sentMessages    Message[] @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
-  conversations   ConversationParticipant[]
-  channels        ChannelMember[]
-  createdChannels Channel[] @relation("ChannelCreator")
-  notifications   Notification[]
-  messageReactions MessageReaction[]
-  blockedUsers    UserBlock[] @relation("BlockedBy")
-  blockedBy       UserBlock[] @relation("Blocked")
-  callRecords     CallRecord[]
-  activeCalls     ActiveCall[]
-  hiddenMessages  MessageHidden[]
-  
-  // E2EE relationships
-  devices         Device[]
+  id                 String                    @id @default(cuid())
+  email              String                    @unique
+  username           String                    @unique
+  password           String?
+  name               String?
+  avatar             String?
+  bio                String?
+  status             String                    @default("offline")
+  lastSeen           DateTime                  @default(now())
+  isOnline           Boolean                   @default(false)
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  emailVerified      DateTime?
+  accounts           Account[]
+  activeCalls        ActiveCall[]
+  callRecords        CallRecord[]
+  createdChannels    Channel[]                 @relation("ChannelCreator")
+  channels           ChannelMember[]
+  conversations      ConversationParticipant[]
+  receivedMessages   Message[]                 @relation("ReceivedMessages")
+  sentMessages       Message[]                 @relation("SentMessages")
+  hiddenMessages     MessageHidden[]
+  messageReactions   MessageReaction[]
+  notifications      Notification[]
+  sessions           Session[]
+  blockedBy          UserBlock[]               @relation("Blocked")
+  blockedUsers       UserBlock[]               @relation("BlockedBy")
   deviceProvisioning DeviceProvisioning[]
-  encryptedBackups EncryptedBackup[]
+  devices            Device[]
+  encryptedBackups   EncryptedBackup[]
 }
 
 model UserBlock {
@@ -75,37 +71,34 @@ model UserBlock {
   blockerId String
   blockedId String
   createdAt DateTime @default(now())
-
-  blocker User @relation("BlockedBy", fields: [blockerId], references: [id], onDelete: Cascade)
-  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  blocker   User     @relation("BlockedBy", fields: [blockerId], references: [id], onDelete: Cascade)
 
   @@unique([blockerId, blockedId])
 }
 
 model Message {
-  id             String   @id @default(cuid())
-  content        String   @db.Text
-  type           String   @default("text")
-  status         String   @default("unread")
-  isSystem       Boolean?
+  id             String              @id @default(cuid())
+  content        String
+  type           String              @default("text")
+  status         String              @default("unread")
   senderId       String
   receiverId     String?
   conversationId String?
   channelId      String?
   replyToId      String?
   editedAt       DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  
-  sender       User          @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver     User?         @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  channel      Channel?      @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  replyTo      Message?      @relation("MessageReplies", fields: [replyToId], references: [id])
-  replies      Message[]     @relation("MessageReplies")
-  reactions    MessageReaction[]
-  attachments  MessageAttachment[]
-  hiddenBy     MessageHidden[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  channel        Channel?            @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  conversation   Conversation?       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  receiver       User?               @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  replyTo        Message?            @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies        Message[]           @relation("MessageReplies")
+  sender         User                @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  attachments    MessageAttachment[]
+  hiddenBy       MessageHidden[]
+  reactions      MessageReaction[]
 
   @@index([conversationId])
   @@index([channelId])
@@ -118,9 +111,8 @@ model MessageReaction {
   userId    String
   emoji     String
   createdAt DateTime @default(now())
-
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([messageId, userId, emoji])
 }
@@ -133,8 +125,7 @@ model MessageAttachment {
   fileType  String
   fileUrl   String
   createdAt DateTime @default(now())
-
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
 model MessageHidden {
@@ -142,26 +133,24 @@ model MessageHidden {
   messageId String
   userId    String
   createdAt DateTime @default(now())
-
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([messageId, userId])
 }
 
 model Conversation {
-  id           String    @id @default(cuid())
-  name         String?
-  description  String?
-  isGroup      Boolean   @default(false)
-  avatar       String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  
-  participants ConversationParticipant[]
-  messages     Message[]
-  callRecords  CallRecord[]
-  activeCalls  ActiveCall[]
+  id                String                    @id @default(cuid())
+  name              String?
+  description       String?
+  isGroup           Boolean                   @default(false)
+  avatar            String?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  activeCalls       ActiveCall[]
+  callRecords       CallRecord[]
+  participants      ConversationParticipant[]
+  messages          Message[]
   encryptedMessages EncryptedMessage[]
 }
 
@@ -172,26 +161,24 @@ model ConversationParticipant {
   role           String       @default("member")
   joinedAt       DateTime     @default(now())
   lastReadAt     DateTime?
-  
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, conversationId])
 }
 
 model Channel {
-  id          String    @id @default(cuid())
+  id          String          @id @default(cuid())
   name        String
   description String?
-  isPrivate   Boolean   @default(false)
+  isPrivate   Boolean         @default(false)
   avatar      String?
   createdBy   String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  creator  User            @relation("ChannelCreator", fields: [createdBy], references: [id])
-  messages Message[]
-  members  ChannelMember[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  creator     User            @relation("ChannelCreator", fields: [createdBy], references: [id])
+  members     ChannelMember[]
+  messages    Message[]
 }
 
 model ChannelMember {
@@ -200,9 +187,8 @@ model ChannelMember {
   channelId String
   role      String   @default("member")
   joinedAt  DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, channelId])
 }
@@ -215,80 +201,75 @@ model Notification {
   content   String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model CallRecord {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   conversationId String?
   callerId       String
-  callType       String   // 'voice' or 'video'
-  status         String   // 'completed', 'missed', 'cancelled'
-  duration       Int      @default(0) // duration in seconds
-  startedAt      DateTime @default(now())
+  callType       String
+  status         String
+  duration       Int           @default(0)
+  startedAt      DateTime      @default(now())
   endedAt        DateTime?
-  participants   String[] // Array of participant user IDs
-  
+  participants   String[]
   caller         User          @relation(fields: [callerId], references: [id], onDelete: Cascade)
   conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
+
   @@index([conversationId])
   @@index([callerId])
 }
 
 model ActiveCall {
-  id             String   @id @default(cuid())
-  callId         String   @unique // The call-{timestamp}-{random} format
-  conversationId String
-  callerId       String
-  callType       String   // 'voice' or 'video'
-  callerName     String
-  callerAvatar   String?
-  conversationName String?
-  isGroupCall    Boolean  @default(false)
-  participantCount Int    @default(0)
-  status         String   // 'dialing', 'ringing', 'connecting', 'connected', 'expired'
-  participants   String[] // Array of current participant user IDs
-  calleeParticipants String[] // Array of invited callee user IDs
-  startTime      BigInt   // JavaScript timestamp
-  connectedTime  BigInt?  // JavaScript timestamp when call connected
-  traceMessageId String?  // ID of the trace message created for this call
-  createdAt      DateTime @default(now())
-  expiresAt      DateTime // When this call should expire (for cleanup)
-  
-  caller         User         @relation(fields: [callerId], references: [id], onDelete: Cascade)
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
+  id                 String       @id @default(cuid())
+  callId             String       @unique
+  conversationId     String
+  callerId           String
+  callType           String
+  callerName         String
+  callerAvatar       String?
+  conversationName   String?
+  isGroupCall        Boolean      @default(false)
+  participantCount   Int          @default(0)
+  status             String
+  participants       String[]
+  calleeParticipants String[]
+  startTime          BigInt
+  connectedTime      BigInt?
+  traceMessageId     String?
+  createdAt          DateTime     @default(now())
+  expiresAt          DateTime
+  caller             User         @relation(fields: [callerId], references: [id], onDelete: Cascade)
+  conversation       Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
   @@index([callId])
   @@index([conversationId])
   @@index([callerId])
-  @@index([expiresAt]) // For cleanup queries
+  @@index([expiresAt])
 }
 
-// E2EE Models
 model Device {
-  id             String   @id @default(cuid())
-  userId         String
-  registrationId Int
-  identityKey    String   // Public key only
-  name           String?
-  isPrimary      Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  lastSeen       DateTime?
-  
-  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  signedPreKeys         SignedPreKey[]
-  oneTimePreKeys        OneTimePreKey[]
-  sentMessages          EncryptedMessage[]     @relation("SentMessages")
-  receivedMessages      EncryptedMessage[]     @relation("ReceivedMessages")
-  groupSenderKeys       GroupSenderKey[]       @relation("SenderDevice")
-  groupReceivedKeys     GroupSenderKey[]       @relation("RecipientDevice")
-  uploadedAttachments   EncryptedAttachment[]
-  backups               EncryptedBackup[]
-  
+  id                  String                @id @default(cuid())
+  userId              String
+  registrationId      Int
+  identityKey         String
+  name                String?
+  isPrimary           Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  lastSeen            DateTime?
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadedAttachments EncryptedAttachment[]
+  backups             EncryptedBackup[]
+  receivedMessages    EncryptedMessage[]    @relation("ReceivedMessages")
+  sentMessages        EncryptedMessage[]    @relation("SentMessages")
+  groupReceivedKeys   GroupSenderKey[]      @relation("RecipientDevice")
+  groupSenderKeys     GroupSenderKey[]      @relation("SenderDevice")
+  oneTimePreKeys      OneTimePreKey[]
+  signedPreKeys       SignedPreKey[]
+
   @@unique([userId, registrationId])
   @@map("devices")
 }
@@ -300,9 +281,8 @@ model SignedPreKey {
   publicKey String
   signature String
   createdAt DateTime @default(now())
-  
-  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
   @@unique([deviceId, keyId])
   @@map("signed_prekeys")
 }
@@ -314,27 +294,25 @@ model OneTimePreKey {
   publicKey String
   createdAt DateTime  @default(now())
   usedAt    DateTime?
-  
-  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  
+  device    Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
   @@unique([deviceId, keyId])
   @@map("one_time_prekeys")
 }
 
 model EncryptedMessage {
-  id                String    @id @default(cuid())
+  id                String        @id @default(cuid())
   senderDeviceId    String
   recipientDeviceId String
   conversationId    String?
   ciphertext        String
-  messageType       Int       // 1=MESSAGE, 3=PREKEY_MESSAGE
-  timestamp         DateTime  @default(now())
+  messageType       Int
+  timestamp         DateTime      @default(now())
   deliveredAt       DateTime?
-  
-  senderDevice    Device        @relation("SentMessages", fields: [senderDeviceId], references: [id], onDelete: Cascade)
-  recipientDevice Device        @relation("ReceivedMessages", fields: [recipientDeviceId], references: [id], onDelete: Cascade)
-  conversation    Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
+  conversation      Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  recipientDevice   Device        @relation("ReceivedMessages", fields: [recipientDeviceId], references: [id], onDelete: Cascade)
+  senderDevice      Device        @relation("SentMessages", fields: [senderDeviceId], references: [id], onDelete: Cascade)
+
   @@index([recipientDeviceId, deliveredAt])
   @@map("encrypted_messages")
 }
@@ -347,10 +325,9 @@ model GroupSenderKey {
   encryptedSenderKey String
   recipientDeviceId  String
   createdAt          DateTime @default(now())
-  
-  senderDevice    Device @relation("SenderDevice", fields: [senderDeviceId], references: [id], onDelete: Cascade)
-  recipientDevice Device @relation("RecipientDevice", fields: [recipientDeviceId], references: [id], onDelete: Cascade)
-  
+  recipientDevice    Device   @relation("RecipientDevice", fields: [recipientDeviceId], references: [id], onDelete: Cascade)
+  senderDevice       Device   @relation("SenderDevice", fields: [senderDeviceId], references: [id], onDelete: Cascade)
+
   @@unique([groupId, senderDeviceId, recipientDeviceId])
   @@map("group_sender_keys")
 }
@@ -364,24 +341,22 @@ model EncryptedAttachment {
   digestSha256     String
   ciphertextUrl    String
   createdAt        DateTime @default(now())
-  
-  uploaderDevice Device @relation(fields: [uploaderDeviceId], references: [id], onDelete: Cascade)
-  
+  uploaderDevice   Device   @relation(fields: [uploaderDeviceId], references: [id], onDelete: Cascade)
+
   @@map("encrypted_attachments")
 }
 
 model DeviceProvisioning {
-  id            String   @id @default(cuid())
-  provisioningId String  @unique
-  userId        String
-  encryptedData String?
-  iv            String?
-  approved      Boolean  @default(false)
-  expiresAt     DateTime
-  createdAt     DateTime @default(now())
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id             String   @id @default(cuid())
+  provisioningId String   @unique
+  userId         String
+  encryptedData  String?
+  iv             String?
+  approved       Boolean  @default(false)
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("device_provisioning")
 }
 
@@ -394,11 +369,9 @@ model EncryptedBackup {
   encryptedData String
   hmac          String
   createdAt     DateTime @default(now())
-  
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  
+  device        Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId, createdAt])
   @@map("encrypted_backups")
 }
-

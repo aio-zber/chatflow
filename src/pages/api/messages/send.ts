@@ -114,7 +114,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
       data: {
         content: content || '',
         type,
-        status: 'unread', // Status for recipients; sender sees 'sent' initially, then 'read' when recipients read it
+        status: 'unread',
         senderId: session.user.id,
         receiverId,
         conversationId,
