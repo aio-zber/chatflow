@@ -146,7 +146,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       console.log(`🚨 TARGET USER FOUND:`, targetUser.id)
       
-      // Check if conversation already exists between these users (prevent duplicates)
+      // Enhanced duplicate prevention: Check if conversation already exists between these users
       const existingConversation = await prisma.conversation.findFirst({
         where: {
           AND: [
@@ -159,6 +159,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             {
               participants: {
                 some: { userId: userId }
+              }
+            },
+            {
+              // Ensure exactly 2 participants to avoid matching group conversations
+              participants: {
+                every: {
+                  userId: {
+                    in: [user.id, userId]
+                  }
+                }
               }
             }
           ]
@@ -177,19 +187,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
               }
             }
+          },
+          messages: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            select: {
+              id: true,
+              content: true,
+              type: true,
+              status: true,
+              senderId: true,
+              createdAt: true,
+              updatedAt: true,
+              sender: {
+                select: {
+                  username: true,
+                  name: true,
+                }
+              }
+            }
           }
         }
       })
       
+      // Additional validation: count participants to ensure exactly 2
       if (existingConversation) {
-        console.log(`🚨 EXISTING CONVERSATION FOUND:`, existingConversation.id)
-        // Transform conversation to include otherParticipants
-        const transformedConversation = {
-          ...existingConversation,
-          otherParticipants: existingConversation.participants.filter(p => p.userId !== user.id)
+        const participantCount = await prisma.conversationParticipant.count({
+          where: {
+            conversationId: existingConversation.id
+          }
+        })
+        
+        if (participantCount !== 2) {
+          console.log(`🚨 WARNING: Found conversation ${existingConversation.id} with ${participantCount} participants, not exactly 2. Allowing new conversation creation.`)
+          // Don't return existing conversation if participant count is wrong
+        } else {
+          console.log(`🚨 EXISTING CONVERSATION FOUND:`, existingConversation.id, `with ${participantCount} participants`)
+          
+          // Transform conversation to include otherParticipants and latest message
+          const transformedConversation = {
+            ...existingConversation,
+            otherParticipants: existingConversation.participants.filter(p => p.userId !== user.id)
+          }
+          return res.status(200).json({ conversation: transformedConversation })
         }
-        return res.status(200).json({ conversation: transformedConversation })
       }
+      
       
       // Create conversation
       const conversation = await prisma.conversation.create({
