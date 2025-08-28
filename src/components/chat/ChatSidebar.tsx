@@ -21,7 +21,7 @@ function getConversationName(conversation: any) {
   if (conversation.name) return conversation.name
   if (conversation.isGroup) return 'Group Chat'
   
-  const otherParticipant = conversation.otherParticipants[0]
+  const otherParticipant = conversation.otherParticipants?.[0]
   return otherParticipant?.user?.name || otherParticipant?.user?.username || 'Unknown'
 }
 
@@ -67,7 +67,7 @@ function formatTime(date: Date | string) {
 }
 
 function getLastMessagePreview(conversation: any, sessionUserId?: string, decryptedContents: Record<string, string> = {}) {
-  const lastMessage = conversation.messages[0]
+  const lastMessage = conversation.messages?.[0]
   if (!lastMessage) return { content: 'No messages yet', status: null }
 
   const isOwn = lastMessage.senderId === sessionUserId
@@ -166,7 +166,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
 
     const decryptMessages = async () => {
       for (const conversation of conversations) {
-        const lastMessage = conversation.messages[0]
+        const lastMessage = conversation.messages?.[0]
         if (lastMessage && 
             lastMessage.content && 
             lastMessage.content.startsWith('🔐') && 
@@ -327,7 +327,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
       // Skip group conversations - they should always be shown even if some members are blocked
       if (conversation.isGroup) {
         const conversationName = getConversationName(conversation)
-        const lastMessage = conversation.messages[0]?.content || ''
+        const lastMessage = conversation.messages?.[0]?.content || ''
         
         // Reduced logging for performance
         if (Math.random() < 0.05) console.log(`ChatSidebar: Group conversation ${conversation.id} (${conversationName}) - members: ${conversation.participants?.length || 0}`)
@@ -337,7 +337,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
       }
       
       // For direct messages, check if the other user is blocked
-      const otherParticipant = conversation.otherParticipants[0]
+      const otherParticipant = conversation.otherParticipants?.[0]
       if (otherParticipant && blockedUserIds.has(otherParticipant.user.id)) {
         console.log(`ChatSidebar: Hiding conversation ${conversation.id} with blocked user ${otherParticipant.user.id} (${otherParticipant.user.name})`)
         return false // Hide conversations with blocked users
@@ -345,7 +345,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
       
       // Apply search filter
       const conversationName = getConversationName(conversation)
-      const lastMessage = conversation.messages[0]?.content || ''
+      const lastMessage = conversation.messages?.[0]?.content || ''
       
       const matchesSearch = conversationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
@@ -486,7 +486,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
           ) : (
             <div className="space-y-1">
               {filteredConversations.map((conversation) => {
-                const lastMessage = conversation.messages[0]
+                const lastMessage = conversation.messages?.[0]
                 const messagePreview = getLastMessagePreview(conversation, session?.user?.id, decryptedContents)
                 return (
                   <button
@@ -504,7 +504,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                         {/* Online status indicator for non-group conversations */}
                         {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
                           <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
-                            conversation.otherParticipants[0].user.isOnline 
+                            conversation.otherParticipants?.[0]?.user.isOnline 
                               ? 'bg-green-500' 
                               : 'bg-gray-400'
                           }`} />
@@ -528,13 +528,13 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                             {/* Online status for DMs */}
                             {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
                               <span className={`text-xs font-medium flex-shrink-0 ${
-                                conversation.otherParticipants[0].user.isOnline 
+                                conversation.otherParticipants?.[0]?.user.isOnline 
                                   ? 'text-green-600 dark:text-green-400' 
                                   : 'text-gray-500 dark:text-gray-400'
                               }`}>
-                                {conversation.otherParticipants[0].user.isOnline 
+                                {conversation.otherParticipants?.[0]?.user.isOnline 
                                   ? 'online' 
-                                  : `last seen ${formatTime(conversation.otherParticipants[0].user.lastSeen)}`
+                                  : `last seen ${formatTime(conversation.otherParticipants?.[0]?.user.lastSeen)}`
                                 }
                               </span>
                             )}

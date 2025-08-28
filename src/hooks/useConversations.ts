@@ -93,8 +93,14 @@ export const useConversations = () => {
         conversationsCount: data.conversations?.length || 0 
       })
       
+      // Transform conversations to include otherParticipants
+      const transformedConversations = (data.conversations || []).map((conv: any) => ({
+        ...conv,
+        otherParticipants: conv.participants?.filter((p: any) => p.userId !== session?.user?.id) || []
+      }))
+
       // Sort conversations by updatedAt timestamp (most recent first)
-      const sortedConversations = (data.conversations || []).sort((a: Conversation, b: Conversation) => 
+      const sortedConversations = transformedConversations.sort((a: Conversation, b: Conversation) => 
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       )
       setConversations(sortedConversations)
@@ -173,7 +179,10 @@ export const useConversations = () => {
 
       const data = await response.json()
       console.log('API response data:', data)
-      const newConversation = data.conversation
+      const newConversation = {
+        ...data.conversation,
+        otherParticipants: data.conversation.participants?.filter((p: any) => p.userId !== session?.user?.id) || []
+      }
       console.log('New conversation created:', newConversation)
 
       setConversations(prev => {
@@ -220,7 +229,10 @@ export const useConversations = () => {
       }
 
       const data = await response.json()
-      const newConversation = data.conversation
+      const newConversation = {
+        ...data.conversation,
+        otherParticipants: data.conversation.participants?.filter((p: any) => p.userId !== session?.user?.id) || []
+      }
 
       setConversations(prev => [newConversation, ...prev])
 
@@ -352,12 +364,17 @@ export const useConversations = () => {
     }
 
     const handleNewConversation = (conversation: Conversation) => {
+      const conversationWithOtherParticipants = {
+        ...conversation,
+        otherParticipants: conversation.participants?.filter(p => p.userId !== session?.user?.id) || []
+      }
+      
       setConversations(prev => {
         const existingIndex = prev.findIndex(c => c.id === conversation.id)
         if (existingIndex >= 0) {
           return prev
         }
-        return [conversation, ...prev]
+        return [conversationWithOtherParticipants, ...prev]
       })
     }
 
@@ -367,8 +384,13 @@ export const useConversations = () => {
         const targetConvIndex = prev.findIndex(conv => conv.id === updatedConversation.id)
         if (targetConvIndex === -1) return prev // Conversation not found
         
-        // Update the conversation
-        const updated = { ...prev[targetConvIndex], ...updatedConversation }
+        // Update the conversation and ensure otherParticipants is set
+        const updated = { 
+          ...prev[targetConvIndex], 
+          ...updatedConversation,
+          otherParticipants: updatedConversation.participants?.filter(p => p.userId !== session?.user?.id) || 
+                           prev[targetConvIndex].otherParticipants || []
+        }
         
         // If this conversation has a more recent updatedAt, move it to the top
         const isMoreRecent = prev.some(conv => 
