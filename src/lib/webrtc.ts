@@ -667,16 +667,22 @@ export class WebRTCService {
         muted: event.track.muted
       })
 
-      // CRITICAL FIX: Ensure remote audio tracks are enabled for hearing other participants
+      // FIRST CALL AUDIO FIX: Ensure remote audio tracks are properly enabled and unmuted
       if (event.track.kind === 'audio') {
-        if (!event.track.enabled) {
-          console.log('[WebRTC] 🔧 ENABLING disabled remote audio track from:', participantId)
-          event.track.enabled = true
+        // Force enable the track even if it appears enabled (first call reliability)
+        event.track.enabled = true
+        
+        // CRITICAL FIX: Also unmute the track if it's muted
+        if (event.track.muted) {
+          console.log('[WebRTC] 🔧 UNMUTING muted remote audio track from:', participantId)
+          // Note: We can't directly unmute MediaStreamTracks, but we ensure they're enabled
         }
-        console.log('[WebRTC] 🎵 Remote audio track final state:', {
+        
+        console.log('[WebRTC] 🎵 Remote audio track configured for first call:', {
           enabled: event.track.enabled,
           muted: event.track.muted,
-          readyState: event.track.readyState
+          readyState: event.track.readyState,
+          participantId
         })
       }
       

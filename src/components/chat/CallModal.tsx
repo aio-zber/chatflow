@@ -280,39 +280,56 @@ export function CallModal({
       }
       
       const buffer = createRingingTone()
-      const source = audioContext.createBufferSource()
-      source.buffer = buffer
-      source.loop = true
       
+      // CONSISTENCY FIX: Store references and create reusable play system
+      let currentSource = null
       const gainNode = audioContext.createGain()
       gainNode.gain.value = 0.5
-      
-      source.connect(gainNode)
       gainNode.connect(audioContext.destination)
       
-      // Store references for cleanup
       audio.audioContext = audioContext
-      audio.source = source
+      audio.buffer = buffer
       audio.gainNode = gainNode
       
-      // Custom play method
+      // CONSISTENCY FIX: Custom play method that creates fresh sources for reusability
       audio.customPlay = async () => {
-        if (audioContext.state === 'suspended') {
-          await audioContext.resume()
+        try {
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume()
+          }
+          
+          // Stop existing source if playing
+          if (currentSource) {
+            try {
+              currentSource.stop()
+              currentSource.disconnect()
+            } catch (e) {
+              // Source might already be stopped
+            }
+          }
+          
+          // Create fresh source for consistent playback
+          currentSource = audioContext.createBufferSource()
+          currentSource.buffer = buffer
+          currentSource.loop = true
+          currentSource.connect(gainNode)
+          currentSource.start()
+          
+          console.log('[CallModal] ✅ Consistent ringing tone started with fresh source')
+        } catch (error) {
+          console.warn('[CallModal] Error in custom play:', error)
         }
-        source.start()
       }
       
-      // Custom stop method
+      // CONSISTENCY FIX: Custom stop method that preserves the context
       audio.customStop = () => {
         try {
-          if (source) {
-            source.stop()
-            source.disconnect()
+          if (currentSource) {
+            currentSource.stop()
+            currentSource.disconnect()
+            currentSource = null
           }
-          if (audioContext && audioContext.state !== 'closed') {
-            audioContext.close()
-          }
+          console.log('[CallModal] ✅ Ringing source stopped (context preserved)')
         } catch (error) {
           console.warn('[CallModal] Error stopping custom audio:', error)
         }
@@ -409,7 +426,7 @@ export function CallModal({
   }
 
   const stopOutgoingRingingSound = useCallback(() => {
-    console.log('[CallModal] 🔇 FORCE STOP outgoing ringing sound')
+    console.log('[CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound')
     
     // Stop current interval if exists
     if (outgoingRingingInterval) {
@@ -418,10 +435,10 @@ export function CallModal({
       console.log('[CallModal] ✅ Cleared outgoing ringing interval')
     }
     
-    // Stop the ringing audio
+    // CONSISTENCY FIX: Pause the ringing audio but keep the reference for reuse
     try {
       if (ringingAudioRef.current) {
-        console.log('[CallModal] Stopping ringing audio...')
+        console.log('[CallModal] Pausing ringing audio (keeping for consistency)...')
         
         // Use custom stop if available
         if (ringingAudioRef.current.customStop) {
@@ -431,28 +448,28 @@ export function CallModal({
           ringingAudioRef.current.currentTime = 0
         }
         
-        // Clear the reference
-        ringingAudioRef.current = null
-        console.log('[CallModal] ✅ Ringing audio stopped and cleared')
+        // CRITICAL FIX: Do NOT clear the reference - keep it for consistent tone
+        // ringingAudioRef.current = null  // REMOVED - this was causing inconsistency
+        console.log('[CallModal] ✅ Ringing audio paused (reference preserved for consistency)')
       }
     } catch (error) {
-      console.warn('[CallModal] Error stopping ringing audio:', error)
+      console.warn('[CallModal] Error pausing ringing audio:', error)
     }
     
-    // ENHANCED: Properly close our AudioContext
+    // CONSISTENCY FIX: Suspend (don't close) AudioContext to preserve it for next call
     try {
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        console.log('[CallModal] Closing AudioContext...')
-        const contextToClose = audioContextRef.current
-        audioContextRef.current = null // Clear reference immediately to prevent reuse
-        contextToClose.close().then(() => {
-          console.log('[CallModal] ✅ AudioContext closed successfully')
+      if (audioContextRef.current && audioContextRef.current.state === 'running') {
+        console.log('[CallModal] Suspending AudioContext (preserving for consistency)...')
+        audioContextRef.current.suspend().then(() => {
+          console.log('[CallModal] ✅ AudioContext suspended for reuse')
         }).catch(error => {
-          console.warn('[CallModal] Error closing AudioContext:', error)
+          console.warn('[CallModal] Error suspending AudioContext:', error)
         })
+        // CRITICAL: Keep the reference for consistent tone across calls
+        // audioContextRef.current = null  // REMOVED - this was causing inconsistency
       }
     } catch (error) {
-      console.warn('[CallModal] Error during AudioContext cleanup:', error)
+      console.warn('[CallModal] Error during AudioContext suspend:', error)
     }
   }, [outgoingRingingInterval])
 
@@ -1818,30 +1835,53 @@ export function CallModal({
           }))
         }
         
-        // Replace video tracks back to camera for all peer connections
+        // SCREEN SHARING FIX: Replace video tracks back to camera for all peer connections
         if (webrtcServiceRef.current) {
           const peerConnections = webrtcServiceRef.current.getActivePeerConnections()
-          peerConnections.forEach(async (peerConn, participantId) => {
+          console.log('[CallModal] 🔄 Restoring camera for', peerConnections.size, 'peer connections')
+          
+          // Use Promise.all to wait for all track replacements to complete
+          const restorePromises = Array.from(peerConnections.entries()).map(async ([participantId, peerConn]) => {
             try {
+              console.log(`[CallModal] Restoring camera for participant ${participantId}`)
               await screenShareManagerRef.current?.replaceVideoTrack(peerConn.connection, false)
+              console.log(`[CallModal] ✅ Camera restored for participant ${participantId}`)
             } catch (error) {
-              console.error('[CallModal] Failed to restore camera for participant:', participantId, error)
+              console.error(`[CallModal] Failed to restore camera for participant ${participantId}:`, error)
             }
           })
+          
+          await Promise.all(restorePromises)
         }
         
-        // Restore local video display
+        // SCREEN SHARING FIX: Restore local video display with proper loading
         if (localVideoRef.current && localStreamRef.current) {
-          localVideoRef.current.srcObject = localStreamRef.current
+          console.log('[CallModal] 🔄 Restoring local video display')
+          try {
+            localVideoRef.current.srcObject = localStreamRef.current
+            // Force video element to load the new stream
+            localVideoRef.current.load()
+            console.log('[CallModal] ✅ Local video display restored')
+          } catch (error) {
+            console.warn('[CallModal] Error restoring local video:', error)
+          }
         }
         
         setCallState(prev => ({ ...prev, isScreenSharing: false }))
       } else {
         // Start screen sharing
+        console.log('[CallModal] 🖥️ Starting screen share...')
         const screenStream = await screenShareManagerRef.current.startScreenShare({
           video: true,
           audio: false,
           systemAudio: false
+        })
+        
+        console.log('[CallModal] ✅ Screen stream acquired:', {
+          id: screenStream.id,
+          active: screenStream.active,
+          videoTracks: screenStream.getVideoTracks().length,
+          videoTrack: screenStream.getVideoTracks()[0]?.readyState
         })
         
         // AUTOMATICALLY TURN OFF CAMERA when screen sharing starts
@@ -1855,21 +1895,36 @@ export function CallModal({
           }))
         }
         
-        // Replace video tracks with screen share for all peer connections
+        // SCREEN SHARING FIX: Replace video tracks with screen share for all peer connections
         if (webrtcServiceRef.current) {
           const peerConnections = webrtcServiceRef.current.getActivePeerConnections()
-          peerConnections.forEach(async (peerConn, participantId) => {
+          console.log('[CallModal] 📡 Sharing screen with', peerConnections.size, 'peer connections')
+          
+          // Use Promise.all to wait for all track replacements to complete
+          const sharePromises = Array.from(peerConnections.entries()).map(async ([participantId, peerConn]) => {
             try {
+              console.log(`[CallModal] Sharing screen with participant ${participantId}`)
               await screenShareManagerRef.current?.replaceVideoTrack(peerConn.connection, true)
+              console.log(`[CallModal] ✅ Screen shared with participant ${participantId}`)
             } catch (error) {
-              console.error('[CallModal] Failed to share screen with participant:', participantId, error)
+              console.error(`[CallModal] Failed to share screen with participant ${participantId}:`, error)
             }
           })
+          
+          await Promise.all(sharePromises)
         }
         
-        // Update local video display
+        // SCREEN SHARING FIX: Update local video display with proper loading
         if (localVideoRef.current) {
-          localVideoRef.current.srcObject = screenStream
+          console.log('[CallModal] 🔄 Updating local video display with screen share')
+          try {
+            localVideoRef.current.srcObject = screenStream
+            // Force video element to load the new stream
+            localVideoRef.current.load()
+            console.log('[CallModal] ✅ Local screen preview updated')
+          } catch (error) {
+            console.warn('[CallModal] Error updating local screen preview:', error)
+          }
         }
         
         setCallState(prev => ({ ...prev, isScreenSharing: true }))
@@ -2363,52 +2418,107 @@ export function CallModal({
                     key={participantId}
                     ref={(element) => {
                       if (element && stream) {
-                        const existingElement = remoteAudioRefs.current.get(participantId)
+                        // FIRST CALL AUDIO FIX: Always refresh audio element setup for reliable audio reception
+                        console.log(`[CallModal] 🔊 Setting up audio element for participant ${participantId}`)
+                        console.log(`[CallModal] Stream details:`, {
+                          id: stream.id,
+                          active: stream.active,
+                          audioTracks: stream.getAudioTracks().map(t => ({
+                            kind: t.kind,
+                            enabled: t.enabled,
+                            readyState: t.readyState,
+                            label: t.label,
+                            muted: t.muted
+                          }))
+                        })
                         
-                        // CRITICAL FIX: Only set srcObject if it's different to prevent interruption
-                        if (existingElement !== element || element.srcObject !== stream) {
-                          console.log(`[CallModal] 🔊 Setting up audio element for participant ${participantId}`)
-                          console.log(`[CallModal] Stream details:`, {
-                            id: stream.id,
-                            active: stream.active,
-                            audioTracks: stream.getAudioTracks().map(t => ({
-                              kind: t.kind,
-                              enabled: t.enabled,
-                              readyState: t.readyState,
-                              label: t.label
-                            }))
-                          })
-                          
-                          remoteAudioRefs.current.set(participantId, element)
-                          element.srcObject = stream
-                          element.volume = 1.0
-                          element.muted = false
-                          
-                          // CRITICAL FIX: Immediately attempt to play, then add loadeddata fallback
-                          const attemptPlay = () => {
-                            element.play().then(() => {
-                              console.log(`[CallModal] ✅ Audio playing for participant ${participantId}`)
-                            }).catch(error => {
-                              console.warn(`[CallModal] ❌ Failed to play audio for ${participantId}:`, error)
-                              console.log(`[CallModal] 🔄 Attempting to play audio with user interaction bypass`)
-                              
-                              // Try with user interaction context
-                              setTimeout(() => {
-                                element.play().then(() => {
-                                  console.log(`[CallModal] ✅ Audio playing after retry for participant ${participantId}`)
-                                }).catch(retryError => {
-                                  console.warn(`[CallModal] Retry audio play failed for ${participantId}:`, retryError)
-                                })
-                              }, 500)
-                            })
-                          }
-                          
-                          // Try immediate play
-                          attemptPlay()
-                          
-                          // Also set up loadeddata event as backup
-                          element.addEventListener('loadeddata', attemptPlay, { once: true })
+                        // CRITICAL: Always reset audio element to ensure clean state for first calls
+                        remoteAudioRefs.current.set(participantId, element)
+                        
+                        // Clear any previous srcObject to prevent conflicts
+                        if (element.srcObject) {
+                          element.pause()
+                          element.srcObject = null
+                          element.load()
                         }
+                        
+                        // FIRST CALL FIX: Ensure audio tracks are properly enabled before setting srcObject
+                        const audioTracks = stream.getAudioTracks()
+                        audioTracks.forEach(track => {
+                          if (!track.enabled) {
+                            console.log(`[CallModal] 🔧 Enabling disabled remote audio track for ${participantId}`)
+                            track.enabled = true
+                          }
+                        })
+                        
+                        // Set up audio element with proper configuration
+                        element.srcObject = stream
+                        element.volume = 1.0
+                        element.muted = false
+                        element.autoplay = true
+                        
+                        // FIRST CALL FIX: Enhanced play sequence with multiple retry strategies
+                        const attemptPlay = async () => {
+                          try {
+                            // Wait for stream to be ready
+                            if (stream.active && audioTracks.length > 0) {
+                              await element.play()
+                              console.log(`[CallModal] ✅ Audio playing immediately for participant ${participantId}`)
+                            } else {
+                              console.log(`[CallModal] 🔄 Stream not ready, waiting...`)
+                              throw new Error('Stream not ready')
+                            }
+                          } catch (error) {
+                            console.warn(`[CallModal] ❌ Initial audio play failed for ${participantId}:`, error)
+                            
+                            // Strategy 1: Wait for stream to become active
+                            if (!stream.active || audioTracks.length === 0) {
+                              console.log(`[CallModal] 🔄 Waiting for stream to become active for ${participantId}`)
+                              const checkActiveStream = () => {
+                                if (stream.active && stream.getAudioTracks().length > 0) {
+                                  element.play().then(() => {
+                                    console.log(`[CallModal] ✅ Audio playing after stream became active for ${participantId}`)
+                                  }).catch(console.warn)
+                                } else {
+                                  setTimeout(checkActiveStream, 100)
+                                }
+                              }
+                              setTimeout(checkActiveStream, 100)
+                              return
+                            }
+                            
+                            // Strategy 2: Force play after short delay
+                            setTimeout(() => {
+                              element.play().then(() => {
+                                console.log(`[CallModal] ✅ Audio playing after retry for participant ${participantId}`)
+                              }).catch(retryError => {
+                                console.warn(`[CallModal] Retry audio play failed for ${participantId}:`, retryError)
+                                
+                                // Strategy 3: Reset and try again (for first call issues)
+                                element.load()
+                                setTimeout(() => {
+                                  element.play().catch(finalError => {
+                                    console.error(`[CallModal] Final audio play attempt failed for ${participantId}:`, finalError)
+                                  })
+                                }, 200)
+                              })
+                            }, 300)
+                          }
+                        }
+                        
+                        // Try immediate play
+                        attemptPlay()
+                        
+                        // Also set up comprehensive event listeners for reliability
+                        element.addEventListener('loadeddata', () => {
+                          console.log(`[CallModal] Audio loadeddata event for ${participantId}`)
+                          attemptPlay()
+                        }, { once: true })
+                        
+                        element.addEventListener('canplay', () => {
+                          console.log(`[CallModal] Audio canplay event for ${participantId}`)
+                          attemptPlay()
+                        }, { once: true })
                       } else {
                         remoteAudioRefs.current.delete(participantId)
                       }
