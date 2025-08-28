@@ -256,22 +256,27 @@ export function CallModal({
       const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       const audioContext = new AudioContextClass()
       
-      // Create a simple ringing tone
+      // RINGING CONSISTENCY FIX: Create traditional dual-tone phone ringing
       const createRingingTone = () => {
-        const duration = 3 // 3 seconds
+        const duration = 6 // 6 seconds for complete ring cycle
         const sampleRate = audioContext.sampleRate
         const length = sampleRate * duration
         const buffer = audioContext.createBuffer(1, length, sampleRate)
         const data = buffer.getChannelData(0)
         
-        // Generate ringing pattern: 1 second tone, 2 seconds silence
+        // Generate traditional dual-tone ringing: 440Hz + 480Hz (North American standard)
         for (let i = 0; i < length; i++) {
           const time = i / sampleRate
-          if (time < 1) {
-            // First second: ringing tone
-            data[i] = Math.sin(2 * Math.PI * 440 * time) * 0.3 * Math.exp(-time * 2)
+          const cycle = time % 6 // 6-second cycle
+          
+          if (cycle < 2) {
+            // First 2 seconds: dual-tone ringing with ring modulation
+            const tone1 = Math.sin(2 * Math.PI * 440 * time) * 0.5 // A4 note
+            const tone2 = Math.sin(2 * Math.PI * 480 * time) * 0.5 // Higher tone
+            const envelope = 0.5 + 0.3 * Math.sin(2 * Math.PI * 2 * time) // Ring modulation
+            data[i] = (tone1 + tone2) * envelope * 0.6
           } else {
-            // Remaining 2 seconds: silence
+            // Remaining 4 seconds: silence
             data[i] = 0
           }
         }
@@ -1396,6 +1401,17 @@ export function CallModal({
         webrtcServiceRef.current.setLocalStream(stream)
         console.log('[CallModal] ✅ Notified WebRTC service of local stream')
         
+        // VIDEO CALL FIX: Force refresh of local video element
+        setTimeout(() => {
+          if (localVideoRef.current && stream) {
+            console.log('[CallModal] 🔄 Refreshing local video element for subsequent call')
+            localVideoRef.current.srcObject = stream
+            localVideoRef.current.play().catch(error => {
+              console.warn('[CallModal] Error playing refreshed local video:', error)
+            })
+          }
+        }, 500)
+        
         // Initialize screen share manager safely
         try {
           screenShareManagerRef.current = new ScreenShareManager((screenStream) => {
@@ -1621,57 +1637,65 @@ export function CallModal({
       console.warn('[CallModal] Error stopping ringing:', error)
     }
     
-    // CRITICAL FIX: Only do aggressive cleanup when call is truly ending
+    // SUBSEQUENT CALL FIX: Less aggressive cleanup to preserve state for next calls
     const isCallEnding = forceCleanup || 
                         callState.status === 'disconnected' || 
                         callState.status === 'declined' ||
                         callState.status === 'ended'
     
     if (isCallEnding) {
-      console.log('[CallModal] 🧹 Performing simple cleanup - call is ending')
+      console.log('[CallModal] 🧹 Performing controlled cleanup - preserving WebRTC service for subsequent calls')
       
       try {
-        // 1. Clean up WebRTC service first
+        // SUBSEQUENT CALL FIX: Only cleanup peer connections, preserve the WebRTC service
         if (webrtcServiceRef.current) {
-          console.log('[CallModal] 🧹 Cleaning up WebRTC service')
-          webrtcServiceRef.current.cleanup()
-          webrtcServiceRef.current = null
+          console.log('[CallModal] 🔄 Cleaning peer connections but preserving WebRTC service')
+          // Use the new clearPeerConnections method instead of destroying the service
+          webrtcServiceRef.current.clearPeerConnections()
+          console.log('[CallModal] ✅ WebRTC service preserved for subsequent calls')
         }
 
-        // 2. Stop local stream tracks immediately
-        if (localStreamRef.current) {
-          console.log('[CallModal] 🎬 Stopping local stream tracks')
+        // SUBSEQUENT CALL FIX: Preserve local stream but stop tracks only when truly ending
+        if (localStreamRef.current && forceCleanup) {
+          console.log('[CallModal] 🎬 Stopping local stream tracks (forced cleanup)')
           localStreamRef.current.getTracks().forEach(track => {
             console.log('[CallModal] Stopping track:', track.kind, track.readyState)
             track.stop()
             console.log('[CallModal] ✅ Stopped track:', track.kind, track.readyState)
           })
           localStreamRef.current = null
+        } else if (localStreamRef.current) {
+          console.log('[CallModal] 🔄 Preserving local stream for subsequent calls')
         }
 
-        // 3. Clean remote streams
+        // SUBSEQUENT CALL FIX: Clean remote stream UI state but preserve capability
         if (remoteStreams.size > 0) {
-          console.log('[CallModal] 🎭 Cleaning remote streams')
-          remoteStreams.forEach((stream, participantId) => {
-            if (stream && typeof stream.getTracks === 'function') {
-              stream.getTracks().forEach(track => {
-                console.log('[CallModal] Stopping remote track:', track.kind, 'for', participantId)
-                track.stop()
-              })
-            }
-          })
+          console.log('[CallModal] 🎭 Cleaning remote streams UI state')
+          if (forceCleanup) {
+            // Only stop tracks on forced cleanup (modal closing)
+            remoteStreams.forEach((stream, participantId) => {
+              if (stream && typeof stream.getTracks === 'function') {
+                stream.getTracks().forEach(track => {
+                  console.log('[CallModal] Stopping remote track:', track.kind, 'for', participantId)
+                  track.stop()
+                })
+              }
+            })
+          }
           setRemoteStreams(new Map())
         }
 
-        // 4. Clean up DOM video elements
-        const videos = document.querySelectorAll('video')
-        videos.forEach((video, index) => {
-          if (video.srcObject) {
-            console.log(`[CallModal] 📹 Cleaning video element ${index}`)
-            video.srcObject = null
-            video.load()
-          }
-        })
+        // SUBSEQUENT CALL FIX: Only clean video elements on forced cleanup
+        if (forceCleanup) {
+          const videos = document.querySelectorAll('video')
+          videos.forEach((video, index) => {
+            if (video.srcObject) {
+              console.log(`[CallModal] 📹 Cleaning video element ${index}`)
+              video.srcObject = null
+              video.load()
+            }
+          })
+        }
 
         console.log('[CallModal] ✅ Simple cleanup completed')
       } catch (error) {
@@ -1679,15 +1703,20 @@ export function CallModal({
       }
     }
     
-    try {
-      // Cleanup screen share manager
-      if (screenShareManagerRef.current) {
-        screenShareManagerRef.current.cleanup()
-        screenShareManagerRef.current = null
-        console.log('[CallModal] ✅ Cleaned up screen share manager')
+    // SUBSEQUENT CALL FIX: Only cleanup screen share on forced cleanup
+    if (forceCleanup) {
+      try {
+        // Cleanup screen share manager only on modal close
+        if (screenShareManagerRef.current) {
+          screenShareManagerRef.current.cleanup()
+          screenShareManagerRef.current = null
+          console.log('[CallModal] ✅ Cleaned up screen share manager (forced)')
+        }
+      } catch (error) {
+        console.warn('[CallModal] Error cleaning screen share:', error)
       }
-    } catch (error) {
-      console.warn('[CallModal] Error cleaning screen share:', error)
+    } else {
+      console.log('[CallModal] 🔄 Preserving screen share manager for subsequent calls')
     }
     
     console.log('[CallModal] ✅ CLEANUP COMPLETED')
@@ -2256,24 +2285,34 @@ export function CallModal({
     participant: CallParticipant, 
     stream?: MediaStream 
   }) => {
+    // AUDIO INDICATOR FIX: Use remoteStreams directly to ensure latest stream reference
+    const latestStream = remoteStreams.get(participant.id) || stream
+    
     const { isSpeaking } = useVoiceActivity({ 
-      stream: stream || null,
+      stream: latestStream || null,
       threshold: -40 // More sensitive threshold for better detection
     })
 
     // Get server-provided mute state with fallback to stream-based detection
     const serverMuteState = participantMuteStates.get(participant.id)
     const streamBasedMuted = useMemo(() => {
-      if (!stream) return false // FIXED: Default to unmuted when no stream (connecting state)
-      const audioTracks = stream.getAudioTracks()
+      if (!latestStream) return false // AUDIO INDICATOR FIX: Use latest stream reference
+      const audioTracks = latestStream.getAudioTracks()
       return audioTracks.length === 0 || audioTracks.every(track => !track.enabled)
-    }, [stream])
+    }, [latestStream])
     
-    // ENHANCED: Use server state if available, otherwise assume unmuted during connection setup
-    const isActuallyMuted = serverMuteState !== undefined ? serverMuteState : (stream ? streamBasedMuted : false)
+    // AUDIO INDICATOR FIX: Use server state if available, otherwise assume unmuted during connection setup
+    const isActuallyMuted = serverMuteState !== undefined ? serverMuteState : (latestStream ? streamBasedMuted : false)
     
-    console.log(`[VoiceParticipant] ${participant.name} mute state:`, {
+    // AUDIO INDICATOR FIX: Enhanced debugging for voice activity and mute states
+    console.log(`[VoiceParticipant] ${participant.name} voice activity debug:`, {
       participantId: participant.id,
+      hasOriginalStream: !!stream,
+      hasLatestStream: !!latestStream,
+      streamActive: latestStream?.active,
+      audioTracksCount: latestStream?.getAudioTracks().length || 0,
+      audioTracksEnabled: latestStream?.getAudioTracks().map(t => t.enabled) || [],
+      isSpeaking,
       serverMuteState,
       streamBasedMuted,
       finalMuteState: isActuallyMuted
@@ -2418,7 +2457,7 @@ export function CallModal({
                     key={participantId}
                     ref={(element) => {
                       if (element && stream) {
-                        // FIRST CALL AUDIO FIX: Always refresh audio element setup for reliable audio reception
+                        // SUBSEQUENT CALL FIX: Always refresh audio element setup for reliable audio reception
                         console.log(`[CallModal] 🔊 Setting up audio element for participant ${participantId}`)
                         console.log(`[CallModal] Stream details:`, {
                           id: stream.id,
@@ -2432,14 +2471,18 @@ export function CallModal({
                           }))
                         })
                         
-                        // CRITICAL: Always reset audio element to ensure clean state for first calls
+                        // SUBSEQUENT CALL FIX: Always reset audio element to ensure clean state
+                        const existingElement = remoteAudioRefs.current.get(participantId)
+                        console.log(`[CallModal] Previous audio element for ${participantId}:`, !!existingElement)
+                        
                         remoteAudioRefs.current.set(participantId, element)
                         
-                        // Clear any previous srcObject to prevent conflicts
+                        // CRITICAL: Always clear any previous srcObject to prevent conflicts
                         if (element.srcObject) {
                           element.pause()
                           element.srcObject = null
                           element.load()
+                          console.log(`[CallModal] Cleared previous srcObject for ${participantId}`)
                         }
                         
                         // FIRST CALL FIX: Ensure audio tracks are properly enabled before setting srcObject

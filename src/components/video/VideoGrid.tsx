@@ -72,6 +72,14 @@ export function VideoGrid({
         }))
       })
       
+      // VIDEO CALL FIX: Clear any previous srcObject to prevent stuck video
+      if (localVideoRef.current.srcObject) {
+        console.log('[VideoGrid] Clearing previous srcObject for fresh video setup')
+        localVideoRef.current.pause()
+        localVideoRef.current.srcObject = null
+        localVideoRef.current.load()
+      }
+      
       // Set video source
       localVideoRef.current.srcObject = localStream
       localVideoRef.current.muted = true // Prevent audio feedback
@@ -306,8 +314,25 @@ function RemoteParticipantVideo({
               <video 
                 ref={(el) => {
                   onVideoRef?.(participant.id, el)
-                  if (el && stream && el.srcObject !== stream) {
-                    el.srcObject = stream
+                  if (el && stream) {
+                    // VIDEO CALL FIX: Always clear previous srcObject to prevent stuck video
+                    if (el.srcObject && el.srcObject !== stream) {
+                      console.log(`[VideoGrid] Clearing previous video stream for ${participant.name}`)
+                      el.pause()
+                      el.srcObject = null
+                      el.load()
+                    }
+                    
+                    // Set the new stream
+                    if (el.srcObject !== stream) {
+                      console.log(`[VideoGrid] Setting up video stream for ${participant.name}:`, {
+                        streamId: stream.id,
+                        active: stream.active,
+                        videoTracks: stream.getVideoTracks().length
+                      })
+                      el.srcObject = stream
+                    }
+                    
                     el.play().catch(error => {
                       console.error('[VideoGrid] Failed to play remote video:', error)
                     })

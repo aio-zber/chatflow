@@ -1333,7 +1333,7 @@ export class WebRTCService {
     this.closePeerConnection(participantId)
   }
 
-  private closePeerConnection(participantId: string) {
+  closePeerConnection(participantId: string) {
     const peerConn = this.peerConnections.get(participantId)
     if (peerConn) {
       // CRITICAL FIX: Add protection against premature closure of healthy connections
@@ -1425,8 +1425,37 @@ export class WebRTCService {
   }
 
 
+  // SUBSEQUENT CALL FIX: Method to clear only peer connections without destroying service
+  clearPeerConnections() {
+    console.log('[WebRTC] 🧹 Clearing peer connections for subsequent calls')
+    
+    // Close all peer connections but preserve the service
+    this.peerConnections.forEach((peerConn, participantId) => {
+      console.log('[WebRTC] Closing peer connection for:', participantId)
+      try {
+        // Close the peer connection
+        if (peerConn.connection.connectionState !== 'closed') {
+          peerConn.connection.close()
+        }
+      } catch (error) {
+        console.warn('[WebRTC] Error closing peer connection:', error)
+      }
+    })
+    
+    // Clear the peer connections map
+    this.peerConnections.clear()
+    console.log('[WebRTC] ✅ Cleared peer connections - service preserved')
+    
+    // Clear ICE candidate buffer
+    this.pendingIceCandidates.clear()
+    
+    // Reset call-specific state but preserve the service
+    this.callId = null
+    this.initializationInProgress = false
+  }
+
   cleanup() {
-    console.log('[WebRTC] Cleaning up WebRTC service')
+    console.log('[WebRTC] 🚨 FULL CLEANUP - Destroying WebRTC service')
     
     // Close all peer connections immediately and stop remote streams
     this.peerConnections.forEach((peerConn, participantId) => {
