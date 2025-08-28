@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, Save, X, Download } from 'lucide-react'
 import { MessageFormatter } from '../MessageFormatter'
 import { VoiceMessagePlayer } from '../VoiceMessagePlayer'
+import { getCompatibleFileUrl } from '@/utils/fileProxy'
 
 interface Reaction {
   emoji: string
@@ -430,7 +431,8 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
   const handleDownloadAttachment = async (attachment: { url: string; name: string }) => {
     try {
       // Create a temporary link element to trigger download
-      const response = await fetch(attachment.url)
+      const compatibleUrl = getCompatibleFileUrl(attachment.url)
+      const response = await fetch(compatibleUrl)
       if (!response.ok) throw new Error('Download failed')
       
       const blob = await response.blob()
@@ -787,7 +789,7 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                     {attachment.type === 'image' ? (
                       <div className="relative group">
                         <img
-                          src={attachment.url}
+                          src={getCompatibleFileUrl(attachment.url)}
                           alt={attachment.name}
                           className="w-full max-w-full h-auto max-h-80 rounded-lg cursor-pointer hover:opacity-90 object-contain"
                           style={{
@@ -818,7 +820,7 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                       </div>
                     ) : attachment.type === 'voice' ? (
                       <VoiceMessagePlayer
-                        audioUrl={attachment.url}
+                        audioUrl={getCompatibleFileUrl(attachment.url)}
                         duration={attachment.duration || 0}
                         isOwn={isOwnMessage}
                         senderName={isOwnMessage ? undefined : message.senderName}

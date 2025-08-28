@@ -46,9 +46,9 @@ const nextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval' data:", // Allow data: URLs for scripts in dev
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "media-src 'self' blob:",
-      "connect-src 'self' wss: ws: https:",
+      "img-src 'self' data: blob: https: res.cloudinary.com *.cloudinary.com",
+      "media-src 'self' blob: res.cloudinary.com *.cloudinary.com",
+      "connect-src 'self' wss: ws: https: res.cloudinary.com *.cloudinary.com",
       "worker-src 'self' blob:",
       "child-src 'self'",
       "object-src 'none'",
@@ -57,14 +57,14 @@ const nextConfig = {
       "frame-ancestors 'none'"
     ].join('; ');
 
-    // Production CSP - functional for Next.js with security
+    // Production CSP - functional for Next.js with security and Cloudinary support
     const prodCSP = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'", // Need unsafe-inline for Next.js runtime
       "style-src 'self' 'unsafe-inline'", // Tailwind CSS
-      "img-src 'self' data: blob: https:",
-      "media-src 'self' blob:",
-      "connect-src 'self' wss: ws: https:",
+      "img-src 'self' data: blob: https: res.cloudinary.com *.cloudinary.com",
+      "media-src 'self' blob: res.cloudinary.com *.cloudinary.com",
+      "connect-src 'self' wss: ws: https: res.cloudinary.com *.cloudinary.com",
       "worker-src 'self' blob:",
       "child-src 'self'",
       "object-src 'none'",
@@ -162,6 +162,16 @@ const nextConfig = {
           {
             key: 'Access-Control-Allow-Headers',
             value: 'Content-Type, Authorization',
+          },
+        ],
+      },
+      // Add headers for file uploads and external resources
+      {
+        source: '/api/upload/(.*)',
+        headers: [
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
           },
         ],
       },

@@ -15,6 +15,16 @@ export const config = {
 const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB for videos and large media files
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Set CORS headers for file uploads
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
