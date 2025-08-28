@@ -88,7 +88,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           messages: {
             orderBy: { createdAt: 'desc' },
             take: 1,
-            include: {
+            select: {
+              id: true,
+              content: true,
+              type: true,
+              status: true,
+              senderId: true,
+              createdAt: true,
+              updatedAt: true,
               sender: {
                 select: {
                   username: true,

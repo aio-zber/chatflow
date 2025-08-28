@@ -741,6 +741,7 @@ export const useConversations = () => {
     loading,
     error,
     forceRefreshKey,
+    setForceRefreshKey,
     refetch: fetchConversations,
     triggerRefresh,
     createConversation,

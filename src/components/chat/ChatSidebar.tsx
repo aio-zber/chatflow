@@ -123,7 +123,7 @@ function getLastMessagePreview(conversation: any, sessionUserId?: string, decryp
 
 export function ChatSidebar({ selectedConversationId, onSelectConversation }: ChatSidebarProps) {
   const { data: session } = useSession()
-  const { conversations, loading, error, forceRefreshKey } = useConversations()
+  const { conversations, loading, error, forceRefreshKey, setForceRefreshKey } = useConversations()
   const { blockedUsers } = useBlockedUsers()
   const { decryptMessage, isAvailable: e2eeAvailable } = useE2EE()
   const { socket, isFullyInitialized } = useSocketContext()
