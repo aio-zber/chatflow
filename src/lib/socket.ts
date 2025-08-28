@@ -73,8 +73,7 @@ async function createCallTrace(call: any, status: 'missed' | 'completed' | 'decl
         conversationId: call.conversationId,
         senderId: call.callerId,
         content: traceContent,
-        type: 'call_trace',
-        isSystem: false // Changed to false so it appears as regular message from caller
+        type: 'call_trace'
       }
     })
     console.log(`[CALL] Created ${status} call trace message: ${traceMessage.id}`)

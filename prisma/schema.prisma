@@ -87,7 +87,7 @@ model Message {
   content        String   @db.Text
   type           String   @default("text")
   status         String   @default("unread")
-  isSystem       Boolean  @default(false)
+  isSystem       Boolean?
   senderId       String
   receiverId     String?
   conversationId String?
