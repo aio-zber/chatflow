@@ -109,11 +109,12 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(self), microphone=(self), geolocation=(), payment=()'
           },
-          // Enable SharedArrayBuffer for libsignal WASM in supporting browsers
-          // Use credentialless in dev to avoid CORS issues with hot reload
+          // Enable SharedArrayBuffer for libsignal WASM in supporting browsers  
+          // COEP FIX: Use credentialless for better compatibility with Cloudinary/external images
+          // while still enabling SharedArrayBuffer for E2EE crypto operations
           {
             key: 'Cross-Origin-Embedder-Policy',
-            value: isDev ? 'credentialless' : 'require-corp'
+            value: 'credentialless'
           },
           {
             key: 'Cross-Origin-Opener-Policy',
@@ -172,6 +173,20 @@ const nextConfig = {
           {
             key: 'Cross-Origin-Resource-Policy',
             value: 'cross-origin',
+          },
+        ],
+      },
+      // COEP FIX: Add specific headers for Cloudinary proxied images
+      {
+        source: '/api/files/(.*)',
+        headers: [
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'credentialless',
           },
         ],
       },

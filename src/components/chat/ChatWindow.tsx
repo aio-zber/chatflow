@@ -16,6 +16,7 @@ import { useAutoScroll } from '@/hooks/useAutoScroll'
 import { Phone, Video, Info, ArrowDown, X, Shield } from 'lucide-react'
 import { EncryptionIndicator, E2EESetupPrompt, SafetyNumberModal } from '@/components/e2ee/EncryptionIndicator'
 import { useE2EE } from '@/hooks/useE2EE'
+import { getCompatibleFileUrl } from '@/utils/fileProxy'
 
 // Message interface for MessageBubble compatibility
 interface MessageBubbleMessage {
@@ -1394,7 +1395,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
             <div className="relative">
               {conversation?.otherParticipants[0]?.user.avatar ? (
                 <img
-                  src={conversation.otherParticipants[0].user.avatar}
+                  src={getCompatibleFileUrl(conversation.otherParticipants[0].user.avatar)}
                   alt={conversation.name || conversation.otherParticipants[0]?.user.name || 'User'}
                   className="w-10 h-10 rounded-full object-cover"
                 />
@@ -1607,6 +1608,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 <MessageBubble
                   key={`search-${message.id}`}
                   message={message}
+                  conversationId={conversationId}
                   onReply={handleReply}
                   onReact={handleReact}
                   onScrollToMessage={scrollToMessage}
@@ -1632,6 +1634,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               <MessageBubble
                 key={`msg-${message.id}`}
                 message={message}
+                conversationId={conversationId}
                 onReply={handleReply}
                 onReact={handleReact}
                 onScrollToMessage={scrollToMessage}

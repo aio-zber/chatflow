@@ -7,6 +7,7 @@ import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, Save, X
 import { MessageFormatter } from '../MessageFormatter'
 import { VoiceMessagePlayer } from '../VoiceMessagePlayer'
 import { getCompatibleFileUrl } from '@/utils/fileProxy'
+import { useE2EE } from '@/hooks/useE2EE'
 
 interface Reaction {
   emoji: string
@@ -49,6 +50,7 @@ interface Message {
 
 interface MessageBubbleProps {
   message: Message
+  conversationId: string // E2EE FIX: Required for reply decryption
   onReply?: (message: Message) => void
   onReact?: (messageId: string, emoji: string) => void
   onScrollToMessage?: (messageId: string) => void
@@ -59,7 +61,7 @@ interface MessageBubbleProps {
   isLastMessage?: boolean
 }
 
-export function MessageBubble({ message, onReply, onReact, onScrollToMessage, onEdit, onDelete, onDeleteForMe, scrollToMessageLoading, isLastMessage }: MessageBubbleProps) {
+export function MessageBubble({ message, conversationId, onReply, onReact, onScrollToMessage, onEdit, onDelete, onDeleteForMe, scrollToMessageLoading, isLastMessage }: MessageBubbleProps) {
   const { data: session } = useSession()
   const [showActions, setShowActions] = useState(false)
   const [showReactions, setShowReactions] = useState(false)
@@ -71,6 +73,10 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
   const [isDeletingForMe, setIsDeletingForMe] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isClient, setIsClient] = useState(false)
+  
+  // E2EE FIX: Add E2EE decryption support for reply content
+  const { decryptMessage, isAvailable } = useE2EE()
+  const [decryptedReplyContent, setDecryptedReplyContent] = useState<string | null>(null)
 
   // Interaction timing - adjusted for mobile
   const LONG_PRESS_MS = isMobile ? 300 : 450 // Shorter on mobile for better UX
@@ -209,6 +215,31 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
       setEditContent(message.content)
     }
   }, [message.content, isEditing, editContent])
+
+  // E2EE FIX: Decrypt reply content if encrypted
+  useEffect(() => {
+    const decryptReplyContent = async () => {
+      if (message.replyTo?.content && message.replyTo.content.startsWith('🔐') && isAvailable && decryptMessage) {
+        try {
+          const encryptedData = message.replyTo.content.substring(2) // Remove 🔐 prefix
+          const decrypted = await decryptMessage(encryptedData, conversationId)
+          if (decrypted && decrypted.trim()) {
+            setDecryptedReplyContent(decrypted)
+          } else {
+            setDecryptedReplyContent('[Encrypted message - decryption failed]')
+          }
+        } catch (error) {
+          console.warn('E2EE: Failed to decrypt reply content:', error)
+          setDecryptedReplyContent('[Encrypted message - decryption failed]')
+        }
+      } else if (message.replyTo?.content && !message.replyTo.content.startsWith('🔐')) {
+        // Not encrypted, use original content
+        setDecryptedReplyContent(message.replyTo.content)
+      }
+    }
+
+    decryptReplyContent()
+  }, [message.replyTo?.content, isAvailable, decryptMessage, conversationId])
 
   useEffect(() => {
     return () => {
@@ -618,7 +649,9 @@ export function MessageBubble({ message, onReply, onReact, onScrollToMessage, on
                 )}
               </div>
               <p className="text-gray-600 dark:text-gray-400 break-words line-clamp-2 text-wrap overflow-wrap-anywhere hyphens-auto">
-                {message.replyTo.content}
+                {decryptedReplyContent !== null ? decryptedReplyContent : (
+                  message.replyTo.content.startsWith('🔐') ? '🔓 Decrypting...' : message.replyTo.content
+                )}
               </p>
             </div>
           )}

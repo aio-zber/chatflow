@@ -5,6 +5,7 @@ import { useSession, signOut } from 'next-auth/react'
 import { Settings, LogOut, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSocketContext } from '@/context/SocketContext'
+import { getCompatibleFileUrl } from '@/utils/fileProxy'
 
 export function UserProfile() {
   const { data: session, update } = useSession()
@@ -125,10 +126,14 @@ export function UserProfile() {
     }
   }, [session?.user?.id])
   
-  // Memoize avatar URL with cache busting - prioritize local state for instant updates
+  // COEP FIX: Memoize avatar URL with cache busting and COEP-compatible proxy
   const avatarUrl = useMemo(() => {
     const currentAvatar = localAvatarUrl || session?.user?.avatar
-    return currentAvatar ? `${currentAvatar}?v=${avatarTimestamp}` : null
+    if (!currentAvatar) return null
+    
+    // Apply proxy for COEP compatibility, then add cache busting
+    const proxiedUrl = getCompatibleFileUrl(currentAvatar)
+    return `${proxiedUrl}?v=${avatarTimestamp}`
   }, [localAvatarUrl, session?.user?.avatar, avatarTimestamp])
 
   // Sync local state with session when session changes

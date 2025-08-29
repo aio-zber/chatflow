@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react'
 import { useSocketContext } from '@/context/SocketContext'
+import { getCompatibleFileUrl } from '@/utils/fileProxy'
 
 interface ConversationAvatarProps {
   conversation: {
@@ -54,7 +55,7 @@ export function ConversationAvatar({ conversation }: ConversationAvatarProps) {
       <div className="relative">
         {avatar ? (
           <img
-            src={avatar}
+            src={getCompatibleFileUrl(avatar)}
             alt={name}
             className="w-10 h-10 rounded-full object-cover"
           />

@@ -36,6 +36,7 @@ interface Message {
 interface VirtualizedMessageListProps {
   messages: Message[]
   currentUserId: string
+  conversationId: string // E2EE FIX: Required for reply decryption
   onLoadMore?: () => void
   onReact?: (messageId: string, emoji: string) => void
   onReply?: (message: Message) => void
@@ -86,6 +87,7 @@ const MessageItem = React.memo<{
   >
     <MessageBubble
       message={message}
+      conversationId={conversationId}
       onReact={onReact}
       onReply={onReply}
       onEdit={onEdit}
@@ -101,6 +103,7 @@ MessageItem.displayName = 'MessageItem'
 export function VirtualizedMessageList({
   messages,
   currentUserId, // eslint-disable-line @typescript-eslint/no-unused-vars
+  conversationId,
   onLoadMore,
   onReact,
   onReply,

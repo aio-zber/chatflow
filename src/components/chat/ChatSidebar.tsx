@@ -6,6 +6,7 @@ import { Search, Plus, MessageCircle, X } from 'lucide-react'
 import { BlockedUsersManager } from '@/components/BlockedUsersManager'
 import { useConversations } from '@/hooks/useConversations'
 import { useBlockedUsers } from '@/hooks/useBlockedUsers'
+import { useUserBlockers } from '@/hooks/useUserBlockers'
 import { useE2EE } from '@/hooks/useE2EE'
 import { useSocketContext } from '@/context/SocketContext'
 import { UserSelectionModal } from './UserSelectionModal'
@@ -125,6 +126,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
   const { data: session } = useSession()
   const { conversations, loading, error, forceRefreshKey, setForceRefreshKey } = useConversations()
   const { blockedUsers } = useBlockedUsers()
+  const { blockers } = useUserBlockers() // BLOCKING FIX: Get users who blocked current user
   const { decryptMessage, isAvailable: e2eeAvailable } = useE2EE()
   const { socket, isFullyInitialized } = useSocketContext()
   const [searchQuery, setSearchQuery] = useState('')
@@ -234,10 +236,12 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
   // Add force refresh state for blocked users changes
   const [forceRefresh, setForceRefresh] = useState(0)
   
-  // Force refresh when blocked users change - ensuring immediate UI update
+  // Force refresh when blocked users OR blockers change - ensuring immediate UI update
   useEffect(() => {
     console.log('🚫 ChatSidebar: Blocked users changed, count:', blockedUsers.length)
     console.log('🚫 ChatSidebar: Blocked user IDs:', blockedUsers.map(b => b.user.id))
+    console.log('🚫 ChatSidebar: Users who blocked us, count:', blockers.length)
+    console.log('🚫 ChatSidebar: Blocker user IDs:', blockers.map(b => b.user.id))
     
     // Force multiple re-renders to ensure UI updates immediately
     setForceRefresh(prev => prev + 1)
@@ -266,7 +270,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
         socket.emit('request-conversation-refresh', { userId: session?.user?.id })
       }
     }, 500)
-  }, [blockedUsers, socket, session?.user?.id])
+  }, [blockedUsers, blockers, socket, session?.user?.id]) // BLOCKING FIX: Include blockers in dependencies
 
   // Add direct socket listeners for group events to force sidebar updates
   useEffect(() => {
@@ -307,16 +311,18 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
     }
   }, [socket])
 
-  // Filter conversations using useMemo for performance
+  // BLOCKING FIX: Filter conversations using useMemo for performance
   const filteredConversations = useMemo(() => {
-    // Create a set of blocked user IDs for quick lookup
+    // Create sets of blocked user IDs for quick lookup
     const blockedUserIds = new Set(blockedUsers.map(blocked => blocked.user.id))
+    const blockerUserIds = new Set(blockers.map(blocker => blocker.user.id))
     
     // Reduced logging for performance
     if (Math.random() < 0.1) {
       console.log('ChatSidebar: Filtering conversations', {
         totalConversations: conversations.length,
         blockedUserIds: Array.from(blockedUserIds),
+        blockerUserIds: Array.from(blockerUserIds),
         searchQuery,
         forceRefresh,
         conversationIds: conversations.map(c => c.id)
@@ -336,11 +342,22 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
       }
       
-      // For direct messages, check if the other user is blocked
+      // BLOCKING FIX: For direct messages, check both blocking relationships
       const otherParticipant = conversation.otherParticipants?.[0]
-      if (otherParticipant && blockedUserIds.has(otherParticipant.user.id)) {
-        console.log(`ChatSidebar: Hiding conversation ${conversation.id} with blocked user ${otherParticipant.user.id} (${otherParticipant.user.name})`)
-        return false // Hide conversations with blocked users
+      if (otherParticipant) {
+        const otherUserId = otherParticipant.user.id
+        
+        // Hide if current user blocked the other user
+        if (blockedUserIds.has(otherUserId)) {
+          console.log(`ChatSidebar: Hiding conversation ${conversation.id} - current user blocked ${otherUserId} (${otherParticipant.user.name})`)
+          return false
+        }
+        
+        // Hide if other user blocked the current user
+        if (blockerUserIds.has(otherUserId)) {
+          console.log(`ChatSidebar: Hiding conversation ${conversation.id} - current user blocked by ${otherUserId} (${otherParticipant.user.name})`)
+          return false
+        }
       }
       
       // Apply search filter
@@ -364,7 +381,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
       console.log(`ChatSidebar: Final conversation list:`, filtered.map(c => ({ id: c.id, name: getConversationName(c), memberCount: c.participants?.length })))
     }
     return filtered
-  }, [conversations, searchQuery, blockedUsers, forceRefresh])
+  }, [conversations, searchQuery, blockedUsers, blockers, forceRefresh]) // BLOCKING FIX: Include blockers dependency
 
   if (loading) {
     return (
