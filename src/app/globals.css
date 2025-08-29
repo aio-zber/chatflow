@@ -5,12 +5,72 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Viber Design System Colors */
+  --viber-primary: #7360F2;
+  --viber-secondary: #FF6B00;
+  --viber-tertiary: #59267c;
+  --viber-accent: #F3F1FF;
+  --viber-green: #00D448;
+  --viber-orange: #FF6B00;
+  --viber-teal: #6BB6FF;
+  
+  /* Viber Surfaces */
+  --viber-surface: #FFFFFF;
+  --viber-surface-container: #F8F9FA;
+  --viber-surface-variant: #F1F3F4;
+  --viber-surface-bright: #FFFFFF;
+  
+  /* Viber Text Colors */
+  --viber-text-primary: #1A1A1A;
+  --viber-text-secondary: #5F6368;
+  --viber-text-tertiary: #9AA0A6;
+  --viber-text-inverse: #FFFFFF;
+  
+  /* Viber Borders */
+  --viber-border: #E8EAED;
+  --viber-border-variant: #DADCE0;
+  
+  /* Viber Shadows */
+  --viber-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --viber-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --viber-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    
+    /* Viber Dark Mode Colors */
+    --viber-primary: #7360F2;
+    --viber-secondary: #FF6B00;
+    --viber-tertiary: #59267c;
+    --viber-accent: #2A2D3A;
+    --viber-green: #00D448;
+    --viber-orange: #FF6B00;
+    --viber-teal: #6BB6FF;
+    
+    /* Viber Dark Surfaces */
+    --viber-surface: #1E1E1E;
+    --viber-surface-container: #2A2D3A;
+    --viber-surface-variant: #404040;
+    --viber-surface-bright: #353535;
+    
+    /* Viber Dark Text Colors */
+    --viber-text-primary: #FFFFFF;
+    --viber-text-secondary: #B3B3B3;
+    --viber-text-tertiary: #808080;
+    --viber-text-inverse: #1A1A1A;
+    
+    /* Viber Dark Borders */
+    --viber-border: #404040;
+    --viber-border-variant: #353535;
+    
+    /* Viber Dark Shadows */
+    --viber-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --viber-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --viber-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -341,9 +401,55 @@ body {
     outline-offset: 2px;
   }
   
+  /* Viber Focus Styles */
+  .viber-focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--viber-primary);
+    border-radius: 8px;
+  }
+
   /* Focus styles for better accessibility */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800;
+    @apply focus:outline-none focus:ring-2 focus:ring-viber-primary focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800;
+  }
+
+  /* Viber Input Styles */
+  .viber-input {
+    background: var(--viber-surface-container);
+    border: 1px solid var(--viber-border);
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--viber-text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .viber-input:focus {
+    border-color: var(--viber-primary);
+    box-shadow: 0 0 0 2px rgba(115, 96, 242, 0.1);
+    outline: none;
+  }
+
+  .viber-input::placeholder {
+    color: var(--viber-text-tertiary);
+  }
+
+  /* Viber Message Input Container */
+  .viber-message-input {
+    background: var(--viber-surface-container);
+    border: 1px solid var(--viber-border);
+    border-radius: 24px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+  }
+
+  .viber-message-input:focus-within {
+    border-color: var(--viber-primary);
+    box-shadow: var(--viber-shadow-sm);
   }
   
   /* Screen reader only content */
@@ -377,10 +483,67 @@ body {
 
 /* Accessibility Enhancements */
 
+/* Viber Conversation List Styles */
+.viber-conversation-item {
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.viber-conversation-item:hover {
+  background-color: var(--viber-surface-variant);
+}
+
+.viber-conversation-item.active {
+  background-color: var(--viber-accent);
+  border-left: 4px solid var(--viber-primary);
+}
+
+.viber-conversation-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--viber-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--viber-text-inverse);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.viber-online-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  background: var(--viber-green);
+  border: 2px solid var(--viber-surface-container);
+  border-radius: 50%;
+}
+
+.viber-unread-badge {
+  background: var(--viber-primary);
+  color: var(--viber-text-inverse);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
 /* High contrast mode */
 .high-contrast {
   --background: #000000;
   --foreground: #ffffff;
+  --viber-primary: #8B7CF6;
+  --viber-surface: #000000;
+  --viber-surface-container: #1A1A1A;
+  --viber-text-primary: #FFFFFF;
+  --viber-border: #FFFFFF;
 }
 
 .high-contrast .bg-white {
@@ -484,19 +647,31 @@ button:disabled {
 /* Color contrast improvements */
 @media (prefers-contrast: high) {
   .text-gray-500 {
-    color: #374151 !important;
+    color: var(--viber-text-secondary) !important;
   }
   
   .text-gray-400 {
-    color: #1f2937 !important;
+    color: var(--viber-text-primary) !important;
   }
   
   .border-gray-200 {
-    border-color: #374151 !important;
+    border-color: var(--viber-border) !important;
   }
   
   .bg-gray-100 {
-    background-color: #f3f4f6 !important;
+    background-color: var(--viber-surface-variant) !important;
+  }
+  
+  /* Viber High Contrast Improvements */
+  .viber-bubble-sent {
+    background: #5A4FCF !important;
+    border: 2px solid #FFFFFF !important;
+  }
+  
+  .viber-bubble-received {
+    background: #FFFFFF !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
   }
 }
 
@@ -518,4 +693,207 @@ button:disabled {
 .dark .high-contrast .text-gray-300,
 .dark .high-contrast .text-gray-400 {
   color: #000000 !important;
+}
+
+/* Viber Mobile Optimizations */
+@media (max-width: 768px) {
+  .viber-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+    font-size: 0.875rem;
+  }
+  
+  .viber-conversation-item {
+    padding: 14px 16px;
+  }
+  
+  .viber-conversation-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+  
+  .viber-message-input {
+    padding: 6px 12px;
+    min-height: 44px;
+  }
+  
+  .viber-button {
+    padding: 10px 20px;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+}
+
+/* Viber Dark Mode Adjustments */
+.dark .viber-bubble-received {
+  background: var(--viber-surface-bright);
+  border: 1px solid var(--viber-border-variant);
+}
+
+.dark .viber-conversation-item:hover {
+  background-color: var(--viber-surface-bright);
+}
+
+.dark .viber-conversation-item.active {
+  background-color: rgba(115, 96, 242, 0.15);
+}
+
+/* Viber Animation Refinements */
+.viber-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+}
+
+.viber-typing-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--viber-text-tertiary);
+  border-radius: 50%;
+  animation: viberTyping 1.4s infinite both;
+}
+
+.viber-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.viber-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes viberTyping {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Viber Loading States */
+.viber-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.viber-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(115, 96, 242, 0.1),
+    transparent
+  );
+  animation: viberShimmer 1.5s infinite;
+}
+
+@keyframes viberShimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Viber Interactive Elements */
+.viber-interactive {
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.viber-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--viber-shadow-lg);
+}
+
+.viber-interactive:active {
+  transform: translateY(0);
+  box-shadow: var(--viber-shadow-sm);
+}
+
+/* Viber Ripple Effect */
+.viber-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.viber-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(115, 96, 242, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.viber-ripple:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Viber Notification Styles */
+.viber-notification {
+  background: var(--viber-surface-bright);
+  border: 1px solid var(--viber-border);
+  border-radius: 12px;
+  box-shadow: var(--viber-shadow-lg);
+  animation: viberNotificationSlide 0.3s ease-out;
+}
+
+@keyframes viberNotificationSlide {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Viber Connection Status */
+.viber-connection-indicator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--viber-surface-variant);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.viber-connection-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.viber-connection-connected .viber-connection-dot {
+  background: var(--viber-green);
+  animation: viberPulse 2s infinite;
+}
+
+.viber-connection-disconnected .viber-connection-dot {
+  background: var(--viber-orange);
+}
+
+.viber-connection-connecting .viber-connection-dot {
+  background: var(--viber-teal);
+  animation: viberPulse 1s infinite;
 }

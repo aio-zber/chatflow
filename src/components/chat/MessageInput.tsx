@@ -277,28 +277,28 @@ export function MessageInput({
   }
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+    <div className="border-t border-viber-border dark:border-viber-border bg-viber-surface dark:bg-viber-surface">
       {/* Reply preview */}
       {replyTo && (
-        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+        <div className="px-4 py-3 border-b border-viber-border dark:border-viber-border bg-viber-accent dark:bg-viber-accent">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-1 h-8 bg-blue-500 rounded-full" />
+            <div className="flex items-center space-x-3">
+              <div className="w-1 h-10 bg-viber-primary rounded-full" />
               <div>
-                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                <p className="text-xs font-medium text-viber-primary">
                   Replying to {replyTo.senderName}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 break-words line-clamp-2 max-w-full pr-8">
+                <p className="text-sm text-viber-text-secondary dark:text-viber-text-secondary break-words line-clamp-2 max-w-full pr-8">
                   {replyTo.content}
                 </p>
               </div>
             </div>
             <button
               onClick={onCancelReply}
-              className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-1.5 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-colors"
               aria-label="Cancel reply"
             >
-              <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <X className="w-4 h-4 text-viber-text-secondary dark:text-viber-text-secondary" />
             </button>
           </div>
         </div>
@@ -306,8 +306,8 @@ export function MessageInput({
 
       {/* Attachment previews */}
       {attachments.length > 0 && (
-        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex flex-wrap gap-2">
+        <div className="px-4 py-3 border-b border-viber-border dark:border-viber-border bg-viber-surface-container dark:bg-viber-surface-container">
+          <div className="flex flex-wrap gap-3">
             {attachments.map((attachment, index) => (
               <div key={`attachment-${attachment.file.name}-${attachment.file.size}-${index}`} className="relative group">
                 {attachment.type === 'image' ? (
@@ -365,7 +365,7 @@ export function MessageInput({
                     <button
                       onClick={() => removeAttachment(index)}
                       disabled={attachment.uploading}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-viber-orange text-viber-text-inverse rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 focus:outline-none focus:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:scale-105"
                       aria-label="Remove attachment"
                     >
                       <X className="w-3 h-3" />
@@ -409,7 +409,7 @@ export function MessageInput({
                     <button
                       onClick={() => removeAttachment(index)}
                       disabled={attachment.uploading}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-viber-orange text-viber-text-inverse rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 focus:outline-none focus:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:scale-105"
                       aria-label="Remove attachment"
                     >
                       <X className="w-3 h-3" />
@@ -423,13 +423,13 @@ export function MessageInput({
       )}
 
       {/* Input area */}
-      <div className="flex items-end space-x-3 p-4">
+      <div className="flex items-end gap-3 p-4">
         {/* Attachment buttons */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled}
-            className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Attach file"
           >
             <Paperclip className="w-5 h-5" />
@@ -438,7 +438,7 @@ export function MessageInput({
           <button
             onClick={() => imageInputRef.current?.click()}
             disabled={disabled}
-            className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Attach image"
           >
             <Image className="w-5 h-5" />
@@ -447,7 +447,7 @@ export function MessageInput({
           <button
             onClick={() => setShowVoiceRecorder(true)}
             disabled={disabled}
-            className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Record voice message"
           >
             <Mic className="w-5 h-5" />
@@ -467,19 +467,19 @@ export function MessageInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-2xl px-4 py-3 pr-20 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ minHeight: '44px', maxHeight: '120px' }}
+            className="w-full resize-none border border-viber-border dark:border-viber-border rounded-3xl px-5 py-3 pr-20 bg-viber-surface-container dark:bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary dark:placeholder-viber-text-tertiary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            style={{ minHeight: '48px', maxHeight: '120px' }}
           />
           
           {/* Emoji and Sticker buttons */}
-          <div className="absolute right-3 bottom-3 flex space-x-1">
+          <div className="absolute right-4 bottom-3.5 flex gap-2">
             <button
               onClick={() => {
                 setShowStickerPicker(!showStickerPicker)
                 setShowEmojiPicker(false)
               }}
               disabled={disabled}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-viber-text-tertiary dark:text-viber-text-tertiary hover:text-viber-primary dark:hover:text-viber-primary focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Add sticker"
             >
               <Sticker className="w-5 h-5" />
@@ -490,7 +490,7 @@ export function MessageInput({
                 setShowStickerPicker(false)
               }}
               disabled={disabled}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-viber-text-tertiary dark:text-viber-text-tertiary hover:text-viber-primary dark:hover:text-viber-primary focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Add emoji"
             >
               <Smile className="w-5 h-5" />
@@ -505,17 +505,17 @@ export function MessageInput({
                 onClick={() => setShowEmojiPicker(false)}
                 aria-hidden="true"
               />
-              <div className="absolute bottom-full right-0 mb-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+              <div className="absolute bottom-full right-0 mb-2 w-80 bg-viber-surface dark:bg-viber-surface rounded-2xl shadow-viber-lg border border-viber-border dark:border-viber-border z-20">
                 {/* Emoji Category Tabs */}
-                <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+                <div className="flex border-b border-viber-border dark:border-viber-border overflow-x-auto">
                   {Object.entries(emojiCategories).map(([key, emojis]) => (
                     <button
                       key={key}
                       onClick={() => setCurrentEmojiCategory(key as keyof typeof emojiCategories)}
-                      className={`px-3 py-2 text-xs font-medium whitespace-nowrap border-b-2 focus:outline-none ${
+                      className={`px-4 py-3 text-xs font-medium whitespace-nowrap border-b-2 focus:outline-none transition-colors ${
                         currentEmojiCategory === key
-                          ? 'text-blue-600 border-blue-600 dark:text-blue-400 dark:border-blue-400'
-                          : 'text-gray-500 border-transparent hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                          ? 'text-viber-primary border-viber-primary bg-viber-accent dark:bg-viber-accent'
+                          : 'text-viber-text-secondary border-transparent hover:text-viber-text-primary dark:text-viber-text-secondary dark:hover:text-viber-text-primary'
                       }`}
                     >
                       {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -524,13 +524,13 @@ export function MessageInput({
                 </div>
                 
                 {/* Emoji Grid */}
-                <div className="p-3 h-48 overflow-y-auto">
-                  <div className="grid grid-cols-8 gap-2">
+                <div className="p-4 h-48 overflow-y-auto">
+                  <div className="grid grid-cols-8 gap-1">
                     {emojiCategories[currentEmojiCategory].map((emoji) => (
                       <button
                         key={emoji}
                         onClick={() => insertEmoji(emoji)}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg hover:scale-110 transition-transform"
+                        className="p-2 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-lg focus:outline-none focus:ring-2 focus:ring-viber-primary text-lg hover:scale-110 transition-all duration-200"
                         aria-label={`Insert ${emoji} emoji`}
                       >
                         {emoji}
@@ -559,11 +559,11 @@ export function MessageInput({
           )}
         </div>
 
-        {/* Send button */}
+        {/* Viber-style Send button */}
         <button
           onClick={handleSend}
           disabled={disabled || (!message.trim() && attachments.length === 0) || isSending}
-          className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="btn-touch p-3 bg-viber-primary text-viber-text-inverse rounded-full hover:bg-viber-secondary focus:outline-none shadow-viber transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 viber-focus ml-2"
           aria-label="Send message"
         >
           {isSending ? (

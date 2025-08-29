@@ -385,17 +385,17 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
 
   if (loading) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 bg-viber-surface dark:bg-viber-surface">
         {/* Search skeleton */}
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse"></div>
+        <div className="h-12 bg-viber-surface-variant dark:bg-viber-surface-bright rounded-2xl animate-pulse"></div>
         
         {/* Conversation skeletons */}
         {[...Array(5)].map((_, i) => (
           <div key={`conversation-skeleton-${i}`} className="flex items-center space-x-3 p-3">
-            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+            <div className="w-12 h-12 bg-viber-surface-variant dark:bg-viber-surface-bright rounded-full animate-pulse"></div>
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4"></div>
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-1/2"></div>
+              <div className="h-4 bg-viber-surface-variant dark:bg-viber-surface-bright rounded animate-pulse w-3/4"></div>
+              <div className="h-3 bg-viber-surface-variant dark:bg-viber-surface-bright rounded animate-pulse w-1/2"></div>
             </div>
           </div>
         ))}
@@ -419,74 +419,74 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Tabs + Search/New Chat */}
-      <div className="p-4 space-y-4">
+    <div className="flex flex-col h-full bg-viber-surface dark:bg-viber-surface">
+      {/* Top Section - Search and New Chat */}
+      <div className="p-4 space-y-3 bg-viber-surface dark:bg-viber-surface border-b border-viber-border dark:border-viber-border">
+        {/* Search bar at the very top */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-viber-text-tertiary w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full pl-12 pr-4 py-3 text-sm bg-viber-surface-container dark:bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary dark:placeholder-viber-text-tertiary border border-viber-border dark:border-viber-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-transparent transition-all duration-200"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-viber-text-tertiary hover:text-viber-text-secondary transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
         {/* Tabs */}
-        <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+        <div className="bg-viber-surface dark:bg-viber-surface rounded-xl border border-viber-border dark:border-viber-border">
           <nav className="-mb-px flex">
             <button
               onClick={() => setActiveTab('conversations')}
-              className={`flex-1 py-2 px-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors rounded-t-xl ${
                 activeTab === 'conversations'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  ? 'border-viber-primary text-viber-primary bg-viber-accent dark:bg-viber-accent'
+                  : 'border-transparent text-viber-text-secondary hover:text-viber-text-primary dark:text-viber-text-secondary dark:hover:text-viber-text-primary'
               }`}
             >
-              Conversations
+              All
             </button>
             <button
               onClick={() => setActiveTab('blocked')}
-              className={`flex-1 py-2 px-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors rounded-t-xl ${
                 activeTab === 'blocked'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  ? 'border-viber-primary text-viber-primary bg-viber-accent dark:bg-viber-accent'
+                  : 'border-transparent text-viber-text-secondary hover:text-viber-text-primary dark:text-viber-text-secondary dark:hover:text-viber-text-primary'
               }`}
             >
-              Blocked Users
+              Blocked
             </button>
           </nav>
         </div>
 
+        {/* Viber Purple + Button */}
         {activeTab === 'conversations' && (
-          <>
-            {/* Search bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search conversations..."
-                className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            {/* New Chat Button */}
+          <div className="flex justify-center">
             <button 
               onClick={handleNewChatClick}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              className="w-12 h-12 bg-viber-primary hover:bg-viber-secondary text-viber-text-inverse rounded-full flex items-center justify-center shadow-viber-md hover:shadow-viber-lg transition-all duration-200 group"
+              title="New Chat"
             >
-              <Plus className="w-4 h-4" />
-              <span className="text-sm font-medium">New Chat</span>
+              <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
             </button>
-          </>
+          </div>
         )}
       </div>
 
       {/* Content */}
       {activeTab === 'conversations' ? (
-        <div className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="flex-1 overflow-y-auto overscroll-contain bg-viber-surface dark:bg-viber-surface">
           {filteredConversations.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+            <div className="p-8 text-center text-viber-text-secondary dark:text-viber-text-secondary">
               {searchQuery ? (
                 <>
                   <Search className="w-8 h-8 mx-auto mb-3 opacity-50" />
@@ -501,7 +501,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
               )}
             </div>
           ) : (
-            <div className="space-y-1">
+            <div className="">
               {filteredConversations.map((conversation) => {
                 const lastMessage = conversation.messages?.[0]
                 const messagePreview = getLastMessagePreview(conversation, session?.user?.id, decryptedContents)
@@ -509,21 +509,21 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                   <button
                     key={conversation.id}
                     onClick={() => onSelectConversation(conversation.id)}
-                    className={`w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                    className={`w-full text-left px-4 py-3 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright transition-all duration-200 border-l-4 ${
                       selectedConversationId === conversation.id
-                        ? 'bg-blue-50 dark:bg-blue-900/50 border-r-2 border-blue-600'
-                        : ''
+                        ? 'bg-viber-accent dark:bg-viber-accent border-l-viber-primary'
+                        : 'border-l-transparent'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="relative">
+                      <div className="relative flex-shrink-0">
                         <ConversationAvatar conversation={conversation} />
                         {/* Online status indicator for non-group conversations */}
                         {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
-                          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
+                          <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-viber-surface dark:border-viber-surface ${
                             conversation.otherParticipants?.[0]?.user.isOnline 
-                              ? 'bg-green-500' 
-                              : 'bg-gray-400'
+                              ? 'bg-viber-green' 
+                              : 'bg-viber-text-tertiary'
                           }`} />
                         )}
                       </div>
@@ -531,14 +531,14 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center space-x-2 min-w-0">
-                            <h3 className={`text-sm text-gray-900 dark:text-white truncate ${
-                              conversation.unreadCount > 0 ? 'font-bold' : 'font-medium'
+                            <h3 className={`text-base text-viber-text-primary dark:text-viber-text-primary truncate ${
+                              conversation.unreadCount > 0 ? 'font-semibold' : 'font-medium'
                             }`}>
                               {getConversationName(conversation)}
                             </h3>
                             {/* Online status for groups - show online count excluding current user */}
                             {conversation.isGroup && (
-                              <span className="text-xs text-green-600 dark:text-green-400 font-medium flex-shrink-0">
+                              <span className="text-xs text-viber-green font-medium flex-shrink-0">
                                 {conversation.participants.filter(p => p.user.isOnline && p.user.id !== session?.user?.id).length} online
                               </span>
                             )}
@@ -546,24 +546,24 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                             {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
                               <span className={`text-xs font-medium flex-shrink-0 ${
                                 conversation.otherParticipants?.[0]?.user.isOnline 
-                                  ? 'text-green-600 dark:text-green-400' 
-                                  : 'text-gray-500 dark:text-gray-400'
+                                  ? 'text-viber-green' 
+                                  : 'text-viber-text-tertiary dark:text-viber-text-tertiary'
                               }`}>
                                 {conversation.otherParticipants?.[0]?.user.isOnline 
-                                  ? 'online' 
-                                  : `last seen ${formatTime(conversation.otherParticipants?.[0]?.user.lastSeen)}`
+                                  ? 'Active' 
+                                  : formatTime(conversation.otherParticipants?.[0]?.user.lastSeen || new Date())
                                 }
                               </span>
                             )}
                           </div>
                           <div className="flex items-center space-x-2">
                             {conversation.unreadCount > 0 && (
-                              <span className="bg-blue-600 text-white text-xs rounded-full min-w-[1.2rem] h-5 flex items-center justify-center px-1 font-medium">
+                              <span className="bg-viber-primary text-viber-text-inverse text-xs rounded-full min-w-[1.25rem] h-5 flex items-center justify-center px-2 font-semibold shadow-sm">
                                 {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
                               </span>
                             )}
                             {lastMessage && (
-                              <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
+                              <span className="text-xs text-viber-text-tertiary dark:text-viber-text-tertiary flex-shrink-0 font-medium">
                                 {formatTime(lastMessage.createdAt)}
                               </span>
                             )}
@@ -571,22 +571,22 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <p className={`text-sm text-gray-600 dark:text-gray-300 truncate break-words flex-1 ${
-                            conversation.unreadCount > 0 ? 'font-bold' : 'font-normal'
+                          <p className={`text-sm text-viber-text-secondary dark:text-viber-text-secondary truncate break-words flex-1 ${
+                            conversation.unreadCount > 0 ? 'font-medium text-viber-text-primary dark:text-viber-text-primary' : 'font-normal'
                           }`}>
                             {messagePreview.content}
                           </p>
                           {messagePreview.status && (
-                            <span className={`text-xs flex-shrink-0 ${
+                            <span className={`text-sm flex-shrink-0 ml-2 ${
                               messagePreview.status === 'read' 
-                                ? 'text-blue-600 dark:text-blue-400' 
+                                ? 'text-viber-teal' 
                                 : messagePreview.status === 'delivered'
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-gray-400 dark:text-gray-500'
+                                ? 'text-viber-text-secondary dark:text-viber-text-secondary'
+                                : 'text-viber-text-tertiary dark:text-viber-text-tertiary'
                             }`}>
                               {messagePreview.status === 'read' ? '✓✓' : 
-                               messagePreview.status === 'delivered' ? '✓' : 
-                               '⏰'}
+                               messagePreview.status === 'delivered' ? '✓✓' : 
+                               '✓'}
                             </span>
                           )}
                         </div>
@@ -599,7 +599,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
           )}
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto overscroll-contain p-4">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 bg-viber-surface dark:bg-viber-surface">
           <BlockedUsersManager />
         </div>
       )}

@@ -1337,13 +1337,13 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   if (!conversationId) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900 min-h-0">
-        <div className="text-center text-gray-500 dark:text-gray-400">
-          <div className="w-24 h-24 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-            <Video className="w-12 h-12" />
+      <div className="h-full flex items-center justify-center bg-viber-surface-container dark:bg-viber-surface-container">
+        <div className="text-center text-viber-text-secondary dark:text-viber-text-secondary">
+          <div className="w-28 h-28 mx-auto mb-6 bg-viber-primary rounded-full flex items-center justify-center shadow-viber-lg">
+            <span className="text-viber-text-inverse font-bold text-3xl">V</span>
           </div>
-          <h2 className="text-xl font-medium mb-2">Select a conversation</h2>
-          <p>Choose a conversation from the sidebar to start chatting</p>
+          <h2 className="text-2xl font-semibold mb-3 text-viber-text-primary dark:text-viber-text-primary">Welcome to Viber</h2>
+          <p className="text-lg">Select a conversation to start chatting</p>
         </div>
       </div>
     )
@@ -1352,14 +1352,14 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   if (messagesLoading || conversationsLoading) {
     return (
       <div className="flex-1 flex flex-col">
-        <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 animate-pulse" />
-        <div className="flex-1 p-4 space-y-4">
+        <div className="h-20 bg-viber-surface dark:bg-viber-surface border-b border-viber-border dark:border-viber-border animate-pulse" />
+        <div className="flex-1 p-4 space-y-4 bg-viber-surface-container dark:bg-viber-surface-container">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={`skeleton-${i}`} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-              <div className="flex items-end space-x-2 max-w-[70%]">
-                {i % 2 === 0 && <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />}
-                <div className="bg-gray-200 dark:bg-gray-700 rounded-2xl p-4 animate-pulse">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-32 animate-pulse" />
+              <div className="flex items-end space-x-3 max-w-[70%]">
+                {i % 2 === 0 && <div className="w-10 h-10 bg-viber-surface-variant dark:bg-viber-surface-bright rounded-full animate-pulse" />}
+                <div className="bg-viber-surface dark:bg-viber-surface rounded-2xl p-4 animate-pulse border border-viber-border dark:border-viber-border">
+                  <div className="h-4 bg-viber-surface-variant dark:bg-viber-surface-bright rounded w-32 animate-pulse" />
                 </div>
               </div>
             </div>
@@ -1371,8 +1371,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   if (messagesError) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center text-red-500 dark:text-red-400">
+      <div className="flex-1 flex items-center justify-center bg-viber-surface-container dark:bg-viber-surface-container">
+        <div className="text-center text-viber-orange">
           <h2 className="text-xl font-medium mb-2">Error</h2>
           <p>{messagesError}</p>
         </div>
@@ -1383,11 +1383,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-between p-4 bg-viber-surface dark:bg-viber-surface border-b border-viber-border dark:border-viber-border">
+        <div className="flex items-center space-x-3 flex-1">
           {conversation?.isGroup ? (
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-medium">
+            <div className="w-12 h-12 bg-viber-primary rounded-full flex items-center justify-center shadow-sm">
+              <span className="text-viber-text-inverse font-semibold text-lg">
                 {conversation.participants.length}
               </span>
             </div>
@@ -1397,32 +1397,32 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 <img
                   src={getCompatibleFileUrl(conversation.otherParticipants[0].user.avatar)}
                   alt={conversation.name || conversation.otherParticipants[0]?.user.name || 'User'}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-12 h-12 rounded-full object-cover shadow-sm"
                 />
               ) : (
-                <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium">
+                <div className="w-12 h-12 bg-viber-primary rounded-full flex items-center justify-center shadow-sm">
+                  <span className="text-viber-text-inverse font-semibold text-lg">
                     {(conversation?.name || conversation?.otherParticipants[0]?.user.name || conversation?.otherParticipants[0]?.user.username || 'U').charAt(0).toUpperCase()}
                   </span>
                 </div>
               )}
               {conversation?.otherParticipants[0]?.user.isOnline && (
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-viber-green border-2 border-viber-surface dark:border-viber-surface rounded-full" />
               )}
             </div>
           )}
           
-          <div>
-            <h2 className="font-medium text-gray-900 dark:text-white">
+          <div className="flex-1 min-w-0">
+            <h2 className="font-semibold text-lg text-viber-text-primary dark:text-viber-text-primary truncate">
               {conversation?.name || conversation?.otherParticipants[0]?.user.name || conversation?.otherParticipants[0]?.user.username || 'Unknown'}
             </h2>
             {conversation?.isGroup ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400" key={`member-count-${groupRefreshKey}-${forceRefreshKey}`}>
-                {conversation.participants.length} members
+              <p className="text-sm text-viber-text-secondary dark:text-viber-text-secondary" key={`member-count-${groupRefreshKey}-${forceRefreshKey}`}>
+                {conversation.participants.length} participants
               </p>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {conversation?.otherParticipants[0]?.user.isOnline ? 'Online' : 'Offline'}
+              <p className="text-sm text-viber-text-secondary dark:text-viber-text-secondary">
+                {conversation?.otherParticipants[0]?.user.isOnline ? 'Active' : 'Offline'}
               </p>
             )}
             
@@ -1441,90 +1441,79 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* E2EE Security Button - temporarily disabled */}
-          {/*
-          {!conversation?.isGroup && (
-            <button 
-              onClick={() => {
-                if (isAvailable) {
-                  setShowSafetyNumber(true)
-                } else {
-                  setShowE2EESetup(true)
-                }
-              }}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              title={isAvailable ? "View safety number" : "Setup encryption"}
-            >
-              <Shield className={`w-5 h-5 ${isAvailable ? 'text-green-600' : 'text-gray-400'}`} />
-            </button>
-          )}
-          */}
-          
-          <button 
-            onClick={handleVoiceCall}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <Phone className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
-          <button 
-            onClick={handleVideoCall}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <Video className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
-          <button 
-            onClick={testMediaAccess}
-            className="p-2 hover:bg-red-100 dark:hover:bg-red-700 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"
-            title="Test Media Access"
-          >
-            🧪
-          </button>
-          <button 
-            onClick={() => conversation?.isGroup ? setShowGroupSettings(true) : setShowUserInfo(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <Info className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
+          {/* Search Bar in Header */}
+          <div className="flex items-center space-x-3 ml-4">
+            {!showSearch ? (
+              <>
+                <button 
+                  onClick={() => setShowSearch(true)}
+                  className="p-3 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full transition-all duration-200 group"
+                  title="Search in conversation"
+                >
+                  <Search className="w-5 h-5 text-viber-text-secondary group-hover:text-viber-primary transition-colors" />
+                </button>
+                <button 
+                  onClick={handleVoiceCall}
+                  className="p-3 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full transition-all duration-200 group"
+                  title="Voice call"
+                >
+                  <Phone className="w-5 h-5 text-viber-text-secondary group-hover:text-viber-primary transition-colors" />
+                </button>
+                <button 
+                  onClick={handleVideoCall}
+                  className="p-3 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full transition-all duration-200 group"
+                  title="Video call"
+                >
+                  <Video className="w-5 h-5 text-viber-text-secondary group-hover:text-viber-primary transition-colors" />
+                </button>
+                <button 
+                  onClick={() => conversation?.isGroup ? setShowGroupSettings(true) : setShowUserInfo(true)}
+                  className="p-3 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full transition-all duration-200 group"
+                  title={conversation?.isGroup ? 'Group settings' : 'User info'}
+                >
+                  <Info className="w-5 h-5 text-viber-text-secondary group-hover:text-viber-primary transition-colors" />
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search messages..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-64 px-4 py-2 bg-viber-surface-container dark:bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary dark:placeholder-viber-text-tertiary border border-viber-border dark:border-viber-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-transparent transition-all"
+                    autoFocus
+                  />
+                  {isSearching && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="w-4 h-4 border-2 border-viber-border border-t-viber-primary rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setShowSearch(false)
+                    setSearchQuery('')
+                    setSearchResults([])
+                  }}
+                  className="p-2 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full transition-all duration-200"
+                  title="Close search"
+                >
+                  <X className="w-5 h-5 text-viber-text-secondary" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Search Interface */}
-      {showSearch && (
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center space-x-2">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Search messages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                autoFocus
-              />
-              {isSearching && (
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-                </div>
-              )}
-            </div>
-            <button
-              onClick={() => {
-                setShowSearch(false)
-                setSearchQuery('')
-                setSearchResults([])
-              }}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
+      {/* Search Results Info */}
+      {showSearch && searchResults.length > 0 && (
+        <div className="bg-viber-surface-container dark:bg-viber-surface-container border-b border-viber-border dark:border-viber-border px-4 py-2">
+          <div className="text-sm text-viber-text-secondary dark:text-viber-text-secondary">
+            {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found for "{searchQuery}"
           </div>
-          
-          {searchResults.length > 0 && (
-            <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
-            </div>
-          )}
         </div>
       )}
 
@@ -1552,13 +1541,13 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       <div 
         ref={messagesContainerRef}
         data-messages-container
-        className="flex-1 overflow-y-auto p-4 space-y-4 relative"
+        className="flex-1 overflow-y-auto p-4 space-y-4 relative bg-viber-surface-container dark:bg-viber-surface-container"
       >
         {/* Load more indicator - positioned at the very top */}
         {messagesLoadingMore && (
           <div className="flex justify-center py-2 mb-2">
-            <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full">
-              <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            <div className="flex items-center space-x-2 text-xs text-viber-text-secondary dark:text-viber-text-secondary bg-viber-surface dark:bg-viber-surface px-4 py-2 rounded-full shadow-sm border border-viber-border dark:border-viber-border">
+              <div className="w-3 h-3 border-2 border-viber-border border-t-viber-primary rounded-full animate-spin"></div>
               <span>Loading older messages...</span>
             </div>
           </div>
@@ -1578,7 +1567,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                   loadMore()
                 }
               }}
-              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="text-sm text-viber-primary hover:text-viber-secondary bg-viber-surface dark:bg-viber-surface px-4 py-2 rounded-full hover:bg-viber-accent dark:hover:bg-viber-accent transition-all duration-200 border border-viber-border dark:border-viber-border shadow-sm font-medium"
             >
               Load older messages
             </button>
@@ -1587,7 +1576,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         {showSearch && searchQuery ? (
           // Show search results
           searchResults.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+            <div className="flex items-center justify-center h-full text-viber-text-secondary dark:text-viber-text-secondary">
               <div className="text-center">
                 <p className="text-lg mb-2">
                   {isSearching ? 'Searching...' : 'No messages found'}
@@ -1599,9 +1588,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
             </div>
           ) : (
             <>
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-4">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  Showing search results for "{searchQuery}"
+              <div className="bg-viber-accent dark:bg-viber-accent border border-viber-primary/20 rounded-xl p-3 mb-4">
+                <p className="text-sm text-viber-primary font-medium">
+                  Search results for "{searchQuery}"
                 </p>
               </div>
               {searchResults.map((message) => (
@@ -1623,7 +1612,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         ) : (
           // Show regular messages
           transformedMessages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+            <div className="flex items-center justify-center h-full text-viber-text-secondary dark:text-viber-text-secondary">
               <div className="text-center">
                 <p className="text-lg mb-2">No messages yet</p>
                 <p className="text-sm">Start the conversation by sending a message</p>
@@ -1649,13 +1638,13 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
         {/* Typing indicators */}
         {typingUsers.length > 0 && (
-          <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center space-x-3 text-sm text-viber-text-secondary dark:text-viber-text-secondary bg-viber-surface dark:bg-viber-surface px-4 py-3 rounded-2xl border border-viber-border dark:border-viber-border shadow-sm max-w-fit">
             <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+              <div className="w-2 h-2 bg-viber-text-tertiary rounded-full animate-bounce" />
+              <div className="w-2 h-2 bg-viber-text-tertiary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+              <div className="w-2 h-2 bg-viber-text-tertiary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
             </div>
-            <span>
+            <span className="font-medium">
               {typingUsers.length === 1 
                 ? `${typingUsers[0].name} is typing...`
                 : `${typingUsers.length} people are typing...`
@@ -1670,7 +1659,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         {showScrollButton && (
           <button
             onClick={scrollToBottom}
-            className="fixed bottom-24 right-8 w-10 h-10 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 z-10 flex items-center justify-center"
+            className="fixed bottom-24 right-8 w-12 h-12 bg-viber-primary text-viber-text-inverse rounded-full shadow-viber-lg hover:bg-viber-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-viber-primary focus:ring-offset-2 z-10 flex items-center justify-center transition-all duration-200"
             aria-label="Scroll to bottom"
           >
             <ArrowDown className="w-5 h-5" />
