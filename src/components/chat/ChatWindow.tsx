@@ -62,7 +62,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const { data: session } = useSession()
   const { socket } = useSocketContext()
   const { playNotificationSound } = useNotifications()
-  const { conversations, loading: conversationsLoading, markConversationAsRead, forceRefreshKey, triggerRefresh } = useConversations()
+  const { conversations, loading: conversationsLoading, markConversationAsRead, forceRefreshKey, triggerRefresh } = useConversations(conversationId)
   const { messages, loading: messagesLoading, error: messagesError, sendMessage, loadMore, hasMore, loadingMore: messagesLoadingMore, scrollToMessageLoading, markMessagesAsRead, reactToMessage, scrollToMessage } = useMessages(conversationId)
   const [replyTo, setReplyTo] = useState<MessageBubbleMessage | null>(null)
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([])
@@ -1337,7 +1337,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   if (!conversationId) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900 min-h-0">
         <div className="text-center text-gray-500 dark:text-gray-400">
           <div className="w-24 h-24 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
             <Video className="w-12 h-12" />

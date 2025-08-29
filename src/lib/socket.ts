@@ -519,21 +519,58 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
           const callRoomSize = currentCallRoom ? currentCallRoom.size : 0
           console.log(`[CALL] Call room call:${data.callId} now has ${callRoomSize} socket connections`)
           
-          // Notify ALL participants in the call about the new participant (including the joiner)
+          socket.on('call_response', async (data: { // <-- Added 'async' here
+            conversationId: string
+            callId: string
+            accepted: boolean
+            participantId: string
+          }) => {
+          // Notify ALL participants in the call about the new participant (including the joiner) with full data
           console.log(`[CALL] Broadcasting participant_joined to all participants in call:${data.callId}`)
-          const participantJoinedData = {
-            callId: data.callId,
-            participantId: data.participantId,
-            participantCount: call.participants.size
+          
+          // Fetch the new participant's data for the broadcast
+          try {
+            const newParticipantUser = await prisma.user.findUnique({
+              where: { id: data.participantId },
+              select: {
+                id: true,
+                username: true,
+                name: true,
+                avatar: true
+              }
+            })
+            
+            const participantJoinedData = {
+              callId: data.callId,
+              participantId: data.participantId,
+              participantCount: call.participants.size,
+              participantData: newParticipantUser ? {
+                id: newParticipantUser.id,
+                name: newParticipantUser.name || newParticipantUser.username,
+                username: newParticipantUser.username,
+                avatar: newParticipantUser.avatar
+              } : undefined
+            }
+            
+            io.to(`call:${data.callId}`).emit('participant_joined', participantJoinedData)
+            
+            // Also notify the conversation room (for any listeners not in call yet)
+            socket.to(`conversation:${data.conversationId}`).emit('participant_joined', participantJoinedData)
+            
+            console.log(`[CALL] participant_joined event sent with enhanced data:`, participantJoinedData)
+          } catch (error) {
+            console.error(`[CALL] Error fetching new participant data:`, error)
+            // Fallback to basic data
+            const participantJoinedData = {
+              callId: data.callId,
+              participantId: data.participantId,
+              participantCount: call.participants.size
+            }
+            
+            io.to(`call:${data.callId}`).emit('participant_joined', participantJoinedData)
+            socket.to(`conversation:${data.conversationId}`).emit('participant_joined', participantJoinedData)
           }
-          
-          io.to(`call:${data.callId}`).emit('participant_joined', participantJoinedData)
-          
-          // Also notify the conversation room (for any listeners not in call yet)
-          socket.to(`conversation:${data.conversationId}`).emit('participant_joined', participantJoinedData)
-          
-          console.log(`[CALL] participant_joined event sent with data:`, participantJoinedData)
-          
+        })
           // ENHANCED: Broadcast individual participant state update
           const participantStateData = {
             callId: data.callId,
@@ -924,6 +961,64 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
           })
           
           console.log(`[CALL] ✅ CONNECTING state broadcasted to all participants via multiple channels`)
+          socket.on('webrtc_stream_ready', async (data: { // <-- Added 'async' here
+            callId: string
+            participantId: string
+            streamId: string
+            hasAudio?: boolean
+            hasVideo?: boolean
+          }) => {
+            // ... (lots of existing code) ...
+    
+            // CRITICAL: For group calls, send complete participant list to the newly joined participant
+            if (call.isGroupCall) {
+              const allParticipants = Array.from(call.participants)
+              console.log(`[CALL] 📋 Sending complete participant list to new joiner ${data.participantId}:`, allParticipants)
+    
+              // Send participant_joined event for each existing participant to the new joiner WITH full participant data
+              for (const existingParticipantId of allParticipants) {
+                if (existingParticipantId !== data.participantId) {
+                  try {
+                    // Fetch complete participant data from database
+                    const participantUser = await prisma.user.findUnique({ // <-- This 'await' is now valid
+                      where: { id: existingParticipantId },
+                      select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        avatar: true
+                      }
+                    })
+    
+                    if (participantUser) {
+                      socket.emit('participant_joined', {
+                        callId: data.callId,
+                        participantId: existingParticipantId,
+                        participantCount: call.participants.size,
+                        participantData: {
+                          id: participantUser.id,
+                          name: participantUser.name || participantUser.username,
+                          username: participantUser.username,
+                          avatar: participantUser.avatar
+                        }
+                      })
+                      console.log(`[CALL] ✅ Notified new joiner ${data.participantId} about existing participant ${existingParticipantId} with full data`)
+                    }
+                  } catch (error) {
+                    console.error(`[CALL] Error fetching participant data for ${existingParticipantId}:`, error)
+                    // Fallback to basic participant_joined event
+                    socket.emit('participant_joined', {
+                      callId: data.callId,
+                      participantId: existingParticipantId,
+                      participantCount: call.participants.size
+                    })
+                  }
+                }
+              }
+            }
+    
+            // ... (rest of the 'webrtc_stream_ready' listener code) ...
+          })
           
           // ENHANCED: Initialize participant states to connecting
           if (!call.participantStates) {

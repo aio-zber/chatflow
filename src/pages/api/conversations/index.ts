@@ -108,10 +108,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { updatedAt: 'desc' }
       })
       
-      // Transform conversations to include otherParticipants for backward compatibility
-      const transformedConversations = conversations.map(conv => ({
-        ...conv,
-        otherParticipants: conv.participants.filter(p => p.userId !== user.id)
+      // Transform conversations to include otherParticipants and unread count
+      const transformedConversations = await Promise.all(conversations.map(async conv => {
+        // Calculate unread count for this user in this conversation
+        const unreadCount = await prisma.message.count({
+          where: {
+            conversationId: conv.id,
+            senderId: { not: user.id }, // Not sent by current user
+            status: { not: 'read' } // Not marked as read
+          }
+        })
+        
+        return {
+          ...conv,
+          unreadCount,
+          otherParticipants: conv.participants.filter(p => p.userId !== user.id)
+        }
       }))
       
       console.log(`🚨 GET CONVERSATIONS SUCCESS: ${conversations.length} found`)

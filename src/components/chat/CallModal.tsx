@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { PhoneOff, Mic, MicOff, Camera, CameraOff, Monitor, Users } from 'lucide-react'
+import { PhoneOff, Mic, MicOff, Camera, CameraOff, Monitor, Users, Minimize2 } from 'lucide-react'
 import { useSocketContext } from '@/context/SocketContext'
 import { useSession } from 'next-auth/react'
 import { WebRTCService } from '@/lib/webrtc'
@@ -55,15 +55,10 @@ export function CallModal({
 }: CallModalProps) {
   const { socket } = useSocketContext()
   const { data: session } = useSession()
-  console.log(`\n📺 [CallModal] RENDERING`, {
-    isOpen,
-    callType,
-    conversationId,
-    callId,
-    isIncoming,
-    participantsCount: participants?.length,
-    sessionUserId: session?.user?.id
-  })
+  // Reduced logging for better performance
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[CallModal] Rendered - ${callType} call ${isOpen ? 'opened' : 'closed'}`)
+  }
   
   const [callState, setCallState] = useState<CallState>({
     status: isIncoming ? 'ringing' : 'dialing',
@@ -75,13 +70,87 @@ export function CallModal({
   })
   const [outgoingRingingInterval, setOutgoingRingingInterval] = useState<NodeJS.Timeout | null>(null)
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map())
-  const [participantConnectionStates, setParticipantConnectionStates] = useState<Map<string, 'ringing' | 'connecting' | 'connected'>>(new Map())
+  const [participantConnectionStates, setParticipantConnectionStates] = useState<Map<string, 'ringing' | 'connecting' | 'connected' | number>>(new Map())
   const [offerCreationAttempts, setOfferCreationAttempts] = useState<Set<string>>(new Set())
+  const [isMinimized, setIsMinimized] = useState(false)
+  const [activeParticipants, setActiveParticipants] = useState<CallParticipant[]>(participants || [])
+  
+  // Sync activeParticipants with participants prop changes
+  useEffect(() => {
+    if (participants && participants.length > 0) {
+      // Filter out ourselves from the participants list to prevent duplicates
+      const filteredParticipants = participants.filter(p => p.id !== session?.user?.id)
+      setActiveParticipants(filteredParticipants)
+      console.log('[CallModal] Initialized active participants (excluding self):', filteredParticipants.map(p => p.id))
+    }
+  }, [participants, session?.user?.id])
   
   // Memoize participant IDs to prevent unnecessary re-renders
   const memoizedParticipantIds = useMemo(() => {
-    return participants?.map(p => p.id).filter(id => id !== session?.user?.id) || []
-  }, [participants, session?.user?.id])
+    return activeParticipants?.map(p => p.id).filter(id => id !== session?.user?.id) || []
+  }, [activeParticipants, session?.user?.id])
+
+  // Memoize connected participants for better performance
+  const connectedParticipants = useMemo(() => {
+    return activeParticipants?.map(participant => {
+      const streamActive = remoteStreams.has(participant.id)
+      const stream = remoteStreams.get(participant.id)
+      const streamHasLiveTracks = stream && stream.getTracks().some(track => 
+        track.readyState === 'live' && !track.muted
+      )
+      
+      let participantStatus: 'ringing' | 'connecting' | 'connected' = 'connecting'
+      
+      const serverParticipantState = participantConnectionStates.get(participant.id)
+      if (serverParticipantState && ['ringing', 'connecting', 'connected'].includes(serverParticipantState as string)) {
+        participantStatus = serverParticipantState as 'ringing' | 'connecting' | 'connected'
+      }
+      
+      if (streamActive && streamHasLiveTracks) {
+        participantStatus = 'connected'
+      } else if (callState.status === 'connected' && callState.connectedParticipants > 1) {
+        const now = Date.now()
+        const participantConnectingTime = participantConnectionStates.get(participant.id + '_time')
+        
+        if (typeof participantConnectingTime === 'number') {
+          const timeSinceConnecting = now - participantConnectingTime
+          if (timeSinceConnecting > 10000) {
+            participantStatus = 'connected'
+          } else {
+            participantStatus = 'connecting'
+          }
+        } else {
+          participantStatus = 'connecting'
+          // Note: Track time separately to avoid setState in render
+        }
+      } else {
+        participantStatus = callState.status === 'connecting' ? 'connecting' : 'ringing'
+      }
+
+      return {
+        ...participant,
+        participantStatus,
+        stream
+      }
+    }) || []
+  }, [activeParticipants, remoteStreams, participantConnectionStates, callState.status, callState.connectedParticipants])
+
+  // Memoize status text to prevent unnecessary recalculations
+  const statusText = useMemo(() => {
+    const getStatusText = (): string => {
+      const statusMapping = {
+        'dialing': 'Calling...',
+        'ringing': isIncoming ? 'Incoming call' : 'Ringing...',
+        'connecting': 'Connecting...',
+        'connected': isGroupCall 
+          ? `Connected \u2022 ${callState.connectedParticipants} joined`
+          : 'Connected',
+        'disconnected': 'Call ended'
+      }
+      return statusMapping[callState.status] || callState.status
+    }
+    return getStatusText()
+  }, [callState.status, callState.connectedParticipants, isIncoming, isGroupCall])
 
   // CRITICAL FIX: Add stability check to prevent immediate unmounting
   const [isInitializing, setIsInitializing] = useState(true)
@@ -120,68 +189,6 @@ export function CallModal({
     }
   }, [])
 
-  // Mark participants based on their actual individual state, not just overall call state
-  // Use useMemo to ensure re-computation when participant states change
-  const connectedParticipants = useMemo(() => {
-    if (!session?.user?.id) return []
-    return participants.map(participant => {
-    const hasRemoteStream = remoteStreams.has(participant.id)
-    const remoteStream = remoteStreams.get(participant.id)
-    
-    // Determine if remote participant's camera is off
-    let isCameraOff = false
-    if (callType === 'video' && hasRemoteStream && remoteStream) {
-      const videoTracks = remoteStream.getVideoTracks()
-      isCameraOff = videoTracks.length === 0 || videoTracks.every(track => !track.enabled)
-    } else if (callType === 'voice') {
-      isCameraOff = true // Voice calls don't have video
-    }
-    
-    // FIXED: Use server-provided participant state instead of inferring from local call state
-    let participantStatus: 'ringing' | 'connecting' | 'connected' = 'connecting' // Default state
-    
-    // First, check if we have explicit state from server
-    const serverParticipantState = participantConnectionStates.get(participant.id)
-    if (serverParticipantState) {
-      participantStatus = serverParticipantState
-      console.log(`[CallModal] Using server state for ${participant.id}: ${participantStatus}`)
-    } else {
-      // SIMPLIFIED: Basic fallback logic based on stream state
-      const streamActive = remoteStream && remoteStream.active
-      const streamHasLiveTracks = remoteStream && typeof remoteStream.getTracks === 'function' 
-        ? remoteStream.getTracks().some(t => t.readyState === 'live') 
-        : false
-      
-      console.log(`[CallModal] 🔍 Status analysis for ${participant.id}:`, {
-        hasRemoteStream: !!hasRemoteStream,
-        remoteStream: !!remoteStream,
-        streamActive,
-        streamHasLiveTracks,
-        callState: callState.status,
-        participantCount: callState.connectedParticipants
-      })
-      
-      // Simplified logic: active stream > call state
-      if (streamActive && streamHasLiveTracks) {
-        participantStatus = 'connected'
-        console.log(`[CallModal] ✅ Using stream-based status for ${participant.id}: connected`)
-      } else if (callState.status === 'connected' && callState.connectedParticipants > 1) {
-        participantStatus = 'connecting' // Show connecting if call is connected but no WebRTC yet
-        console.log(`[CallModal] 🔄 Using call-state-based status for ${participant.id}: connecting`)
-      } else {
-        participantStatus = callState.status === 'connecting' ? 'connecting' : 'ringing'
-        console.log(`[CallModal] 🔔 Using fallback status for ${participant.id}: ${participantStatus}`)
-      }
-    }
-    
-      return {
-        ...participant,
-        isConnected: participantStatus === 'connected',
-        participantStatus, // Add status for display
-        isCameraOff // Override with actual camera state from stream
-      }
-    })
-  }, [participants, remoteStreams, callState.status, callState.connectedParticipants, session?.user?.id, participantConnectionStates, callType])
   
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const localVideoRef = useRef<HTMLVideoElement>(null)
@@ -228,7 +235,41 @@ export function CallModal({
     return () => clearInterval(interval)
   }, [callState.status, remoteStreams])
 
-  const { performanceState, getOverallNetworkQuality } = useCallPerformance(peerConnections, callType)
+  useCallPerformance(peerConnections, callType)
+
+
+  // Announce call status changes to screen readers
+  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('')
+  useEffect(() => {
+    const announcements: { [key: string]: string } = {
+      'ringing': isIncoming ? 'Incoming call' : 'Calling...',
+      'connecting': 'Connecting to call',
+      'connected': 'Call connected',
+      'disconnected': 'Call ended'
+    }
+    
+    const announcement = announcements[callState.status]
+    if (announcement) {
+      setScreenReaderAnnouncement(announcement)
+      // Clear announcement after screen reader has time to read it
+      setTimeout(() => setScreenReaderAnnouncement(''), 1000)
+    }
+  }, [callState.status, isIncoming])
+
+  // Track participant connecting times separately to avoid setState in render
+  useEffect(() => {
+    if (callState.status === 'connected' && connectedParticipants.length > 0) {
+      const now = Date.now()
+      connectedParticipants.forEach(participant => {
+        const participantConnectingTime = participantConnectionStates.get(participant.id + '_time')
+        if (participant.participantStatus === 'connecting' && !participantConnectingTime) {
+          setParticipantConnectionStates(prev => 
+            new Map(prev.set(participant.id + '_time', now))
+          )
+        }
+      })
+    }
+  }, [connectedParticipants, participantConnectionStates, callState.status])
   
   // Voice activity detection for local user
   const { isSpeaking: isLocalSpeaking } = useVoiceActivity({ 
@@ -308,7 +349,7 @@ export function CallModal({
             try {
               currentSource.stop()
               currentSource.disconnect()
-            } catch (e) {
+            } catch {
               // Source might already be stopped
             }
           }
@@ -523,6 +564,24 @@ export function CallModal({
           cleanupCallResources(true)
           setCallState(prev => ({ ...prev, status: 'disconnected' }))
           setTimeout(() => onClose(), 1500)
+        } else {
+          console.log('[CallModal] Group call - removing declined participant:', data.participantId)
+          // Remove the declined participant from active participants
+          setActiveParticipants(prev => 
+            prev.filter(participant => participant.id !== data.participantId)
+          )
+          
+          // Remove their stream if any
+          setRemoteStreams(prev => {
+            const newStreams = new Map(prev)
+            newStreams.delete(data.participantId)
+            return newStreams
+          })
+          
+          // Clean up WebRTC connection for this participant
+          if (webrtcServiceRef.current) {
+            webrtcServiceRef.current.removePeerConnection(data.participantId)
+          }
         }
       }
     }
@@ -532,6 +591,12 @@ export function CallModal({
       callId: string
       participantId: string
       participantCount: number
+      participantData?: {
+        id: string
+        name: string
+        username: string
+        avatar: string | null
+      }
     }) => {
       console.log('[CallModal] Participant joined event received:', data)
       console.log('[CallModal] Our callId:', callId, 'Event callId:', data.callId)
@@ -552,24 +617,77 @@ export function CallModal({
         ...prev, 
         connectedParticipants: data.participantCount
       }))
+
+      // Add new participant to activeParticipants if not already present
+      if (data.participantId !== session?.user?.id) {
+        setActiveParticipants(prev => {
+          // Check if participant already exists to prevent duplicates
+          const exists = prev.some(p => p.id === data.participantId)
+          if (exists) {
+            console.log('[CallModal] Participant already in list, skipping duplicate:', data.participantId)
+            return prev
+          }
+          
+          console.log('[CallModal] Adding new participant to active list:', data.participantId)
+          // Use enhanced participant data if available, otherwise create basic participant object
+          const newParticipant: CallParticipant = {
+            id: data.participantId,
+            name: data.participantData?.name || `User ${data.participantId.slice(-4)}`,
+            username: data.participantData?.username || `user${data.participantId.slice(-4)}`,
+            avatar: data.participantData?.avatar || null,
+            isMuted: false,
+            isCameraOff: false,
+            isConnected: true,
+            participantStatus: 'connected'
+          }
+          return [...prev, newParticipant]
+        })
+      }
       
       console.log('[CallModal] Participant joined, waiting for server state updates...')
       
-      // Initiate WebRTC connection with the new participant if we're not the one who just joined
+      // ENHANCED: For group calls, ensure full mesh connectivity by initiating WebRTC connections
       if (webrtcServiceRef.current && data.participantId !== session?.user?.id) {
+        
+        // For group calls, we need to ensure all participants connect to each other
+        // Not just rely on the ID comparison mesh logic
+        if (isGroupCall) {
+          console.log('[CallModal] 🔀 GROUP CALL: Ensuring full mesh connectivity with new participant:', data.participantId)
+          
+          // Always try to establish connection in group calls, regardless of ID comparison
+          const existingConnection = webrtcServiceRef.current.getActivePeerConnections()
+          const hasConnectionToParticipant = Object.keys(existingConnection).includes(data.participantId)
+          
+          if (!hasConnectionToParticipant) {
+            console.log('[CallModal] 🚀 Creating WebRTC connection for group call participant:', data.participantId)
+            try {
+              webrtcServiceRef.current.createOffer(data.participantId).catch(error => {
+                console.error('[CallModal] Failed to create offer for group participant:', data.participantId, error)
+              })
+            } catch (error) {
+              console.error('[CallModal] Error initiating group call connection:', error)
+            }
+          } else {
+            console.log('[CallModal] ✅ Connection already exists for group participant:', data.participantId)
+          }
+          return // Skip the regular mesh logic for group calls
+        }
+        
+        // Regular 1-on-1 call logic with ID comparison
         console.log('[CallModal] Initiating WebRTC offer to:', data.participantId)
         console.log('[CallModal] WebRTC service callId:', (webrtcServiceRef.current as WebRTCService & { callId: string | null }).callId)
         console.log('[CallModal] Our callId:', callId)
         
-        // FIXED: Use deterministic offer creation based on user ID comparison
-        // This prevents both participants from creating offers simultaneously
-        // Use localeCompare for proper string comparison
+        // FIXED: Use proper mesh networking - create offers only to participants with lower IDs
+        // This works for both group calls and 1-on-1 calls to prevent duplicate connections
         const shouldCreateOffer = session?.user?.id && session.user.id.localeCompare(data.participantId) > 0;
+        
         console.log('[CallModal] Offer creation decision:', {
           ourUserId: session?.user?.id,
           theirUserId: data.participantId,
+          isGroupCall,
           shouldCreateOffer,
-          reason: shouldCreateOffer ? 'Our ID is higher' : 'Their ID is higher, they will create offer'
+          reason: shouldCreateOffer ? 'Our ID is higher - we create offer' : 'Their ID is higher - they will create offer'
         });
         
         if (shouldCreateOffer && !offerCreationAttempts.has(data.participantId)) {
@@ -680,6 +798,11 @@ export function CallModal({
         return newStreams
       })
       
+      // Remove participant from active participants list
+      setActiveParticipants(prev => 
+        prev.filter(participant => participant.id !== data.participantId)
+      )
+      
       // If this is a 1-on-1 call and the other participant left, end the call
       // ENHANCED FIX: Add extended delay during initialization and WebRTC setup
       if (!isGroupCall && data.participantCount < 2 && data.participantId !== session?.user?.id) {
@@ -748,6 +871,12 @@ export function CallModal({
           try {
             onClose()
             console.log('[CallModal] ✅ Modal closed')
+            
+            // Refresh/reload the app after call ends - for ALL participants
+            setTimeout(() => {
+              console.log('[CallModal] Refreshing app after call_ended event')
+              window.location.reload()
+            }, 500)
           } catch (closeError) {
             console.error('[CallModal] Error closing modal:', closeError)
           }
@@ -771,7 +900,14 @@ export function CallModal({
       cleanupCallResources(true)
       
       setCallState(prev => ({ ...prev, status: 'disconnected' }))
-      setTimeout(() => onClose(), 1500)
+      setTimeout(() => {
+        onClose()
+        // Refresh/reload the app after call timeout - for ALL participants
+        setTimeout(() => {
+          console.log('[CallModal] Refreshing app after call timeout')
+          window.location.reload()
+        }, 500)
+      }, 1500)
     }
 
     // Listen for WebRTC stream ready events
@@ -814,14 +950,7 @@ export function CallModal({
       console.log('[CallModal] 🚀 INITIATING PEER CONNECTION for remote participant:', data.participantId)
       console.log('[CallModal] 🚀 WebRTC service available:', !!webrtcServiceRef.current)
       
-      // DEVELOPMENT FIX: If no remote participants (single-user testing), transition to connected
-      const isTestMode = process.env.NODE_ENV !== 'production'
-      if (isTestMode && callState.status === 'ringing') {
-        console.log('[CallModal] 🧪 TEST MODE: No remote participants detected, transitioning to connected state for testing')
-        setTimeout(() => {
-          setCallState(prev => ({ ...prev, status: 'connected' }))
-        }, 1000)
-      }
+      // Removed auto-transition test mode logic that was causing auto-join issues
       
       console.log('[CallModal] 🎥 Processing webrtc_stream_ready for REMOTE participant:', data.participantId)
       
@@ -939,9 +1068,15 @@ export function CallModal({
         return
       }
       
-      // Prevent invalid state transitions
-      if (callState.status === 'connected' && data.status === 'connecting') {
-        console.log('[CallModal] ❌ Ignoring invalid transition: connected -> connecting')
+      // Prevent invalid state transitions - be more strict
+      if (callState.status === 'connected' && (data.status === 'connecting' || data.status === 'ringing')) {
+        console.log('[CallModal] ❌ Ignoring invalid backward transition:', callState.status, '->', data.status)
+        return
+      }
+      
+      // Also prevent going from disconnected back to earlier states unless it's a new call
+      if (callState.status === 'disconnected' && data.status !== 'disconnected') {
+        console.log('[CallModal] ❌ Ignoring transition from disconnected to', data.status, '- possible stale event')
         return
       }
       
@@ -960,6 +1095,40 @@ export function CallModal({
           connectedParticipants: data.participantCount
         }
         console.log('[CallModal] 🔄 State FORCEFULLY updated from server:', prev.status, '->', newState.status)
+        
+        // CRITICAL: If we're being moved to connecting/connected without WebRTC, initialize it
+        if ((data.status === 'connecting' || data.status === 'connected') && !webrtcServiceRef.current) {
+          console.log('[CallModal] ⚡ EMERGENCY WebRTC initialization - state changed to', data.status, 'without WebRTC service')
+          
+          // Initialize WebRTC service immediately
+          setTimeout(async () => {
+            try {
+              const WebRTCServiceModule = await import('@/lib/webrtc')
+              const WebRTCService = WebRTCServiceModule.default
+              const service = new WebRTCService(callId, socket)
+              webrtcServiceRef.current = service
+              
+              // Initialize call with media
+              const stream = await service.initializeCall(callId, callType === 'video')
+              localStreamRef.current = stream
+              service.setLocalStream(stream)
+              
+              console.log('[CallModal] ✅ Emergency WebRTC initialization completed')
+              
+              // Try to connect to existing participants
+              if (memoizedParticipantIds.length > 0) {
+                console.log('[CallModal] 🔗 Connecting to existing participants:', memoizedParticipantIds)
+                service.initiateConnections(memoizedParticipantIds).catch(error => {
+                  console.error('[CallModal] Failed to connect to participants:', error)
+                })
+              }
+              
+            } catch (error) {
+              console.error('[CallModal] ❌ Emergency WebRTC initialization failed:', error)
+            }
+          }, 100)
+        }
+        
         return newState
       })
       
@@ -973,7 +1142,8 @@ export function CallModal({
           if (localStreamRef.current && localStreamRef.current.active) {
             console.log('[CallModal] ✅ Local stream confirmed active, checking which participants to create offers for')
             
-            // FIXED: Only create offers to participants with lower IDs to prevent conflicts
+            // FIXED: For group calls, use proper mesh networking - create offers only to participants with lower IDs
+            // This prevents duplicate connections and ensures proper peer-to-peer mesh
             const participantsToOffer = memoizedParticipantIds.filter(participantId => 
               session?.user?.id && session.user.id > participantId
             );
@@ -989,7 +1159,7 @@ export function CallModal({
                   if (socket && callId) {
                     socket.emit('force_call_connected', { callId })
                   }
-                }, 15000) // 15 second fallback
+                }, 10000) // 10 second fallback - reduced to prevent stuck states
               })
             } else {
               console.log('[CallModal] No participants to create offers for - waiting for incoming offers')
@@ -1067,7 +1237,7 @@ export function CallModal({
               socket.emit('force_call_connected', { callId })
             }
           }
-        }, 15000) // 15 second timeout for connecting state
+        }, 8000) // 8 second timeout for connecting state - reduced to prevent stuck states
         
         // Store timeout ID to clear it if state changes
         return () => clearTimeout(connectingTimeout)
@@ -1216,10 +1386,10 @@ export function CallModal({
         
         console.log('[CallModal] 🔍 Connection verification:')
         console.log('[CallModal] - Expected participants:', otherParticipantIds)
-        console.log('[CallModal] - Active connections:', Object.keys(activePeerConnections))
+        console.log('[CallModal] - Active connections:', Array.from(activePeerConnections.keys()))
         
         // Check if we have connections to all expected participants
-        const missingConnections = otherParticipantIds.filter(id => !activePeerConnections[id])
+        const missingConnections = otherParticipantIds.filter(id => !activePeerConnections.get(id))
         
         if (missingConnections.length > 0) {
           console.log('[CallModal] 🚨 Missing WebRTC connections to:', missingConnections)
@@ -1335,12 +1505,12 @@ export function CallModal({
               return
             } else {
               console.log('[CallModal] 🔧 Existing service has no local stream, reinitializing...')
-              webrtcServiceRef.current.cleanup?.()
+              webrtcServiceRef.current?.cleanup?.()
               webrtcServiceRef.current = null
             }
           } catch (error) {
             console.warn('[CallModal] 🔧 Error checking existing service, reinitializing:', error)
-            webrtcServiceRef.current.cleanup?.()
+            webrtcServiceRef.current?.cleanup?.()
             webrtcServiceRef.current = null
           }
         }
@@ -1461,11 +1631,11 @@ export function CallModal({
             // Wait a brief moment for stream to be fully set, then create offers
             setTimeout(async () => {
               try {
-                const streamReady = await webrtcServiceRef.current.waitForLocalStream(2000)
+                const streamReady = await webrtcServiceRef.current?.waitForLocalStream(2000)
                 if (streamReady) {
                   for (const participantId of memoizedParticipantIds) {
                     try {
-                      await webrtcServiceRef.current.safeCreateOffer(participantId)
+                      await webrtcServiceRef.current?.safeCreateOffer(participantId)
                       console.log('[CallModal] ✅ Created offer for:', participantId)
                     } catch (offerError) {
                       console.error('[CallModal] ❌ Failed to create offer for:', participantId, offerError)
@@ -1621,6 +1791,63 @@ export function CallModal({
       }
     }
   }, [outgoingRingingInterval])
+
+  // Keyboard navigation and accessibility - placed with other useEffects to follow Rules of Hooks
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent default browser behavior for our keyboard shortcuts
+      switch (event.code) {
+        case 'Space':
+          if (event.target === document.body) {
+            event.preventDefault()
+            if (callState.status === 'connected') {
+              toggleMute()
+            }
+          }
+          break
+        case 'KeyM':
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault()
+            if (callState.status === 'connected') {
+              toggleMute()
+            }
+          }
+          break
+        case 'KeyV':
+          if ((event.ctrlKey || event.metaKey) && callType === 'video') {
+            event.preventDefault()
+            if (callState.status === 'connected') {
+              toggleCamera()
+            }
+          }
+          break
+        case 'KeyS':
+          if ((event.ctrlKey || event.metaKey) && callType === 'video') {
+            event.preventDefault()
+            if (callState.status === 'connected') {
+              toggleScreenShare()
+            }
+          }
+          break
+        case 'Escape':
+          event.preventDefault()
+          handleEndCall()
+          break
+        case 'Enter':
+          if (isIncoming && callState.status === 'ringing') {
+            event.preventDefault()
+            handleAcceptCall()
+          }
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [callState.status, callType, isIncoming]) // Removed function dependencies to avoid stale closures
 
   // Centralized cleanup function with crash prevention - stabilized with useCallback
   const cleanupCallResources = useCallback((forceCleanup = false) => {
@@ -1784,6 +2011,17 @@ export function CallModal({
 
     setCallState(prev => ({ ...prev, status: 'disconnected' }))
     onClose()
+    
+    // Refresh/reload the app after call ends
+    setTimeout(() => {
+      console.log('[CallModal] Refreshing app after call end')
+      window.location.reload()
+    }, 500) // Small delay to ensure cleanup is complete
+  }
+
+  const handleMinimize = () => {
+    console.log('[CallModal] Minimizing call')
+    setIsMinimized(!isMinimized)
   }
 
   const toggleMute = () => {
@@ -1887,9 +2125,24 @@ export function CallModal({
         if (localVideoRef.current && localStreamRef.current) {
           console.log('[CallModal] 🔄 Restoring local video display')
           try {
+            // Clear any existing stream first
+            if (localVideoRef.current.srcObject) {
+              localVideoRef.current.pause()
+              localVideoRef.current.srcObject = null
+            }
+            
+            // Wait a brief moment for cleanup
+            await new Promise(resolve => setTimeout(resolve, 100))
+            
+            // Restore the original camera stream
             localVideoRef.current.srcObject = localStreamRef.current
-            // Force video element to load the new stream
-            localVideoRef.current.load()
+            
+            // Force video element to reload and play
+            await localVideoRef.current.load()
+            localVideoRef.current.play().catch(error => {
+              console.warn('[CallModal] Failed to play restored video:', error)
+            })
+            
             console.log('[CallModal] ✅ Local video display restored')
           } catch (error) {
             console.warn('[CallModal] Error restoring local video:', error)
@@ -2040,7 +2293,7 @@ export function CallModal({
             }
             
           } catch (streamError) {
-            console.error(`[CallModal] ❌ ${callType} stream failed:`, streamError.message)
+            console.error(`[CallModal] ❌ ${callType} stream failed:`, streamError instanceof Error ? streamError.message : String(streamError))
             
             // For video calls, try audio-only fallback
             if (callType === 'video') {
@@ -2051,11 +2304,11 @@ export function CallModal({
                 console.log('[CallModal] ✅ Audio-only fallback successful')
                 setConnectionErrors(prev => new Map(prev.set('video', 'Camera failed - joined with audio only')))
               } catch (fallbackError) {
-                console.error('[CallModal] ❌ Audio fallback failed:', fallbackError.message)
-                throw new Error('Cannot access microphone: ' + fallbackError.message)
+                console.error('[CallModal] ❌ Audio fallback failed:', fallbackError instanceof Error ? fallbackError.message : String(fallbackError))
+                throw new Error('Cannot access microphone: ' + (fallbackError instanceof Error ? fallbackError.message : String(fallbackError)))
               }
             } else {
-              throw new Error('Cannot access microphone: ' + streamError.message)
+              throw new Error('Cannot access microphone: ' + (streamError instanceof Error ? streamError.message : String(streamError)))
             }
           }
           
@@ -2101,7 +2354,7 @@ export function CallModal({
                 })
                 screenShareManagerRef.current.setOriginalStream(stream)
               } catch (screenShareError) {
-                console.warn('[CallModal] Screen share setup failed:', screenShareError.message)
+                console.warn('[CallModal] Screen share setup failed:', screenShareError instanceof Error ? screenShareError.message : String(screenShareError))
               }
             }
             
@@ -2156,20 +2409,14 @@ export function CallModal({
         
         console.log('[CallModal] 🎉 Call acceptance and media initialization completed!')
         
-        // DEVELOPMENT FIX: Force transition to connected state for single-user testing
-        if (process.env.NODE_ENV !== 'production') {
-          setTimeout(() => {
-            console.log('[CallModal] 🧪 TEST MODE: Force transitioning to connected state after media setup')
-            setCallState(prev => ({ ...prev, status: 'connected' }))
-          }, 3000) // Wait 3 seconds for server state sync
-        }
+        // Removed auto-transition test mode logic that was causing auto-join issues
         
       } catch (mediaError) {
-        console.error('[CallModal] ❌ Media initialization failed after call acceptance:', mediaError.message)
+        console.error('[CallModal] ❌ Media initialization failed after call acceptance:', mediaError instanceof Error ? mediaError.message : String(mediaError))
         
         // Set error but don't fail the call acceptance
         setConnectionErrors(prev => new Map(prev.set('media', 
-          `Media access failed: ${mediaError.message}. You're in the call but others may not hear/see you.`
+          `Media access failed: ${mediaError instanceof Error ? mediaError.message : String(mediaError)}. You're in the call but others may not hear/see you.`
         )))
         
         // Still continue with the call, just without local media
@@ -2258,24 +2505,6 @@ export function CallModal({
     )
   }
 
-  const getStatusText = () => {
-    switch (callState.status) {
-      case 'dialing':
-        return 'Dialing...'
-      case 'ringing':
-        return isIncoming ? 'Incoming call...' : (isGroupCall ? 'Calling participants...' : 'Ringing...')
-      case 'connecting':
-        return 'Connecting...'
-      case 'connected':
-        return isGroupCall ? 
-          `${callState.connectedParticipants} participant${callState.connectedParticipants > 1 ? 's' : ''} connected` :
-          'Connected'
-      case 'disconnected':
-        return 'Call ended'
-      default:
-        return ''
-    }
-  }
 
   // Component for individual participant with voice activity detection
   const VoiceParticipant = ({ 
@@ -2319,124 +2548,265 @@ export function CallModal({
     })
 
     return (
-      <div className="flex flex-col items-center relative">
+      <div className="flex flex-col items-center relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl p-6 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:scale-105">
+        {/* Connection Status Indicator */}
+        <div className={`absolute top-2 right-2 w-3 h-3 rounded-full ${
+          participant.participantStatus === 'connected' ? 'bg-green-500' :
+          participant.participantStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' :
+          participant.participantStatus === 'ringing' ? 'bg-blue-500 animate-pulse' :
+          'bg-gray-500'
+        }`} />
+
         <div className="relative">
           {participant.avatar ? (
             <img
               src={participant.avatar}
               alt={participant.name}
-              className={`w-20 h-20 rounded-full object-cover mb-2 transition-all duration-200 ${
-                isSpeaking && !isActuallyMuted ? 'ring-4 ring-green-500' : ''
+              className={`w-24 h-24 rounded-2xl object-cover mb-3 transition-all duration-200 shadow-lg ${
+                isSpeaking && !isActuallyMuted ? 'ring-4 ring-green-500 ring-opacity-75 shadow-green-500/25' : 
+                'shadow-slate-900/50'
               }`}
             />
           ) : (
-            <div className={`w-20 h-20 bg-gray-600 rounded-full flex items-center justify-center mb-2 transition-all duration-200 ${
-              isSpeaking && !isActuallyMuted ? 'ring-4 ring-green-500' : ''
+            <div className={`w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-3 transition-all duration-200 shadow-lg ${
+              isSpeaking && !isActuallyMuted ? 'ring-4 ring-green-500 ring-opacity-75 shadow-green-500/25' : 
+              'shadow-slate-900/50'
             }`}>
-              <span className="text-white text-xl font-medium">
+              <span className="text-white text-2xl font-bold">
                 {participant.name.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
           
-          {/* Enhanced mute indicator for voice calls */}
+          {/* Enhanced mute indicator with modern design */}
           {(participant.isMuted || isActuallyMuted) && (
-            <div className="absolute -bottom-1 -right-1 bg-red-600 text-white p-1 rounded-full border-2 border-gray-900">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
+            <div className="absolute -bottom-1 -right-1 bg-red-500 text-white p-2 rounded-xl border-2 border-slate-900 shadow-lg">
+              <MicOff className="w-3 h-3" />
+            </div>
+          )}
+
+          {/* Speaking indicator */}
+          {isSpeaking && !isActuallyMuted && (
+            <div className="absolute -top-1 -left-1 bg-green-500 text-white p-2 rounded-xl border-2 border-slate-900 shadow-lg animate-pulse">
+              <Mic className="w-3 h-3" />
             </div>
           )}
         </div>
         
-        <p className="text-white text-sm">
-          {participant.name}{(participant.isMuted || isActuallyMuted) ? ' (muted)' : ''}
-        </p>
-        
-        {participant.participantStatus !== 'connected' && (
-          <p className="text-gray-400 text-xs">
-            {participant.participantStatus === 'ringing' ? 'Ringing...' :
-             participant.participantStatus === 'connecting' ? 'Connecting...' : 
-             'Waiting...'}
+        <div className="text-center">
+          <p className="text-white text-sm font-medium mb-1">
+            {participant.name || participant.username}
           </p>
-        )}
+          
+          {/* Status text with better styling */}
+          <div className="flex items-center justify-center space-x-2 text-xs">
+            {participant.participantStatus !== 'connected' ? (
+              <span className={`px-2 py-1 rounded-full ${
+                participant.participantStatus === 'ringing' ? 'bg-blue-500/20 text-blue-300' :
+                participant.participantStatus === 'connecting' ? 'bg-yellow-500/20 text-yellow-300' : 
+                'bg-gray-500/20 text-gray-300'
+              }`}>
+                {participant.participantStatus === 'ringing' ? 'Ringing' :
+                 participant.participantStatus === 'connecting' ? 'Joining' : 
+                 'Waiting'}
+              </span>
+            ) : (
+              <>
+                {(participant.isMuted || isActuallyMuted) && (
+                  <span className="px-2 py-1 rounded-full bg-red-500/20 text-red-300">
+                    Muted
+                  </span>
+                )}
+                {!participant.isMuted && !isActuallyMuted && (
+                  <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-300">
+                    Active
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        {/* Background overlay */}
-        <div className="fixed inset-0 transition-opacity bg-black bg-opacity-90" />
+    <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="call-modal-title" aria-describedby="call-modal-description">
+      {/* Screen reader announcements */}
+      <div 
+        className="sr-only" 
+        role="status" 
+        aria-live="polite" 
+        aria-atomic="true"
+      >
+        {screenReaderAnnouncement}
+      </div>
+      
+      {/* Keyboard shortcuts help */}
+      <div className="sr-only">
+        <p>Keyboard shortcuts: Space or Ctrl+M to mute, Ctrl+V to toggle camera, Ctrl+S to share screen, Escape to end call, Enter to accept incoming call</p>
+      </div>
 
-        {/* Modal */}
-        <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-center align-middle transition-all transform bg-gray-900 shadow-xl rounded-2xl">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="text-left">
-              <h3 className="text-xl font-semibold text-white">
-                {isGroupCall ? (conversationName || 'Group Call') : 
-                 (participants[0]?.name || participants[0]?.username || 'Call')}
-              </h3>
-              <p className="text-sm text-gray-300">
-                {getStatusText()}
-              </p>
-            </div>
-            <div className="text-right">
-              {callState.status === 'connected' && (
-                <p className="text-lg font-mono text-white">
-                  {formatDuration(callState.duration)}
-                </p>
-              )}
-              {isGroupCall && (
-                <div className="flex items-center text-sm text-gray-300 mt-1">
-                  <Users className="w-4 h-4 mr-1" />
-                  {participants.length} invited
+      <div className="flex items-center justify-center min-h-screen">
+        {/* Background overlay with blur effect */}
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 transition-all duration-300" onClick={handleEndCall} />
+
+        {/* Modern Call Interface */}
+        <div className={`relative mx-auto flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 shadow-2xl overflow-hidden transition-all duration-300 ${
+          isMinimized 
+            ? 'fixed bottom-4 right-4 w-80 h-60 rounded-2xl z-50' 
+            : 'w-full h-full max-w-7xl md:h-auto md:max-h-[90vh] md:rounded-3xl md:my-4'
+        }`}>
+          {/* Modern Header with improved layout */}
+          <div className="flex-shrink-0 px-4 py-4 md:px-8 md:py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  {isGroupCall ? (
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5 text-white" />
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      {participants[0]?.avatar ? (
+                        <img 
+                          src={participants[0].avatar} 
+                          alt={participants[0].name}
+                          className="w-10 h-10 rounded-xl object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center">
+                          <span className="text-white text-sm font-medium">
+                            {participants[0]?.name?.charAt(0)?.toUpperCase() || 'U'}
+                          </span>
+                        </div>
+                      )}
+                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-slate-900 ${
+                        callState.status === 'connected' ? 'bg-green-500' :
+                        callState.status === 'connecting' ? 'bg-yellow-500' :
+                        callState.status === 'ringing' ? 'bg-blue-500 animate-pulse' :
+                        'bg-gray-500'
+                      }`} />
+                    </div>
+                  )}
                 </div>
-              )}
+                <div className="min-w-0 flex-1">
+                  <h1 id="call-modal-title" className="text-lg md:text-xl font-semibold text-white truncate">
+                    {isGroupCall ? (conversationName || 'Group Call') : 
+                     (participants[0]?.name || participants[0]?.username || 'Call')}
+                  </h1>
+                  <div id="call-modal-description" className="sr-only">
+                    {callType === 'video' ? 'Video call' : 'Voice call'} 
+                    {isGroupCall ? ` with ${participants.length} participants` : 
+                     ` with ${participants[0]?.name || 'unknown participant'}`}.
+                    Current status: {callState.status}. 
+                    {callState.status === 'connected' ? `Duration: ${formatDuration(callState.duration)}` : ''}
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <span className={`text-sm ${
+                      callState.status === 'connected' ? 'text-green-400' :
+                      callState.status === 'connecting' ? 'text-yellow-400' :
+                      callState.status === 'ringing' ? 'text-blue-400' :
+                      'text-gray-400'
+                    }`}>
+                      {statusText}
+                    </span>
+                    {isGroupCall && (
+                      <>
+                        <span className="text-gray-500">•</span>
+                        <span className="text-gray-400">{participants.length} invited</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Timer and control buttons */}
+              <div className="flex items-center space-x-3">
+                {callState.status === 'connected' && (
+                  <div className="text-right">
+                    <div className="text-lg md:text-xl font-mono font-medium text-white">
+                      {formatDuration(callState.duration)}
+                    </div>
+                    <div className="text-xs text-gray-400">Call duration</div>
+                  </div>
+                )}
+                
+                {/* Minimize button */}
+                <button
+                  onClick={handleMinimize}
+                  className="w-8 h-8 bg-slate-700/50 hover:bg-slate-600/70 rounded-lg flex items-center justify-center transition-colors"
+                  aria-label={isMinimized ? "Maximize call" : "Minimize call"}
+                >
+                  <Minimize2 className="w-4 h-4 text-gray-300" />
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Error Messages */}
-          {connectionErrors.size > 0 && (
-            <div className="mb-4 space-y-2">
-              {Array.from(connectionErrors.entries()).map(([key, error]) => (
-                <div key={key} className="bg-red-600 bg-opacity-20 border border-red-500 rounded-lg p-3">
-                  <p className="text-red-200 text-sm">{error}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Performance Recommendations */}
-          {performanceState.recommendations.length > 0 && callState.status === 'connected' && (
-            <div className="mb-4">
-              <div className="bg-yellow-600 bg-opacity-20 border border-yellow-500 rounded-lg p-3">
-                <div className="flex items-center mb-2">
-                  <div className={`w-2 h-2 rounded-full mr-2 ${
-                    getOverallNetworkQuality() === 'excellent' ? 'bg-green-500' :
-                    getOverallNetworkQuality() === 'good' ? 'bg-blue-500' :
-                    getOverallNetworkQuality() === 'fair' ? 'bg-yellow-500' : 'bg-red-500'
-                  }`} />
-                  <span className="text-yellow-200 text-xs font-medium">
-                    Network Quality: {getOverallNetworkQuality().toUpperCase()}
-                  </span>
-                </div>
-                {performanceState.recommendations.slice(0, 2).map((rec, index) => (
-                  <p key={index} className="text-yellow-200 text-xs">{rec}</p>
+          {/* Enhanced Error Messages - Hidden when minimized */}
+          {!isMinimized && connectionErrors.size > 0 && (
+            <div className="px-4 md:px-8 pb-4">
+              <div className="space-y-3">
+                {Array.from(connectionErrors.entries()).map(([key, error]) => (
+                  <div key={key} className="relative overflow-hidden bg-red-500/10 border border-red-500/20 rounded-xl p-4 backdrop-blur-sm">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
+                          <svg className="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-red-200 text-sm font-medium">{error}</p>
+                      </div>
+                      <button 
+                        onClick={() => setConnectionErrors(prev => {
+                          const newErrors = new Map(prev)
+                          newErrors.delete(key)
+                          return newErrors
+                        })}
+                        className="flex-shrink-0 w-6 h-6 bg-red-500/20 hover:bg-red-500/30 rounded-md flex items-center justify-center transition-colors"
+                        aria-label="Dismiss error"
+                      >
+                        <svg className="w-3 h-3 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Video/Participants Area */}
+          {/* Connection status indicator - Hidden when minimized */}
+          {!isMinimized && (callState.status === 'connecting' || callState.status === 'ringing') && (
+            <div className="px-4 md:px-8 pb-4">
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 backdrop-blur-sm">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="relative">
+                    <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse" />
+                    <div className="absolute inset-0 w-4 h-4 bg-blue-500 rounded-full animate-ping" />
+                  </div>
+                  <span className="text-blue-200 text-sm font-medium">
+                    {callState.status === 'connecting' ? 'Connecting to participants...' : 'Calling...'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+
+          {/* Video/Participants Area - Hidden when minimized */}
+          {!isMinimized && (
           <div className="mb-8">
             {callType === 'video' ? (
               <VideoGrid
                 localStream={localStreamRef.current}
                 remoteStreams={remoteStreams}
-                participants={connectedParticipants}
+                participants={isGroupCall ? activeParticipants : connectedParticipants}
                 currentUserId={session?.user?.id || ''}
                 isLocalCameraOff={callState.isCameraOff}
                 isLocalMuted={callState.isMuted}
@@ -2579,32 +2949,69 @@ export function CallModal({
                 <div className="py-12">
                 {callState.status === 'connected' ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* Current user with voice activity */}
-                    <div className="flex flex-col items-center relative">
+                    {/* Current user with modern interface matching participants */}
+                    <div className="flex flex-col items-center relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl p-6 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:scale-105">
+                      {/* Connection Status Indicator - Always green for current user */}
+                      <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-green-500" />
+                      
                       <div className="relative">
-                        <div className={`w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mb-2 transition-all duration-200 ${
-                          isLocalSpeaking && !callState.isMuted ? 'ring-4 ring-green-500' : ''
-                        }`}>
-                          <span className="text-white text-xl font-medium">You</span>
-                        </div>
+                        {session?.user?.image ? (
+                          <img
+                            src={session.user.image}
+                            alt="You"
+                            className={`w-24 h-24 rounded-2xl object-cover mb-3 transition-all duration-200 shadow-lg ${
+                              isLocalSpeaking && !callState.isMuted ? 'ring-4 ring-green-500 ring-opacity-75 shadow-green-500/25' : 
+                              'shadow-slate-900/50'
+                            }`}
+                          />
+                        ) : (
+                          <div className={`w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-3 transition-all duration-200 shadow-lg ${
+                            isLocalSpeaking && !callState.isMuted ? 'ring-4 ring-green-500 ring-opacity-75 shadow-green-500/25' : 
+                            'shadow-slate-900/50'
+                          }`}>
+                            <span className="text-white text-2xl font-bold">
+                              {session?.user?.name?.charAt(0)?.toUpperCase() || 'Y'}
+                            </span>
+                          </div>
+                        )}
                         
-                        {/* Enhanced mute indicator for current user */}
+                        {/* Enhanced mute indicator with modern design */}
                         {callState.isMuted && (
-                          <div className="absolute -bottom-1 -right-1 bg-red-600 text-white p-1.5 rounded-full border-2 border-gray-900">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
+                          <div className="absolute -bottom-1 -right-1 bg-red-500 text-white p-2 rounded-xl border-2 border-slate-900 shadow-lg">
+                            <MicOff className="w-3 h-3" />
+                          </div>
+                        )}
+
+                        {/* Speaking indicator */}
+                        {isLocalSpeaking && !callState.isMuted && (
+                          <div className="absolute -top-1 -left-1 bg-green-500 text-white p-2 rounded-xl border-2 border-slate-900 shadow-lg animate-pulse">
+                            <Mic className="w-3 h-3" />
                           </div>
                         )}
                       </div>
                       
-                      <p className="text-white text-sm">
-                        {callState.isMuted ? 'You (muted)' : 'You'}
-                      </p>
+                      <div className="text-center">
+                        <p className="text-white text-sm font-medium mb-1">
+                          {session?.user?.name || 'You'}
+                        </p>
+                        
+                        {/* Status text with better styling */}
+                        <div className="flex items-center justify-center space-x-2 text-xs">
+                          {callState.isMuted ? (
+                            <span className="px-2 py-1 rounded-full bg-red-500/20 text-red-300">
+                              Muted
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-300">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Connected participants with voice activity */}
-                    {connectedParticipants.map((participant) => (
+                    {(isGroupCall ? activeParticipants : connectedParticipants).map((participant) => (
                       <VoiceParticipant 
                         key={participant.id}
                         participant={participant}
@@ -2616,7 +3023,7 @@ export function CallModal({
                   /* Calling state */
                   <div className="flex flex-col items-center">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {connectedParticipants.map((participant) => (
+                      {(isGroupCall ? activeParticipants : connectedParticipants).map((participant) => (
                         <VoiceParticipant 
                           key={participant.id}
                           participant={participant}
@@ -2630,92 +3037,138 @@ export function CallModal({
               </>
             )}
           </div>
+          )}
 
-          {/* Controls */}
-          <div className="flex justify-center space-x-4">
-            {/* Accept/Decline buttons for incoming calls */}
+          {/* Modern Call Controls - Hidden when minimized */}
+          {!isMinimized && (
+          <div className="flex-shrink-0 px-4 py-6 md:px-8">
+            {/* Incoming call controls - show for all incoming calls including group calls */}
             {isIncoming && callState.status === 'ringing' && (
-              <>
-                <button
-                  onClick={handleDeclineCall}
-                  className="w-14 h-14 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <PhoneOff className="w-6 h-6 text-white" />
-                </button>
-                <button
-                  onClick={handleAcceptCall}
-                  className="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                  </svg>
-                </button>
-              </>
+              <div className="flex justify-center items-center space-x-8">
+                <div className="flex flex-col items-center space-y-3">
+                  <button
+                    onClick={handleDeclineCall}
+                    className="group relative w-16 h-16 md:w-18 md:h-18 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full flex items-center justify-center transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-red-500/25"
+                    aria-label="Decline call"
+                    role="button"
+                  >
+                    <PhoneOff className="w-7 h-7 md:w-8 md:h-8 text-white" />
+                    <div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/10 transition-colors" />
+                  </button>
+                  <span className="text-sm text-gray-400 font-medium">Decline</span>
+                </div>
+                
+                <div className="flex flex-col items-center space-y-3">
+                  <button
+                    onClick={handleAcceptCall}
+                    className="group relative w-16 h-16 md:w-18 md:h-18 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-full flex items-center justify-center transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/25"
+                    aria-label="Accept call"
+                    role="button"
+                  >
+                    <svg className="w-7 h-7 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                    <div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/10 transition-colors" />
+                  </button>
+                  <span className="text-sm text-gray-400 font-medium">Accept</span>
+                </div>
+              </div>
             )}
             
-            {/* Regular call controls - show for outgoing calls or after accepting incoming */}
+            {/* Connected call controls */}
             {!(isIncoming && callState.status === 'ringing') && (
-              <>
-                {/* Mute - only show when connected */}
+              <div className="flex justify-center items-center space-x-3 md:space-x-4">
+                {/* Mute control */}
                 {callState.status === 'connected' && (
-                  <button
-                    onClick={toggleMute}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      callState.isMuted
-                        ? 'bg-red-600 hover:bg-red-700'
-                        : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    {callState.isMuted ? (
-                      <MicOff className="w-5 h-5 text-white" />
-                    ) : (
-                      <Mic className="w-5 h-5 text-white" />
-                    )}
-                  </button>
+                  <div className="flex flex-col items-center space-y-2">
+                    <button
+                      onClick={toggleMute}
+                      className={`group relative w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+                        callState.isMuted
+                          ? 'bg-red-500/90 hover:bg-red-500 shadow-lg shadow-red-500/25'
+                          : 'bg-slate-700/90 hover:bg-slate-600 shadow-lg shadow-slate-500/25'
+                      }`}
+                      aria-label={callState.isMuted ? 'Unmute microphone' : 'Mute microphone'}
+                      aria-pressed={callState.isMuted}
+                    >
+                      {callState.isMuted ? (
+                        <MicOff className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
+                      ) : (
+                        <Mic className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
+                      )}
+                      <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/10 transition-colors" />
+                    </button>
+                    <span className="text-xs text-gray-400 font-medium hidden md:block">
+                      {callState.isMuted ? 'Muted' : 'Mic'}
+                    </span>
+                  </div>
                 )}
 
-                {/* Camera (video calls only) - show when connected */}
+                {/* Camera control (video calls only) */}
                 {callType === 'video' && callState.status === 'connected' && (
-                  <button
-                    onClick={toggleCamera}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      callState.isCameraOff
-                        ? 'bg-red-600 hover:bg-red-700'
-                        : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    {callState.isCameraOff ? (
-                      <CameraOff className="w-5 h-5 text-white" />
-                    ) : (
-                      <Camera className="w-5 h-5 text-white" />
-                    )}
-                  </button>
+                  <div className="flex flex-col items-center space-y-2">
+                    <button
+                      onClick={toggleCamera}
+                      className={`group relative w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+                        callState.isCameraOff
+                          ? 'bg-red-500/90 hover:bg-red-500 shadow-lg shadow-red-500/25'
+                          : 'bg-slate-700/90 hover:bg-slate-600 shadow-lg shadow-slate-500/25'
+                      }`}
+                      aria-label={callState.isCameraOff ? 'Turn on camera' : 'Turn off camera'}
+                      aria-pressed={callState.isCameraOff}
+                    >
+                      {callState.isCameraOff ? (
+                        <CameraOff className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
+                      ) : (
+                        <Camera className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
+                      )}
+                      <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/10 transition-colors" />
+                    </button>
+                    <span className="text-xs text-gray-400 font-medium hidden md:block">
+                      {callState.isCameraOff ? 'Camera off' : 'Camera'}
+                    </span>
+                  </div>
                 )}
 
-                {/* Screen Share (video calls only) - show when connected */}
+                {/* Screen share control (video calls only) */}
                 {callType === 'video' && callState.status === 'connected' && (
-                  <button
-                    onClick={toggleScreenShare}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      callState.isScreenSharing
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    <Monitor className="w-5 h-5 text-white" />
-                  </button>
+                  <div className="flex flex-col items-center space-y-2">
+                    <button
+                      onClick={toggleScreenShare}
+                      className={`group relative w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+                        callState.isScreenSharing
+                          ? 'bg-blue-500/90 hover:bg-blue-500 shadow-lg shadow-blue-500/25'
+                          : 'bg-slate-700/90 hover:bg-slate-600 shadow-lg shadow-slate-500/25'
+                      }`}
+                      aria-label={callState.isScreenSharing ? 'Stop screen sharing' : 'Start screen sharing'}
+                      aria-pressed={callState.isScreenSharing}
+                      title={callState.isScreenSharing ? "Stop Screen Recording" : "Start Screen Recording/Live Screen Share"}
+                    >
+                      <Monitor className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
+                      <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/10 transition-colors" />
+                    </button>
+                    <span className="text-xs text-gray-400 font-medium hidden md:block">
+                      {callState.isScreenSharing ? 'Sharing' : 'Share'}
+                    </span>
+                  </div>
                 )}
 
-                {/* End Call - always show except for incoming ringing */}
-                <button
-                  onClick={handleEndCall}
-                  className="w-12 h-12 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <PhoneOff className="w-5 h-5 text-white" />
-                </button>
-              </>
+                {/* End call button */}
+                <div className="flex flex-col items-center space-y-2">
+                  <button
+                    onClick={handleEndCall}
+                    className="group relative w-12 h-12 md:w-14 md:h-14 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl flex items-center justify-center transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-red-500/25"
+                    aria-label="End call"
+                  >
+                    <PhoneOff className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" />
+                    <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/10 transition-colors" />
+                  </button>
+                  <span className="text-xs text-gray-400 font-medium hidden md:block">End</span>
+                </div>
+              </div>
             )}
           </div>
+          )}
         </div>
       </div>
     </div>

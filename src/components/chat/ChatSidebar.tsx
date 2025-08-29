@@ -124,7 +124,7 @@ function getLastMessagePreview(conversation: any, sessionUserId?: string, decryp
 
 export function ChatSidebar({ selectedConversationId, onSelectConversation }: ChatSidebarProps) {
   const { data: session } = useSession()
-  const { conversations, loading, error, forceRefreshKey, setForceRefreshKey } = useConversations()
+  const { conversations, loading, error, forceRefreshKey, setForceRefreshKey } = useConversations(selectedConversationId)
   const { blockedUsers } = useBlockedUsers()
   const { blockers } = useUserBlockers() // BLOCKING FIX: Get users who blocked current user
   const { decryptMessage, isAvailable: e2eeAvailable } = useE2EE()

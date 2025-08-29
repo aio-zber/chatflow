@@ -190,9 +190,34 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   }
 
   const showNotification = (title: string, options: NotificationOptions = {}) => {
-    // Disable browser notifications entirely to avoid showing encrypted content
-    // Only sound notifications will be used
-    return
+    // Only show notifications if user has granted permission and page is not visible
+    if (permission !== 'granted') {
+      console.log('NotificationContext: Notifications not permitted')
+      return
+    }
+
+    // Only show browser notifications when page is not visible or window is not focused
+    if (!isPageVisible || !isWindowFocused) {
+      try {
+        const notification = new Notification(title, {
+          icon: '/favicon.ico',
+          badge: '/favicon.ico',
+          tag: 'chatflow-message', // Reuse tag to replace previous notifications
+          requireInteraction: false, // Don't require user interaction to dismiss
+          silent: !soundEnabled, // Respect user's sound preference
+          ...options
+        })
+
+        // Auto-dismiss notification after 5 seconds
+        setTimeout(() => {
+          notification.close()
+        }, 5000)
+
+        console.log('NotificationContext: Browser notification shown:', title)
+      } catch (error) {
+        console.warn('NotificationContext: Failed to show browser notification:', error)
+      }
+    }
   }
 
   const playNotificationSound = () => {

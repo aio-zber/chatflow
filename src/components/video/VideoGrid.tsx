@@ -128,22 +128,34 @@ export function VideoGrid({
     }
   }, [localStream, isLocalCameraOff])
 
-  // Calculate grid layout based on participant count
+  // Enhanced dynamic grid layout based on participant count
   const getGridLayout = (participantCount: number) => {
     if (participantCount <= 1) return 'grid-cols-1'
-    if (participantCount <= 2) return 'grid-cols-1 md:grid-cols-2'
-    if (participantCount <= 4) return 'grid-cols-2'
+    if (participantCount === 2) return 'grid-cols-1 md:grid-cols-2'
+    if (participantCount === 3) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+    if (participantCount === 4) return 'grid-cols-2 lg:grid-cols-2 xl:grid-cols-2'
     if (participantCount <= 6) return 'grid-cols-2 lg:grid-cols-3'
-    return 'grid-cols-3 lg:grid-cols-4'
+    if (participantCount <= 9) return 'grid-cols-3 lg:grid-cols-3'
+    if (participantCount <= 12) return 'grid-cols-3 lg:grid-cols-4'
+    return 'grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+  }
+
+  // Calculate aspect ratio based on participant count for better layout
+  const getAspectRatio = (participantCount: number) => {
+    if (participantCount <= 2) return 'aspect-video'
+    if (participantCount <= 4) return 'aspect-video'
+    if (participantCount <= 9) return 'aspect-square'
+    return 'aspect-[4/3]'
   }
 
   const totalParticipants = participants.length + 1 // +1 for local user
   const gridLayout = getGridLayout(totalParticipants)
+  const aspectRatio = getAspectRatio(totalParticipants)
 
   return (
-    <div className={`grid ${gridLayout} gap-4 h-full max-h-[70vh]`}>
+    <div className={`grid ${gridLayout} gap-2 md:gap-4 h-full max-h-[80vh] p-2 md:p-4`}>
       {/* Local video */}
-      <div className={`relative bg-gray-800 rounded-lg overflow-hidden aspect-video ${
+      <div className={`relative bg-gray-800 rounded-lg overflow-hidden ${aspectRatio} ${
         isLocalSpeaking && !isLocalMuted ? 'ring-4 ring-green-500' : ''
       }`}>
         {!isLocalCameraOff && localStream && localStream.getVideoTracks().length > 0 ? (
@@ -210,6 +222,7 @@ export function VideoGrid({
             stream={remoteStream}
             hasRemoteStream={hasRemoteStream}
             onVideoRef={onVideoRef}
+            aspectRatio={aspectRatio}
           />
         )
       })}
@@ -222,12 +235,14 @@ function RemoteParticipantVideo({
   participant,
   stream,
   hasRemoteStream,
-  onVideoRef
+  onVideoRef,
+  aspectRatio
 }: {
   participant: VideoParticipant
   stream?: MediaStream
   hasRemoteStream: boolean
   onVideoRef?: (participantId: string, element: HTMLVideoElement | null) => void
+  aspectRatio: string
 }) {
   // Voice activity detection for remote participant
   const { isSpeaking } = useVoiceActivity({ 
@@ -243,7 +258,7 @@ function RemoteParticipantVideo({
   }, [stream])
 
   return (
-    <div className={`relative bg-gray-800 rounded-lg overflow-hidden aspect-video ${
+    <div className={`relative bg-gray-800 rounded-lg overflow-hidden ${aspectRatio} ${
       isSpeaking && !isActuallyMuted ? 'ring-4 ring-green-500' : ''
     }`}>
             {participant.isCameraOff || !hasRemoteStream ? (
