@@ -462,7 +462,7 @@ export function GroupSettings({
                   onClick={() => setActiveTab(id as any)}
                   className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 ${
                     activeTab === id
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      ? 'border-[#7360F2] text-[#7360F2] dark:text-[#7360F2]'
                       : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
                 >
@@ -497,7 +497,7 @@ export function GroupSettings({
                         type="text"
                         value={editForm.name}
                         onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7360F2] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         placeholder="Enter group name"
                       />
                     ) : (
@@ -526,7 +526,7 @@ export function GroupSettings({
                       <textarea
                         value={editForm.description}
                         onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7360F2] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         placeholder="Enter group description"
                         rows={3}
                       />
@@ -542,7 +542,7 @@ export function GroupSettings({
                       <button
                         onClick={handleSaveGroup}
                         disabled={saving}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                        className="flex items-center space-x-2 px-4 py-2 bg-[#7360F2] text-white rounded-lg hover:bg-[#6854E8] disabled:opacity-50"
                       >
                         <Save className="w-4 h-4" />
                         <span>{saving ? 'Saving...' : 'Save'}</span>
@@ -582,7 +582,7 @@ export function GroupSettings({
                   <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                     <button
                       onClick={() => setShowMediaHistory(true)}
-                      className="w-full flex items-center justify-center px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                      className="w-full flex items-center justify-center px-4 py-3 bg-[#7360F2] text-white rounded-lg hover:bg-[#6854E8] focus:outline-none focus:ring-2 focus:ring-[#7360F2]"
                     >
                       <Image className="w-4 h-4 mr-2" />
                       View Media History
@@ -600,7 +600,7 @@ export function GroupSettings({
                     {isAdmin && (
                       <button 
                         onClick={() => setShowAddMember(true)}
-                        className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="flex items-center space-x-2 px-3 py-2 bg-[#7360F2] text-white rounded-lg hover:bg-[#6854E8]"
                       >
                         <UserPlus className="w-4 h-4" />
                         <span>Add Member</span>
@@ -644,7 +644,7 @@ export function GroupSettings({
                             {member.role === 'member' ? (
                               <button
                                 onClick={() => handlePromoteMember(member.userId)}
-                                className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg"
+                                className="p-2 text-[#7360F2] hover:bg-[#7360F2]/10 dark:hover:bg-[#7360F2]/20 rounded-lg"
                                 title="Promote to admin"
                               >
                                 <Crown className="w-4 h-4" />
@@ -731,7 +731,7 @@ export function GroupSettings({
                   placeholder="Search users by name or username..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7360F2]"
                   autoFocus
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -784,7 +784,7 @@ export function GroupSettings({
                       <button
                         onClick={() => handleAddMember(user.id)}
                         disabled={addingMember === user.id}
-                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center space-x-2 px-3 py-1.5 bg-[#7360F2] text-white rounded-lg hover:bg-[#6854E8] disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {addingMember === user.id ? (
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

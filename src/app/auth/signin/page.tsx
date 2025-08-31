@@ -53,7 +53,7 @@ export default function SignIn() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7360F2] rounded-full mb-4">
             <MessageCircle className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome to ChatFlow</h1>
@@ -70,7 +70,7 @@ export default function SignIn() {
               type="email"
               required
               autoComplete="email"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-[#7360F2] focus:border-[#7360F2] dark:bg-gray-700 dark:text-white"
               placeholder="Enter your email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -87,7 +87,7 @@ export default function SignIn() {
                 type={showPassword ? 'text' : 'password'}
                 required
                 autoComplete="current-password"
-                className="block w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="block w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-[#7360F2] focus:border-[#7360F2] dark:bg-gray-700 dark:text-white"
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -113,7 +113,7 @@ export default function SignIn() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7360F2] hover:bg-[#6854E8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7360F2] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
@@ -149,7 +149,7 @@ export default function SignIn() {
 
         <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/auth/signup" className="font-medium text-[#7360F2] hover:text-[#6854E8]">
             Sign up
           </Link>
         </p>

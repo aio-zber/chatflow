@@ -46,7 +46,7 @@
     --viber-primary: #7360F2;
     --viber-secondary: #FF6B00;
     --viber-tertiary: #59267c;
-    --viber-accent: #2A2D3A;
+    --viber-accent: rgba(115, 96, 242, 0.15);
     --viber-green: #00D448;
     --viber-orange: #FF6B00;
     --viber-teal: #6BB6FF;
@@ -434,6 +434,11 @@ body {
   .viber-input::placeholder {
     color: var(--viber-text-tertiary);
   }
+  
+  /* Ensure dark mode placeholder text is visible */
+  .dark .viber-input::placeholder {
+    color: var(--viber-text-tertiary);
+  }
 
   /* Viber Message Input Container */
   .viber-message-input {
@@ -737,6 +742,25 @@ button:disabled {
 
 .dark .viber-conversation-item.active {
   background-color: rgba(115, 96, 242, 0.15);
+}
+
+/* Enhanced Conversation Highlights for Dark Mode */
+.dark {
+  --viber-accent: rgba(115, 96, 242, 0.15);
+}
+
+/* Improved dark mode conversation highlighting */
+.dark .bg-viber-accent {
+  background-color: rgba(115, 96, 242, 0.15) !important;
+}
+
+/* Better conversation highlight theming */
+.viber-conversation-highlight {
+  background: linear-gradient(90deg, var(--viber-primary), rgba(115, 96, 242, 0.8));
+}
+
+.dark .viber-conversation-highlight {
+  background: linear-gradient(90deg, var(--viber-primary), rgba(115, 96, 242, 0.6));
 }
 
 /* Viber Animation Refinements */

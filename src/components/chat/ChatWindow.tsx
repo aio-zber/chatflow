@@ -13,7 +13,7 @@ import { useConversations } from '@/hooks/useConversations'
 import { useSocketContext } from '@/context/SocketContext'
 import { useNotifications } from '@/context/NotificationContext'
 import { useAutoScroll } from '@/hooks/useAutoScroll'
-import { Phone, Video, Info, ArrowDown, X, Shield } from 'lucide-react'
+import { Phone, Video, Info, ArrowDown, X, Shield, Search, MessageCircle } from 'lucide-react'
 import { EncryptionIndicator, E2EESetupPrompt, SafetyNumberModal } from '@/components/e2ee/EncryptionIndicator'
 import { useE2EE } from '@/hooks/useE2EE'
 import { getCompatibleFileUrl } from '@/utils/fileProxy'
@@ -1340,9 +1340,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       <div className="h-full flex items-center justify-center bg-viber-surface-container dark:bg-viber-surface-container">
         <div className="text-center text-viber-text-secondary dark:text-viber-text-secondary">
           <div className="w-28 h-28 mx-auto mb-6 bg-viber-primary rounded-full flex items-center justify-center shadow-viber-lg">
-            <span className="text-viber-text-inverse font-bold text-3xl">V</span>
+            <span className="text-viber-text-inverse font-bold text-3xl"><MessageCircle className="w-14 h-14 text-white" /></span>
           </div>
-          <h2 className="text-2xl font-semibold mb-3 text-viber-text-primary dark:text-viber-text-primary">Welcome to Viber</h2>
+          <h2 className="text-2xl font-semibold mb-3 text-viber-text-primary dark:text-viber-text-primary">Welcome to Chatflow</h2>
           <p className="text-lg">Select a conversation to start chatting</p>
         </div>
       </div>
@@ -1441,8 +1441,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           </div>
         </div>
 
-          {/* Search Bar in Header */}
-          <div className="flex items-center space-x-3 ml-4">
+        {/* Search Bar in Header */}
+        <div className="flex items-center space-x-3 ml-4">
             {!showSearch ? (
               <>
                 <button 
@@ -1504,7 +1504,6 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 </button>
               </div>
             )}
-          </div>
         </div>
       </div>
 

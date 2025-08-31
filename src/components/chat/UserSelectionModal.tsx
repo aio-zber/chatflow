@@ -438,7 +438,7 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
               <button
                 onClick={handleGroupCreate}
                 disabled={isCreating || !groupName.trim() || selectedUsers.length === 0}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-[#7360F2] text-white rounded-md hover:bg-[#6854E8] focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isCreating ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

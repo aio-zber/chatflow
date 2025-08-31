@@ -46,8 +46,9 @@ const nextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval' data:", // Allow data: URLs for scripts in dev
       "style-src 'self' 'unsafe-inline'",
+      "font-src 'self' data:",
       "img-src 'self' data: blob: https: res.cloudinary.com *.cloudinary.com",
-      "media-src 'self' blob: res.cloudinary.com *.cloudinary.com",
+      "media-src 'self' data: blob: res.cloudinary.com *.cloudinary.com",
       "connect-src 'self' wss: ws: https: res.cloudinary.com *.cloudinary.com",
       "worker-src 'self' blob:",
       "child-src 'self'",
@@ -62,8 +63,9 @@ const nextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'", // Need unsafe-inline for Next.js runtime
       "style-src 'self' 'unsafe-inline'", // Tailwind CSS
+      "font-src 'self' data:",
       "img-src 'self' data: blob: https: res.cloudinary.com *.cloudinary.com",
-      "media-src 'self' blob: res.cloudinary.com *.cloudinary.com",
+      "media-src 'self' data: blob: res.cloudinary.com *.cloudinary.com",
       "connect-src 'self' wss: ws: https: res.cloudinary.com *.cloudinary.com",
       "worker-src 'self' blob:",
       "child-src 'self'",

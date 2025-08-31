@@ -9,8 +9,6 @@ import { ArrowLeft, Camera, RefreshCw, Save, User, MessageCircle } from 'lucide-
 export default function SettingsPage() {
   const { data: session, update } = useSession()
   const router = useRouter()
-  const [avatarUploading, setAvatarUploading] = useState(false)
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [name, setName] = useState(session?.user?.name || '')
   const [bio, setBio] = useState(session?.user?.bio || '')
   const [saving, setSaving] = useState(false)
@@ -95,133 +93,84 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
+    <div className="min-h-screen bg-viber-surface-container dark:bg-viber-surface-container">
+      <div className="max-w-lg mx-auto py-8 px-4">
+        <div className="mb-6">
           <Link
             href="/chat"
-            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-4"
+            className="inline-flex items-center text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-text-primary dark:hover:text-viber-text-primary mb-4"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Chat
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Manage your account settings and profile</p>
+          <h1 className="text-2xl font-semibold text-viber-text-primary dark:text-viber-text-primary">Settings</h1>
+          <p className="text-viber-text-secondary dark:text-viber-text-secondary mt-1 text-sm">Manage your account settings and profile</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-          <div className="px-6 py-8 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center space-x-6">
+        <div className="bg-viber-surface dark:bg-viber-surface rounded-2xl shadow-viber overflow-hidden">
+          <div className="px-6 py-6 border-b border-viber-border dark:border-viber-border">
+            <div className="flex items-center space-x-4">
               <div className="relative">
-                <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
-                  {avatarPreview ? (
-                    <img src={avatarPreview} alt="Preview" className="w-24 h-24 object-cover" />
-                  ) : session.user.avatar ? (
-                    <img src={`${session.user.avatar}?${new Date().getTime()}`} alt={session.user.name || 'Profile'} className="w-24 h-24 object-cover" />
+                <div className="w-16 h-16 bg-viber-primary rounded-full flex items-center justify-center overflow-hidden">
+                  {session.user.avatar ? (
+                    <img src={`${session.user.avatar}?${new Date().getTime()}`} alt={session.user.name || 'Profile'} className="w-16 h-16 object-cover" />
                   ) : (
-                    <span className="text-3xl font-bold text-white">
+                    <span className="text-xl font-semibold text-viber-text-inverse">
                       {(session.user.name || session.user.email || 'U').charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
-                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-colors cursor-pointer">
-                  <Camera className="w-4 h-4" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0]
-                      if (!file) return
-                      try {
-                        setAvatarUploading(true)
-                        const reader = new FileReader()
-                        const fileAsDataUrl: string = await new Promise((resolve, reject) => {
-                          reader.onload = () => resolve(reader.result as string)
-                          reader.onerror = reject
-                          reader.readAsDataURL(file)
-                        })
-                        // Immediate local preview
-                        setAvatarPreview(fileAsDataUrl)
-                        const resp = await fetch('/api/upload/avatar', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ imageBase64: fileAsDataUrl }),
-                        })
-                        if (!resp.ok) {
-                          const err = await resp.json().catch(() => ({}))
-                          throw new Error(err.error || 'Failed to upload avatar')
-                        }
-                        const data = await resp.json()
-                        await update({ ...session, user: { ...session?.user, avatar: data.user.avatar, image: data.user.avatar } })
-                        // Replace preview with CDN URL to ensure transformations/caching are reflected
-                        setAvatarPreview(data.user.avatar)
-                      } catch (err) {
-                        console.error('Avatar upload failed:', err)
-                        // Revert preview on failure
-                        setAvatarPreview(null)
-                      } finally {
-                        setAvatarUploading(false)
-                      }
-                    }}
-                  />
-                </label>
-                {avatarUploading && (
-                  <div className="absolute -bottom-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow">
-                    <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
-                  </div>
-                )}
               </div>
 
               <div className="flex-1 min-w-0">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white truncate">
-                  {session.user.name || 'Unnamed User'}
+                <h2 className="text-xl font-semibold text-viber-text-primary dark:text-viber-text-primary truncate">
+                  {session.user.name || 'Tester2'}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">@{session.user.username || 'username'}</p>
-                <div className="flex items-center mt-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Online</span>
+                <p className="text-viber-text-secondary dark:text-viber-text-secondary">@{session.user.username || 'Tester2'}</p>
+                <div className="flex items-center mt-1">
+                  <div className="w-2 h-2 bg-viber-green rounded-full mr-2"></div>
+                  <span className="text-xs text-viber-text-secondary dark:text-viber-text-secondary">Online</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <form onSubmit={handleSave} className="px-6 py-6 space-y-6">
+          <form onSubmit={handleSave} className="px-6 py-6 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <User className="w-4 h-4 inline mr-2" />
+              <label className="flex items-center text-sm font-medium text-viber-text-primary dark:text-viber-text-primary mb-2">
+                <User className="w-4 h-4 mr-2" />
                 Display Name
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="w-full px-4 py-3 border border-viber-border dark:border-viber-border rounded-lg bg-viber-surface-container dark:bg-viber-surface-bright text-viber-text-primary dark:text-viber-text-primary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary transition-all"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your display name"
+                placeholder="Tester2"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <MessageCircle className="w-4 h-4 inline mr-2" />
+              <label className="flex items-center text-sm font-medium text-viber-text-primary dark:text-viber-text-primary mb-2">
+                <MessageCircle className="w-4 h-4 mr-2" />
                 Bio
               </label>
               <textarea
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                className="w-full px-4 py-3 border border-viber-border dark:border-viber-border rounded-lg bg-viber-surface-container dark:bg-viber-surface-bright text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary resize-none transition-all"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Tell others about yourself..."
                 maxLength={160}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{bio.length}/160 characters</p>
+              <p className="text-xs text-viber-text-tertiary dark:text-viber-text-tertiary mt-1">{bio.length}/160 characters</p>
             </div>
 
-            <div className="flex items-center justify-end pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-end pt-4">
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-8 py-3 bg-[#7360F2] hover:bg-[#6854E8] text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Saving...' : 'Save Changes'}

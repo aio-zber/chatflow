@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useSession } from 'next-auth/react'
-import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, Save, X, Download } from 'lucide-react'
+import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, Save, X, Download, Phone, Video } from 'lucide-react'
 import { MessageFormatter } from '../MessageFormatter'
 import { VoiceMessagePlayer } from '../VoiceMessagePlayer'
 import { getCompatibleFileUrl } from '@/utils/fileProxy'
@@ -291,7 +291,7 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
   }, [showReactions, showMoreOptions, showActions])
 
   const isOwnMessage = message.senderId === session?.user?.id
-  const isSystemMessage = message.type === 'system'
+  const isSystemMessage = message.type === 'system' || message.type === 'call_trace'
   const isCallMessage = message.type === 'call'
   const isCallTrace = message.type === 'call_trace'
   const commonReactions = ['❤️', '👍', '😂', '😮', '😢', '😡']
@@ -482,8 +482,104 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
     }
   }
 
-  // Special rendering for system messages
+  // Special rendering for system messages including call traces
   if (isSystemMessage) {
+    // Check if this is a call trace system message
+    if (message.content && (
+      message.content.includes('Missed call') || 
+      message.content.includes('Cancelled call') ||
+      message.content.includes('Incoming call') ||
+      message.content.includes('Outgoing call') ||
+      message.content.includes('voice call') ||
+      message.content.includes('video call')
+    )) {
+      // Render call trace as a centered system message with Viber styling
+      // Determine call direction based on who sent the message (call initiator)
+      // If current user sent the call trace message, it was an outgoing call
+      const isOutgoing = message.senderId === session?.user?.id
+      const isMissed = message.content.includes('Missed') || message.content.includes('Cancelled')
+      const isVideo = message.content.includes('video')
+      
+      // Extract duration if present
+      const durationMatch = message.content.match(/\((\d+:\d+)\)/)
+      const duration = durationMatch ? durationMatch[1] : ''
+      
+      const getCallTraceMessage = () => {
+        const getDirectionIcon = () => {
+          if (isOutgoing) {
+            return (
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            )
+          } else {
+            return (
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            )
+          }
+        }
+        
+        const callTypeIcon = isVideo ? 
+          <Video className="w-4 h-4" /> : 
+          <Phone className="w-4 h-4" />
+        
+        if (isMissed) {
+          return {
+            text: message.content.replace(/\s*\(\d+:\d+\)/, ''),
+            bgColor: 'bg-red-50 dark:bg-red-900/30',
+            borderColor: 'border-red-200 dark:border-red-800/50',
+            textColor: 'text-red-700 dark:text-red-300',
+            directionIcon: getDirectionIcon(),
+            callIcon: callTypeIcon,
+            duration
+          }
+        } else {
+          return {
+            text: message.content.replace(/\s*\(\d+:\d+\)/, ''),
+            bgColor: 'bg-gray-50 dark:bg-gray-800/50',
+            borderColor: 'border-gray-200 dark:border-gray-700/50',
+            textColor: 'text-gray-700 dark:text-gray-300',
+            directionIcon: getDirectionIcon(),
+            callIcon: callTypeIcon,
+            duration
+          }
+        }
+      }
+      
+      const callTrace = getCallTraceMessage()
+      
+      return (
+        <div className="flex justify-center my-3" data-message-id={message.id} role="article">
+          <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${callTrace.bgColor} ${callTrace.borderColor} shadow-sm max-w-sm`}>
+            {/* Direction Arrow */}
+            <div className={`${callTrace.textColor} flex-shrink-0`}>
+              {callTrace.directionIcon}
+            </div>
+            
+            {/* Call Text */}
+            <div className="flex-1 min-w-0">
+              <span className={`text-sm font-medium ${callTrace.textColor}`}>
+                {callTrace.text}
+              </span>
+              {callTrace.duration && (
+                <span className={`text-sm ${callTrace.textColor} ml-1`}>
+                  ({callTrace.duration})
+                </span>
+              )}
+            </div>
+            
+            {/* Call Type Icon */}
+            <div className={`${callTrace.textColor} flex-shrink-0`}>
+              {callTrace.callIcon}
+            </div>
+          </div>
+        </div>
+      )
+    }
+    
+    // Regular system message
     return (
       <div className="flex justify-center my-2" data-message-id={message.id} role="article">
         <div className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-300 text-center max-w-[80%]">
@@ -493,95 +589,6 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
     )
   }
 
-  // Special rendering for call trace messages (as regular user messages)
-  if (isCallTrace) {
-    return (
-      <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-3`} data-message-id={message.id} role="article">
-        <div className="flex items-start space-x-2 max-w-[70%]">
-          {!isOwnMessage && (
-            <div className="flex-shrink-0">
-              {message.senderImage ? (
-                <img
-                  src={message.senderImage}
-                  alt={message.senderName}
-                  className="w-8 h-8 rounded-full"
-                />
-              ) : (
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">
-                    {message.senderName?.charAt(0).toUpperCase() || '?'}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-          <div className="flex flex-col">
-            {!isOwnMessage && (
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                {message.senderName}
-              </div>
-            )}
-            <div className={`rounded-lg px-3 py-2 ${
-              isOwnMessage
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
-            }`}>
-              <div className="text-sm">{message.content}</div>
-              <div className={`text-xs mt-1 ${
-                isOwnMessage ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
-              }`}>
-                {formatTime(message.timestamp)}
-              </div>
-            </div>
-            
-            {/* Reactions for call traces */}
-            {groupedReactions.length > 0 && (
-              <div className={`flex flex-wrap gap-1 mt-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-                {groupedReactions.map((reactionGroup, index) => (
-                  <button
-                    key={`${message.id}-reaction-${reactionGroup.emoji}-${index}`}
-                    onClick={() => handleReaction(reactionGroup.emoji)}
-                    disabled={isReacting}
-                    className={`
-                      inline-flex items-center space-x-1 rounded-full text-xs flex-shrink-0 px-2 py-1
-                      ${
-                        reactionGroup.hasCurrentUser
-                          ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-500'
-                          : 'bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600'
-                      }
-                      ${isReacting ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 transition-transform'}
-                      focus:outline-none focus:ring-2 focus:ring-blue-500
-                    `}
-                    title={(() => {
-                      if (!reactionGroup.users || !Array.isArray(reactionGroup.users)) {
-                        return `Reacted by: ${reactionGroup.count} user${reactionGroup.count > 1 ? 's' : ''}`
-                      }
-                      const userList = reactionGroup.users
-                        .filter(u => u && typeof u === 'object' && (u.username || u.name))
-                        .map(u => {
-                          try {
-                            return u.username || u.name || 'Unknown'
-                          } catch {
-                            return 'Unknown'
-                          }
-                        })
-                        .slice(0, 3)
-                      return userList.length > 0 
-                        ? `Reacted by: ${userList.join(', ')}${reactionGroup.count > 3 ? ` and ${reactionGroup.count - 3} others` : ''}`
-                        : `Reacted by: ${reactionGroup.count} user${reactionGroup.count > 1 ? 's' : ''}`
-                    })()}
-                  >
-                    <span>{reactionGroup.emoji}</span>
-                    <span className="font-medium">{reactionGroup.count}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className={`flex ${isCallMessage ? 'justify-center' : isOwnMessage ? 'justify-end' : 'justify-start'} group px-2`} data-message-id={message.id} role="article">

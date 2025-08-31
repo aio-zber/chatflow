@@ -84,7 +84,7 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab('profile')}
                 className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'profile'
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    ? 'border-[#7360F2] text-[#7360F2] dark:text-[#7360F2]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
@@ -95,7 +95,7 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab('blocked')}
                 className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'blocked'
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    ? 'border-[#7360F2] text-[#7360F2] dark:text-[#7360F2]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
@@ -112,7 +112,7 @@ export default function ProfilePage() {
             <div className="px-6 py-8 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-6">
               <div className="relative">
-                <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                <div className="w-24 h-24 bg-[#7360F2] rounded-full flex items-center justify-center overflow-hidden">
                   {avatarPreview ? (
                     <img
                       src={avatarPreview}
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                     </span>
                   )}
                 </div>
-                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-colors cursor-pointer">
+                <label className="absolute bottom-0 right-0 bg-[#7360F2] hover:bg-[#6854E8] text-white p-2 rounded-full shadow-lg transition-colors cursor-pointer">
                   <Camera className="w-4 h-4" />
                   <input
                     type="file"
@@ -176,7 +176,7 @@ export default function ProfilePage() {
                 </label>
                 {avatarUploading && (
                   <div className="absolute -bottom-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow">
-                    <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
+                    <RefreshCw className="w-4 h-4 text-[#7360F2] animate-spin" />
                   </div>
                 )}
               </div>
@@ -215,7 +215,7 @@ export default function ProfilePage() {
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:border-transparent dark:bg-gray-700 dark:text-white"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter your display name"
@@ -229,7 +229,7 @@ export default function ProfilePage() {
               </label>
               <textarea
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 placeholder="Tell others about yourself..."
@@ -245,7 +245,7 @@ export default function ProfilePage() {
                 Status
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:border-transparent dark:bg-gray-700 dark:text-white"
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               >
@@ -283,7 +283,7 @@ export default function ProfilePage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-6 py-2 bg-[#7360F2] hover:bg-[#6854E8] text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}

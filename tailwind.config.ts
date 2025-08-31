@@ -18,6 +18,29 @@ const config: Config = {
           600: '#2563eb',
           700: '#1d4ed8',
         },
+        // Viber Design System Colors
+        viber: {
+          primary: '#7360F2',
+          secondary: '#FF6B00',
+          tertiary: '#59267c',
+          accent: '#F3F1FF',
+          green: '#00D448',
+          orange: '#FF6B00',
+          teal: '#6BB6FF',
+          // Surfaces
+          surface: 'var(--viber-surface)',
+          'surface-container': 'var(--viber-surface-container)',
+          'surface-variant': 'var(--viber-surface-variant)',
+          'surface-bright': 'var(--viber-surface-bright)',
+          // Text
+          'text-primary': 'var(--viber-text-primary)',
+          'text-secondary': 'var(--viber-text-secondary)',
+          'text-tertiary': 'var(--viber-text-tertiary)',
+          'text-inverse': 'var(--viber-text-inverse)',
+          // Borders
+          border: 'var(--viber-border)',
+          'border-variant': 'var(--viber-border-variant)',
+        },
       },
       screens: {
         'xs': '475px',

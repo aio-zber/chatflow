@@ -95,95 +95,82 @@ export function CallRecord({ callRecord, onCallBack }: CallRecordProps) {
   const callStatus = getCallStatus()
   const isGroupCall = callRecord.participants.length > 1
 
-  return (
-    <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800/70 transition-colors">
-      {/* Call direction and type indicator */}
-      <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700">
-        {getCallDirection()}
-      </div>
+  const getViberCallMessage = () => {
+    const duration = callRecord.duration > 0 ? ` (${formatDuration(callRecord.duration)})` : ''
+    
+    // Direction arrow icons - matching Viber design
+    const getDirectionIcon = () => {
+      if (callRecord.isOutgoing) {
+        // Right arrow (→) for outgoing calls - user initiated the call
+        return (
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        )
+      } else {
+        // Left arrow (←) for incoming calls - other person initiated the call  
+        return (
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+        </svg>
+        )
+      }
+    }
+    
+    const callTypeIcon = callRecord.callType === 'video' ? 
+      <Video className="w-4 h-4" /> : 
+      <Phone className="w-4 h-4" />
+    
+    if (callRecord.status === 'missed' || callRecord.status === 'cancelled') {
+      return {
+        text: callRecord.status === 'missed' && !callRecord.isOutgoing ? 'Missed call' : 'Cancelled call',
+        bgColor: 'bg-red-50 dark:bg-red-900/30',
+        borderColor: 'border-red-200 dark:border-red-800/50',
+        textColor: 'text-red-700 dark:text-red-300',
+        directionIcon: getDirectionIcon(),
+        callIcon: callTypeIcon,
+        duration
+      }
+    } else {
+      return {
+        text: `${callRecord.isOutgoing ? 'Outgoing call' : 'Incoming call'}`,
+        bgColor: 'bg-gray-50 dark:bg-gray-800/50',
+        borderColor: 'border-gray-200 dark:border-gray-700/50',
+        textColor: 'text-gray-700 dark:text-gray-300',
+        directionIcon: getDirectionIcon(),
+        callIcon: callTypeIcon,
+        duration
+      }
+    }
+  }
 
-      {/* Call details */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center space-x-2">
-          <p className={`text-sm font-medium ${callStatus.color}`}>
-            {callStatus.text}
-          </p>
-          {isGroupCall && (
-            <div className="flex items-center space-x-1">
-              <Users className="w-3 h-3 text-gray-400" />
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {callRecord.participants.length}
-              </span>
-            </div>
+  const viberMessage = getViberCallMessage()
+
+  return (
+    <div className="flex justify-center my-3">
+      <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${viberMessage.bgColor} ${viberMessage.borderColor} shadow-sm max-w-sm`}>
+        {/* Direction Arrow */}
+        <div className={`${viberMessage.textColor} flex-shrink-0`}>
+          {viberMessage.directionIcon}
+        </div>
+        
+        {/* Call Text */}
+        <div className="flex-1 min-w-0">
+          <span className={`text-sm font-medium ${viberMessage.textColor}`}>
+            {viberMessage.text}
+          </span>
+          {viberMessage.duration && (
+            <span className={`text-sm ${viberMessage.textColor} ml-1`}>
+              {viberMessage.duration}
+            </span>
           )}
         </div>
         
-        <div className="flex items-center space-x-2 mt-1">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {formatDistanceToNow(callRecord.startedAt, { addSuffix: true })}
-          </span>
-          {callRecord.duration > 0 && (
-            <>
-              <span className="text-xs text-gray-400">•</span>
-              <div className="flex items-center space-x-1">
-                <Clock className="w-3 h-3 text-gray-400" />
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {formatDuration(callRecord.duration)}
-                </span>
-              </div>
-            </>
-          )}
+        {/* Call Type Icon */}
+        <div className={`${viberMessage.textColor} flex-shrink-0`}>
+          {viberMessage.callIcon}
         </div>
-
-        {/* Participants (for group calls) */}
-        {isGroupCall && (
-          <div className="flex items-center space-x-1 mt-1">
-            {callRecord.participants.slice(0, 3).map((participant, index) => (
-              <div key={participant.id} className="flex items-center">
-                {participant.avatar ? (
-                  <img
-                    src={participant.avatar}
-                    alt={participant.name}
-                    className="w-4 h-4 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                    <User className="w-2 h-2 text-white" />
-                  </div>
-                )}
-                {index < Math.min(callRecord.participants.length - 1, 2) && (
-                  <span className="text-xs text-gray-400 mx-1">•</span>
-                )}
-              </div>
-            ))}
-            {callRecord.participants.length > 3 && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                +{callRecord.participants.length - 3} more
-              </span>
-            )}
-          </div>
-        )}
       </div>
-
-      {/* Call back button */}
-      {onCallBack && callRecord.status !== 'missed' && (
-        <div className="flex space-x-1">
-          <button
-            onClick={() => onCallBack('voice')}
-            className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-full transition-colors"
-            title="Voice call"
-          >
-            <Phone className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onCallBack('video')}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
-            title="Video call"
-          >
-            <Video className="w-4 h-4" />
-          </button>
-        </div>
-      )}
     </div>
   )
 }

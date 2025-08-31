@@ -14,6 +14,7 @@ import { ConversationAvatar } from './ConversationAvatar'
 
 interface ChatSidebarProps {
   selectedConversationId: string | null
+  searchQuery?: string
   onSelectConversation: (conversationId: string) => void
 }
 
@@ -122,7 +123,7 @@ function getLastMessagePreview(conversation: any, sessionUserId?: string, decryp
 }
 
 
-export function ChatSidebar({ selectedConversationId, onSelectConversation }: ChatSidebarProps) {
+export function ChatSidebar({ selectedConversationId, searchQuery: externalSearchQuery, onSelectConversation }: ChatSidebarProps) {
   const { data: session } = useSession()
   const { conversations, loading, error, forceRefreshKey, setForceRefreshKey } = useConversations(selectedConversationId)
   const { blockedUsers } = useBlockedUsers()
@@ -130,6 +131,9 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
   const { decryptMessage, isAvailable: e2eeAvailable } = useE2EE()
   const { socket, isFullyInitialized } = useSocketContext()
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // Use external search query if provided, otherwise use internal
+  const effectiveSearchQuery = externalSearchQuery !== undefined ? externalSearchQuery : searchQuery
   const [showUserSelection, setShowUserSelection] = useState(false)
   const [activeTab, setActiveTab] = useState<'conversations' | 'blocked'>('conversations')
   const [decryptedContents, setDecryptedContents] = useState<Record<string, string>>({})
@@ -323,7 +327,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
         totalConversations: conversations.length,
         blockedUserIds: Array.from(blockedUserIds),
         blockerUserIds: Array.from(blockerUserIds),
-        searchQuery,
+        effectiveSearchQuery,
         forceRefresh,
         conversationIds: conversations.map(c => c.id)
       })
@@ -338,8 +342,8 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
         // Reduced logging for performance
         if (Math.random() < 0.05) console.log(`ChatSidebar: Group conversation ${conversation.id} (${conversationName}) - members: ${conversation.participants?.length || 0}`)
         
-        return conversationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-               lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+        return conversationName.toLowerCase().includes(effectiveSearchQuery.toLowerCase()) ||
+               lastMessage.toLowerCase().includes(effectiveSearchQuery.toLowerCase())
       }
       
       // BLOCKING FIX: For direct messages, check both blocking relationships
@@ -364,12 +368,12 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
       const conversationName = getConversationName(conversation)
       const lastMessage = conversation.messages?.[0]?.content || ''
       
-      const matchesSearch = conversationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesSearch = conversationName.toLowerCase().includes(effectiveSearchQuery.toLowerCase()) ||
+                           lastMessage.toLowerCase().includes(effectiveSearchQuery.toLowerCase())
       
       // Reduced logging for performance
-      if (!matchesSearch && searchQuery && Math.random() < 0.05) {
-        console.log(`ChatSidebar: Conversation ${conversation.id} doesn't match search "${searchQuery}"`)
+      if (!matchesSearch && effectiveSearchQuery && Math.random() < 0.05) {
+        console.log(`ChatSidebar: Conversation ${conversation.id} doesn't match search "${effectiveSearchQuery}"`)
       }
       
       return matchesSearch
@@ -381,7 +385,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
       console.log(`ChatSidebar: Final conversation list:`, filtered.map(c => ({ id: c.id, name: getConversationName(c), memberCount: c.participants?.length })))
     }
     return filtered
-  }, [conversations, searchQuery, blockedUsers, blockers, forceRefresh]) // BLOCKING FIX: Include blockers dependency
+  }, [conversations, effectiveSearchQuery, blockedUsers, blockers, forceRefresh]) // BLOCKING FIX: Include blockers dependency
 
   if (loading) {
     return (
@@ -420,36 +424,15 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
 
   return (
     <div className="flex flex-col h-full bg-viber-surface dark:bg-viber-surface">
-      {/* Top Section - Search and New Chat */}
-      <div className="p-4 space-y-3 bg-viber-surface dark:bg-viber-surface border-b border-viber-border dark:border-viber-border">
-        {/* Search bar at the very top */}
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-viber-text-tertiary w-4 h-4" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-12 pr-4 py-3 text-sm bg-viber-surface-container dark:bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary dark:placeholder-viber-text-tertiary border border-viber-border dark:border-viber-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-transparent transition-all duration-200"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-viber-text-tertiary hover:text-viber-text-secondary transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Tabs */}
-        <div className="bg-viber-surface dark:bg-viber-surface rounded-xl border border-viber-border dark:border-viber-border">
-          <nav className="-mb-px flex">
+      {/* Tab Bar - All/Blocked */}
+      <div className="px-4 pt-2 pb-0">
+        <div className="bg-viber-surface dark:bg-viber-surface">
+          <nav className="flex">
             <button
               onClick={() => setActiveTab('conversations')}
-              className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors rounded-t-xl ${
+              className={`flex-1 py-3 px-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'conversations'
-                  ? 'border-viber-primary text-viber-primary bg-viber-accent dark:bg-viber-accent'
+                  ? 'border-viber-primary text-viber-primary'
                   : 'border-transparent text-viber-text-secondary hover:text-viber-text-primary dark:text-viber-text-secondary dark:hover:text-viber-text-primary'
               }`}
             >
@@ -457,9 +440,9 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
             </button>
             <button
               onClick={() => setActiveTab('blocked')}
-              className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors rounded-t-xl ${
+              className={`flex-1 py-3 px-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'blocked'
-                  ? 'border-viber-primary text-viber-primary bg-viber-accent dark:bg-viber-accent'
+                  ? 'border-viber-primary text-viber-primary'
                   : 'border-transparent text-viber-text-secondary hover:text-viber-text-primary dark:text-viber-text-secondary dark:hover:text-viber-text-primary'
               }`}
             >
@@ -467,19 +450,6 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
             </button>
           </nav>
         </div>
-
-        {/* Viber Purple + Button */}
-        {activeTab === 'conversations' && (
-          <div className="flex justify-center">
-            <button 
-              onClick={handleNewChatClick}
-              className="w-12 h-12 bg-viber-primary hover:bg-viber-secondary text-viber-text-inverse rounded-full flex items-center justify-center shadow-viber-md hover:shadow-viber-lg transition-all duration-200 group"
-              title="New Chat"
-            >
-              <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Content */}
@@ -487,7 +457,7 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
         <div className="flex-1 overflow-y-auto overscroll-contain bg-viber-surface dark:bg-viber-surface">
           {filteredConversations.length === 0 ? (
             <div className="p-8 text-center text-viber-text-secondary dark:text-viber-text-secondary">
-              {searchQuery ? (
+              {effectiveSearchQuery ? (
                 <>
                   <Search className="w-8 h-8 mx-auto mb-3 opacity-50" />
                   <p className="text-sm">No conversations found</p>
@@ -511,8 +481,8 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                     onClick={() => onSelectConversation(conversation.id)}
                     className={`w-full text-left px-4 py-3 hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright transition-all duration-200 border-l-4 ${
                       selectedConversationId === conversation.id
-                        ? 'bg-viber-accent dark:bg-viber-accent border-l-viber-primary'
-                        : 'border-l-transparent'
+                        ? 'bg-viber-accent dark:bg-viber-accent border-l-viber-primary shadow-sm'
+                        : 'border-l-transparent hover:border-l-viber-primary/20'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -536,23 +506,18 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                             }`}>
                               {getConversationName(conversation)}
                             </h3>
-                            {/* Online status for groups - show online count excluding current user */}
-                            {conversation.isGroup && (
-                              <span className="text-xs text-viber-green font-medium flex-shrink-0">
-                                {conversation.participants.filter(p => p.user.isOnline && p.user.id !== session?.user?.id).length} online
-                              </span>
-                            )}
-                            {/* Online status for DMs */}
-                            {!conversation.isGroup && conversation.otherParticipants.length > 0 && (
-                              <span className={`text-xs font-medium flex-shrink-0 ${
-                                conversation.otherParticipants?.[0]?.user.isOnline 
-                                  ? 'text-viber-green' 
+                            {/* Message status indicators - show checkmarks for sent messages */}
+                            {lastMessage && lastMessage.senderId === session?.user?.id && (
+                              <span className={`text-sm flex-shrink-0 ${
+                                lastMessage.status === 'read' 
+                                  ? 'text-viber-teal' 
+                                  : lastMessage.status === 'delivered'
+                                  ? 'text-viber-text-secondary dark:text-viber-text-secondary'
                                   : 'text-viber-text-tertiary dark:text-viber-text-tertiary'
                               }`}>
-                                {conversation.otherParticipants?.[0]?.user.isOnline 
-                                  ? 'Active' 
-                                  : formatTime(conversation.otherParticipants?.[0]?.user.lastSeen || new Date())
-                                }
+                                {lastMessage.status === 'read' ? '✓✓' : 
+                                 lastMessage.status === 'delivered' ? '✓✓' : 
+                                 '✓'}
                               </span>
                             )}
                           </div>
@@ -576,19 +541,6 @@ export function ChatSidebar({ selectedConversationId, onSelectConversation }: Ch
                           }`}>
                             {messagePreview.content}
                           </p>
-                          {messagePreview.status && (
-                            <span className={`text-sm flex-shrink-0 ml-2 ${
-                              messagePreview.status === 'read' 
-                                ? 'text-viber-teal' 
-                                : messagePreview.status === 'delivered'
-                                ? 'text-viber-text-secondary dark:text-viber-text-secondary'
-                                : 'text-viber-text-tertiary dark:text-viber-text-tertiary'
-                            }`}>
-                              {messagePreview.status === 'read' ? '✓✓' : 
-                               messagePreview.status === 'delivered' ? '✓✓' : 
-                               '✓'}
-                            </span>
-                          )}
                         </div>
                       </div>
                     </div>

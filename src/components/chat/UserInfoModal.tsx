@@ -200,49 +200,33 @@ export function UserInfoModal({
                 {/* Media History Button */}
                 <button
                   onClick={() => setShowMediaHistory(true)}
-                  className="w-full flex items-center justify-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="w-full flex items-center justify-center px-4 py-2 bg-[#7360F2] text-white rounded-md hover:bg-[#6854E8] focus:outline-none focus:ring-2 focus:ring-[#7360F2]"
                 >
                   <Image className="w-4 h-4 mr-2" />
                   View Media History
                 </button>
 
-                <div className="flex space-x-3">
-                  {/* Search Conversation */}
-                  {onSearchConversation && (
-                    <button
-                      onClick={() => {
-                        onSearchConversation()
-                        onClose()
-                      }}
-                      className="flex-1 flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <Search className="w-4 h-4 mr-2" />
-                      Search Messages
-                    </button>
-                  )}
-
-                  {/* Block/Unblock */}
-                  {onBlockToggle && (
-                    <button
-                      onClick={onBlockToggle}
-                      disabled={isBlockLoading}
-                      className={`flex-1 flex items-center justify-center px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        isBlocked
-                          ? 'bg-green-600 text-white hover:bg-green-700'
-                          : 'bg-red-600 text-white hover:bg-red-700'
-                      } ${isBlockLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {isBlockLoading ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      ) : isBlocked ? (
-                        <UserCheck className="w-4 h-4 mr-2" />
-                      ) : (
-                        <UserX className="w-4 h-4 mr-2" />
-                      )}
-                      {isBlocked ? 'Unblock' : 'Block'}
-                    </button>
-                  )}
-                </div>
+                {/* Block/Unblock */}
+                {onBlockToggle && (
+                  <button
+                    onClick={onBlockToggle}
+                    disabled={isBlockLoading}
+                    className={`w-full flex items-center justify-center px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      isBlocked
+                        ? 'bg-green-600 text-white hover:bg-green-700'
+                        : 'bg-red-600 text-white hover:bg-red-700'
+                    } ${isBlockLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {isBlockLoading ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    ) : isBlocked ? (
+                      <UserCheck className="w-4 h-4 mr-2" />
+                    ) : (
+                      <UserX className="w-4 h-4 mr-2" />
+                    )}
+                    {isBlocked ? 'Unblock' : 'Block'}
+                  </button>
+                )}
               </div>
             </div>
           ) : null}

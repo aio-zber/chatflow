@@ -424,12 +424,12 @@ export function MessageInput({
 
       {/* Input area */}
       <div className="flex items-end gap-3 p-4">
-        {/* Attachment buttons */}
+        {/* Attachment buttons - left side */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled}
-            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Attach file"
           >
             <Paperclip className="w-5 h-5" />
@@ -438,7 +438,7 @@ export function MessageInput({
           <button
             onClick={() => imageInputRef.current?.click()}
             disabled={disabled}
-            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Attach image"
           >
             <Image className="w-5 h-5" />
@@ -447,14 +447,14 @@ export function MessageInput({
           <button
             onClick={() => setShowVoiceRecorder(true)}
             disabled={disabled}
-            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-bright rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 text-viber-text-secondary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary rounded-full focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Record voice message"
           >
             <Mic className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Text input */}
+        {/* Text input with improved dark mode support */}
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
@@ -467,11 +467,11 @@ export function MessageInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full resize-none border border-viber-border dark:border-viber-border rounded-3xl px-5 py-3 pr-20 bg-viber-surface-container dark:bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary dark:placeholder-viber-text-tertiary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full resize-none border border-viber-border dark:border-viber-border rounded-3xl px-5 py-3 pr-20 bg-viber-surface-container dark:bg-viber-surface-bright text-viber-text-primary dark:text-viber-text-primary placeholder-viber-text-tertiary dark:placeholder-viber-text-tertiary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             style={{ minHeight: '48px', maxHeight: '120px' }}
           />
           
-          {/* Emoji and Sticker buttons */}
+          {/* Emoji and Sticker buttons - inside input */}
           <div className="absolute right-4 bottom-3.5 flex gap-2">
             <button
               onClick={() => {
@@ -479,7 +479,7 @@ export function MessageInput({
                 setShowEmojiPicker(false)
               }}
               disabled={disabled}
-              className="text-viber-text-tertiary dark:text-viber-text-tertiary hover:text-viber-primary dark:hover:text-viber-primary focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-viber-text-tertiary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary rounded-full p-1 focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Add sticker"
             >
               <Sticker className="w-5 h-5" />
@@ -490,7 +490,7 @@ export function MessageInput({
                 setShowStickerPicker(false)
               }}
               disabled={disabled}
-              className="text-viber-text-tertiary dark:text-viber-text-tertiary hover:text-viber-primary dark:hover:text-viber-primary focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-viber-text-tertiary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary rounded-full p-1 focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Add emoji"
             >
               <Smile className="w-5 h-5" />
