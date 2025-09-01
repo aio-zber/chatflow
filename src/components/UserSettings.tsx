@@ -2,10 +2,11 @@
 
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSession, signOut } from 'next-auth/react'
-import { Settings, LogOut, ChevronDown, User, Sun, Moon, Monitor } from 'lucide-react'
+import { Settings, LogOut, ChevronDown, User, Sun, Moon, Monitor, Volume2, VolumeX } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSocketContext } from '@/context/SocketContext'
 import { useTheme } from '@/context/ThemeContext'
+import { useNotifications } from '@/context/NotificationContext'
 import { getCompatibleFileUrl } from '@/utils/fileProxy'
 import { createPortal } from 'react-dom'
 
@@ -13,11 +14,12 @@ export function UserSettings() {
   const { data: session, update } = useSession()
   const { socket } = useSocketContext()
   const { theme, setTheme, actualTheme } = useTheme()
+  const { soundEnabled, setSoundEnabled } = useNotifications()
   const [isOpen, setIsOpen] = useState(false)
+  const [isAppearanceOpen, setIsAppearanceOpen] = useState(false)
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now())
   const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null)
   const [localDisplayName, setLocalDisplayName] = useState<string | null>(null)
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 })
   const [isClient, setIsClient] = useState(false)
   const router = useRouter()
@@ -86,6 +88,13 @@ export function UserSettings() {
       socket.off('user-profile-updated', handleUserProfileUpdated)
     }
   }, [socket])
+
+  // Close appearance dropdown when main dropdown closes
+  useEffect(() => {
+    if (!isOpen) {
+      setIsAppearanceOpen(false)
+    }
+  }, [isOpen])
 
   // Calculate dropdown position to prevent overflow using fixed positioning with portal
   useEffect(() => {
@@ -286,15 +295,70 @@ export function UserSettings() {
 
             {/* Menu items */}
             <div className="py-2" role="menu" aria-orientation="vertical">
-              {/* Appearance as dropdown menu */}
+              {/* Appearance dropdown menu */}
               <div className="px-4 py-2">
                 <div className="relative">
-                  <div className="flex items-center w-full px-3 py-2 text-sm rounded-lg text-viber-text-secondary dark:text-viber-text-secondary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-variant">
+                  <button
+                    onClick={() => setIsAppearanceOpen(!isAppearanceOpen)}
+                    className="flex items-center w-full px-3 py-2 text-sm rounded-lg text-viber-text-secondary dark:text-viber-text-secondary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-variant transition-colors"
+                    role="menuitem"
+                    aria-expanded={isAppearanceOpen}
+                  >
                     {getThemeIcon()}
                     <span className="ml-3 flex-1">Appearance</span>
-                    <span className="text-xs text-viber-text-tertiary dark:text-viber-text-tertiary">{getThemeLabel()}</span>
-                  </div>
-                  {/* Theme submenu can be expanded here later if needed */}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isAppearanceOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {/* Theme submenu */}
+                  {isAppearanceOpen && (
+                    <div className="mt-2 ml-6 space-y-1">
+                      <button
+                        onClick={() => {
+                          setTheme('system')
+                          setIsAppearanceOpen(false)
+                        }}
+                        className={`flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${
+                          theme === 'system' 
+                            ? 'bg-[#7360F2] text-white' 
+                            : 'text-viber-text-secondary dark:text-viber-text-secondary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-variant'
+                        }`}
+                        role="menuitem"
+                      >
+                        <Monitor className="w-4 h-4 mr-3" />
+                        System
+                      </button>
+                      <button
+                        onClick={() => {
+                          setTheme('light')
+                          setIsAppearanceOpen(false)
+                        }}
+                        className={`flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${
+                          theme === 'light' 
+                            ? 'bg-[#7360F2] text-white' 
+                            : 'text-viber-text-secondary dark:text-viber-text-secondary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-variant'
+                        }`}
+                        role="menuitem"
+                      >
+                        <Sun className="w-4 h-4 mr-3" />
+                        Light
+                      </button>
+                      <button
+                        onClick={() => {
+                          setTheme('dark')
+                          setIsAppearanceOpen(false)
+                        }}
+                        className={`flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${
+                          theme === 'dark' 
+                            ? 'bg-[#7360F2] text-white' 
+                            : 'text-viber-text-secondary dark:text-viber-text-secondary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-variant'
+                        }`}
+                        role="menuitem"
+                      >
+                        <Moon className="w-4 h-4 mr-3" />
+                        Dark
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -313,22 +377,27 @@ export function UserSettings() {
                 Profile Settings
               </button>
 
-              {/* Notifications */}
+              {/* Notifications - Integrated with existing notification system */}
               <button
-                onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                onClick={() => setSoundEnabled(!soundEnabled)}
                 className="flex items-center w-full px-4 py-2 text-sm text-viber-text-secondary dark:text-viber-text-secondary hover:bg-viber-surface-variant dark:hover:bg-viber-surface-variant transition-colors"
                 role="menuitem"
+                title={soundEnabled ? 'Disable notification sounds' : 'Enable notification sounds'}
               >
                 <div className="w-4 h-4 mr-3 flex items-center justify-center">
-                  <span className="text-viber-primary">🔔</span>
+                  {soundEnabled ? (
+                    <Volume2 className="w-4 h-4 text-viber-primary" />
+                  ) : (
+                    <VolumeX className="w-4 h-4 text-viber-text-tertiary dark:text-viber-text-tertiary" />
+                  )}
                 </div>
                 <span className="flex-1">Notifications</span>
                 <span className={`text-xs font-medium ${
-                  notificationsEnabled 
+                  soundEnabled 
                     ? 'text-viber-green' 
                     : 'text-viber-text-tertiary dark:text-viber-text-tertiary'
                 }`}>
-                  {notificationsEnabled ? 'ON' : 'OFF'}
+                  {soundEnabled ? 'ON' : 'OFF'}
                 </span>
               </button>
 

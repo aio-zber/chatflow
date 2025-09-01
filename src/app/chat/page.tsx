@@ -8,7 +8,6 @@ import { ChatSidebar } from '@/components/chat/ChatSidebar'
 import { ChatWindow } from '@/components/chat/ChatWindow'
 import { UserSettings } from '@/components/UserSettings'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { NotificationBadge } from '@/components/NotificationBadge'
 import { UserSelectionModal } from '@/components/chat/UserSelectionModal'
 import { useSocketContext } from '@/context/SocketContext'
 

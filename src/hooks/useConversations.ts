@@ -54,7 +54,7 @@ interface Conversation {
 export const useConversations = (selectedConversationId?: string | null) => {
   const { data: session } = useSession()
   const { socket, isFullyInitialized } = useSocketContext()
-  const { playNotificationSound, showNotification } = useNotifications()
+  const { playNotificationSound, showNotification, soundEnabled } = useNotifications()
   const { decryptMessage, isAvailable: e2eeAvailable } = useE2EE()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
@@ -277,37 +277,9 @@ export const useConversations = (selectedConversationId?: string | null) => {
     const handleNewMessage = (message: Message) => {
       console.log('useConversations: Received new-message event:', message.id, 'for conversation:', message.conversationId)
       
-      // Handle notifications for messages not from current user
-      if (message.senderId !== session?.user?.id) {
-        // If the message is from a conversation that's NOT currently selected, show notification
-        if (message.conversationId !== selectedConversationId) {
-          console.log('🔔 useConversations: Playing notification for message from background conversation:', message.conversationId)
-          playNotificationSound()
-          
-          // Decrypt message content for notification
-          let notificationContent = message.content
-          if (e2eeAvailable && message.isEncrypted) {
-            try {
-              const decrypted = decryptMessage(message.content, message.senderId)
-              if (decrypted) {
-                notificationContent = decrypted
-                console.log('🔐 useConversations: Successfully decrypted message for notification')
-              }
-            } catch (error) {
-              console.warn('🔐 useConversations: Failed to decrypt message for notification:', error)
-              notificationContent = '🔒 Encrypted message'
-            }
-          }
-          
-          // Show browser notification with sender name and decrypted preview
-          const senderName = message.sender?.name || message.sender?.username || 'Someone'
-          const conversationName = message.conversation?.name || 'New message'
-          showNotification(`${senderName} in ${conversationName}`, {
-            body: notificationContent.length > 50 ? notificationContent.substring(0, 50) + '...' : notificationContent,
-            tag: `conversation-${message.conversationId}`
-          })
-        }
-      }
+      // useConversations should NOT handle notifications - this is handled by GlobalNotificationListener
+      // This prevents duplicate notifications and centralizes notification logic
+      console.log('📨 useConversations: New message received, notification handling delegated to GlobalNotificationListener')
       
       setConversations(prev => {
         console.log('useConversations: Current conversations count:', prev.length)

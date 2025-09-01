@@ -61,7 +61,7 @@ interface ChatWindowProps {
 export function ChatWindow({ conversationId }: ChatWindowProps) {
   const { data: session } = useSession()
   const { socket } = useSocketContext()
-  const { playNotificationSound } = useNotifications()
+  const { playNotificationSound, soundEnabled } = useNotifications()
   const { conversations, loading: conversationsLoading, markConversationAsRead, forceRefreshKey, triggerRefresh } = useConversations(conversationId)
   const { messages, loading: messagesLoading, error: messagesError, sendMessage, loadMore, hasMore, loadingMore: messagesLoadingMore, scrollToMessageLoading, markMessagesAsRead, reactToMessage, scrollToMessage } = useMessages(conversationId)
   const [replyTo, setReplyTo] = useState<MessageBubbleMessage | null>(null)
@@ -618,16 +618,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     messageCountRef.current = messages.length
 
     const handleNewMessage = (message: any) => {
-      // Only play notification if:
-      // 1. Message is for current conversation
-      // 2. Message is not from current user
-      // 3. Current tab/window is not focused (user might not see it immediately)
-      if (message.conversationId === conversationId && 
-          message.senderId !== session.user.id) {
-        
-        console.log('🔊 Playing notification sound for new message in current conversation')
-        playNotificationSound()
-      }
+      // ChatWindow should NOT play notification sounds - this is handled by GlobalNotificationListener
+      // This prevents duplicate notifications when user is actively viewing the conversation
+      console.log('📨 ChatWindow: New message received, but not playing notification (handled globally)')
     }
 
     const handleMessageUpdate = (updatedMessage: any) => {

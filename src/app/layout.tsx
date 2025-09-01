@@ -6,6 +6,7 @@ import { SocketProvider } from "@/context/SocketContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { SessionProvider } from "@/components/SessionProvider";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
+import { GlobalNotificationListener } from "@/components/GlobalNotificationListener";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -44,6 +45,7 @@ export default function RootLayout({
             <AccessibilityProvider>
               <SocketProvider>
                 <NotificationProvider>
+                  <GlobalNotificationListener />
                   <main id="main-content" tabIndex={-1}>
                     {children}
                   </main>

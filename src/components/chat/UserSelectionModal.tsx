@@ -259,7 +259,7 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder="Enter group name"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                    className="w-full px-3 py-2 border border-viber-border dark:border-viber-border rounded-lg bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                     maxLength={50}
                   />
                 </div>
@@ -272,7 +272,7 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
                     onChange={(e) => setGroupDescription(e.target.value)}
                     placeholder="Describe what this group is about"
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 resize-none"
+                    className="w-full px-3 py-2 border border-viber-border dark:border-viber-border rounded-lg bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 resize-none"
                     maxLength={200}
                   />
                 </div>
@@ -312,7 +312,7 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
               <input
                 type="text"
                 placeholder={mode === 'direct' ? 'Search for users to chat with...' : 'Search for users to add...'}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-2 border border-viber-border dark:border-viber-border rounded-lg bg-viber-surface-container text-viber-text-primary dark:text-viber-text-primary focus:outline-none focus:ring-2 focus:ring-viber-primary focus:border-viber-primary dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -402,7 +402,7 @@ export function UserSelectionModal({ isOpen, onClose, onConversationCreated }: U
                         <button
                           onClick={() => handleUserSelect(user)}
                           disabled={isCreating}
-                          className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center space-x-2 px-3 py-2 bg-[#7360F2] text-white rounded-lg hover:bg-[#6854E8]"
                         >
                           {isCreating ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

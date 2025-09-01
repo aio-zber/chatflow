@@ -54,6 +54,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     switch (req.method) {
+      case 'GET':
+        return res.status(200).json({ message })
       case 'PUT':
         return handleUpdateMessage(req, res, message, session.user.id)
       case 'DELETE':

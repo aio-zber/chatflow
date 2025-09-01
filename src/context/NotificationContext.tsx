@@ -13,6 +13,8 @@ interface NotificationContextType {
   notificationEnabled: boolean
   soundEnabled: boolean
   setSoundEnabled: (enabled: boolean) => void
+  audioEnabled: boolean
+  enableAudio: () => void
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
@@ -33,10 +35,18 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const { data: session } = useSession()
   const [permission, setPermission] = useState<NotificationPermission>('default')
   const [unreadCount, setUnreadCount] = useState(0)
-  const [soundEnabled, setSoundEnabled] = useState(true)
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('notificationSoundEnabled')
+      return saved !== null ? JSON.parse(saved) : true
+    }
+    return true
+  })
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
   const [isPageVisible, setIsPageVisible] = useState(true)
   const [isWindowFocused, setIsWindowFocused] = useState(true)
+  const [audioEnabled, setAudioEnabled] = useState(false)
   const queuedNotifications = useRef<Array<{ title: string; options?: NotificationOptions }>>([])
 
   const notificationEnabled = permission === 'granted'
@@ -48,40 +58,89 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
   }, [])
 
-  // Initialize audio for notification sounds
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
+  // Initialize audio context on user interaction to avoid autoplay blocking
+  const enableAudio = useCallback(() => {
+    console.log('🎵 enableAudio called, current state:', { audioEnabled, hasAudioContext: !!audioContextRef.current })
+    
+    if (typeof window !== 'undefined' && !audioEnabled) {
       try {
-        audioRef.current = new Audio('/sounds/notification.mp3')
-        audioRef.current.volume = 0.5
-        audioRef.current.preload = 'none' // Don't preload to avoid 404 errors
-        
-        // Handle audio load errors gracefully
-        audioRef.current.onerror = () => {
-          console.warn('Notification sound file not found, continuing without audio notifications')
-          audioRef.current = null
+        // Initialize audio context
+        if (!audioContextRef.current) {
+          console.log('🎵 Creating new AudioContext...')
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
         }
         
-        // Test if the file exists by attempting to load metadata
-        audioRef.current.addEventListener('loadstart', () => {
-          // File exists and is loading
-        }, { once: true })
+        // Resume audio context if suspended
+        if (audioContextRef.current.state === 'suspended') {
+          console.log('🎵 AudioContext is suspended, attempting to resume...')
+          audioContextRef.current.resume().then(() => {
+            console.log('🎵 Audio context resumed successfully')
+            setAudioEnabled(true)
+          }).catch(error => {
+            console.error('🎵 Failed to resume audio context:', error)
+          })
+        } else {
+          console.log('🎵 AudioContext is ready, enabling audio')
+          setAudioEnabled(true)
+        }
+        
+        // Initialize audio file
+        if (!audioRef.current) {
+          console.log('🎵 Initializing notification audio file...')
+          audioRef.current = new Audio('/sounds/notification.mp3')
+          audioRef.current.volume = 0.5
+          audioRef.current.preload = 'auto'
+          
+          audioRef.current.onerror = () => {
+            console.warn('Notification sound file not found, will use fallback beep sound')
+            audioRef.current = null
+          }
+          
+          audioRef.current.oncanplaythrough = () => {
+            console.log('Notification audio loaded successfully')
+          }
+        }
       } catch (error) {
-        console.warn('Could not initialize notification audio:', error)
-        audioRef.current = null
+        console.warn('Could not enable audio:', error)
       }
+    } else {
+      console.log('🎵 enableAudio: Audio already enabled or window not available')
     }
-  }, [])
-
-  // Load sound preference from localStorage
+  }, [audioEnabled])
+  
+  // Initialize audio for notification sounds
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedSoundPreference = localStorage.getItem('notificationSoundEnabled')
-      if (savedSoundPreference !== null) {
-        setSoundEnabled(JSON.parse(savedSoundPreference))
+    if (typeof window !== 'undefined' && !audioEnabled) {
+      console.log('🎵 Setting up user interaction listeners for audio enablement...')
+      // Add event listeners for user interaction to enable audio
+      const events = ['click', 'touchstart', 'keydown', 'mousedown']
+      
+      const handleUserInteraction = (event: Event) => {
+        console.log('🎵 User interaction detected:', event.type)
+        enableAudio()
+        
+        // Remove listeners after first successful interaction
+        events.forEach(eventType => {
+          document.removeEventListener(eventType, handleUserInteraction)
+        })
+      }
+      
+      // Add listeners to document to catch any user interaction
+      events.forEach(event => {
+        document.addEventListener(event, handleUserInteraction, { passive: true })
+      })
+      
+      console.log('🎵 User interaction listeners added for:', events.join(', '))
+      
+      return () => {
+        console.log('🎵 Cleaning up user interaction listeners')
+        events.forEach(event => {
+          document.removeEventListener(event, handleUserInteraction)
+        })
       }
     }
-  }, [])
+  }, [enableAudio, audioEnabled])
+
 
   // Save sound preference to localStorage
   useEffect(() => {
@@ -90,35 +149,35 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
   }, [soundEnabled])
 
-  const createSimpleNotificationBeep = () => {
-    if (typeof window !== 'undefined' && window.AudioContext) {
-      try {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
-        const oscillator = audioContext.createOscillator()
-        const gainNode = audioContext.createGain()
-        
-        oscillator.connect(gainNode)
-        gainNode.connect(audioContext.destination)
-        
-        oscillator.frequency.value = 800 // 800Hz tone
-        oscillator.type = 'sine'
-        
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime)
-        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01)
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2)
-        
-        oscillator.start(audioContext.currentTime)
-        oscillator.stop(audioContext.currentTime + 0.2)
-        
-        // Clean up
-        setTimeout(() => {
-          audioContext.close().catch(() => {})
-        }, 300)
-      } catch (error) {
-        console.warn('Could not create notification beep:', error)
-      }
+  const createSimpleNotificationBeep = useCallback(() => {
+    if (!audioContextRef.current || !audioEnabled) {
+      console.warn('🔇 Audio context not available or not enabled for notification beep')
+      return
     }
-  }
+    
+    try {
+      const audioContext = audioContextRef.current
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+      
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      
+      oscillator.frequency.value = 800 // 800Hz tone
+      oscillator.type = 'sine'
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime)
+      gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2)
+      
+      oscillator.start(audioContext.currentTime)
+      oscillator.stop(audioContext.currentTime + 0.2)
+      
+      console.log('🔔 Simple notification beep played successfully')
+    } catch (error) {
+      console.warn('Could not create notification beep:', error)
+    }
+  }, [audioEnabled])
 
   // Track page visibility and window focus for better idle notification handling
   useEffect(() => {
@@ -190,7 +249,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   }
 
   const showNotification = (title: string, options: NotificationOptions = {}) => {
-    // Only show notifications if user has granted permission and page is not visible
+    // Only show notifications if sound is enabled, user has granted permission and page is not visible
+    if (!soundEnabled) {
+      console.log('NotificationContext: Notifications disabled by user, not showing browser notification')
+      return
+    }
+    
     if (permission !== 'granted') {
       console.log('NotificationContext: Notifications not permitted')
       return
@@ -221,36 +285,52 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   }
 
   const playNotificationSound = () => {
-    if (soundEnabled) {
-      console.log('NotificationContext: Attempting to play notification sound, page visible:', isPageVisible, 'window focused:', isWindowFocused)
-      
-      // If page is not visible or window is not focused, queue the notification for later
-      if (!isPageVisible || !isWindowFocused) {
-        console.log('NotificationContext: Page not visible or window not focused, queuing notification')
-        queuedNotifications.current.push({ title: 'New message' })
-        // Still try to play sound for background notifications
-      }
-      
-      // Always try to play sound, even when not focused (browsers allow this)
-      try {
-        // Try to play the audio file first
-        if (audioRef.current) {
-          // Reset audio to beginning for multiple rapid notifications
-          audioRef.current.currentTime = 0
-          audioRef.current.play().catch((error) => {
-            console.warn('Audio file playback failed:', error)
-            // If audio file fails, create a simple beep using Web Audio API
-            createSimpleNotificationBeep()
-          })
-        } else {
-          // If no audio file, create a simple beep using Web Audio API
+    console.log('🔊 NotificationContext: playNotificationSound called, soundEnabled:', soundEnabled, 'audioEnabled:', audioEnabled)
+    
+    if (!soundEnabled) {
+      console.log('🔇 NotificationContext: Sound disabled, not playing notification sound')
+      return
+    }
+    
+    if (!audioEnabled) {
+      console.log('🔇 NotificationContext: Audio not enabled by user interaction yet, attempting to enable...')
+      // Try to enable audio immediately
+      enableAudio()
+      // Don't return - continue with sound attempt in case it enables quickly
+    }
+    
+    console.log('NotificationContext: Attempting to play notification sound, page visible:', isPageVisible, 'window focused:', isWindowFocused)
+    
+    // If page is not visible or window is not focused, queue the notification for later
+    if (!isPageVisible || !isWindowFocused) {
+      console.log('NotificationContext: Page not visible or window not focused, queuing notification')
+      queuedNotifications.current.push({ title: 'New message' })
+      // Still try to play sound for background notifications
+    }
+    
+    // Always try to play sound, even when not focused (browsers allow this once enabled)
+    try {
+      // Try to play the audio file first
+      if (audioRef.current) {
+        console.log('🎵 NotificationContext: Playing notification.mp3')
+        // Reset audio to beginning for multiple rapid notifications
+        audioRef.current.currentTime = 0
+        audioRef.current.play().then(() => {
+          console.log('✅ NotificationContext: Audio played successfully')
+        }).catch((error) => {
+          console.warn('❌ Audio file playback failed, trying fallback beep:', error)
+          // If audio file fails, create a simple beep using Web Audio API
           createSimpleNotificationBeep()
-        }
-      } catch (error) {
-        console.warn('Notification sound failed:', error)
-        // Fallback to simple beep
+        })
+      } else {
+        console.log('🎵 NotificationContext: Audio file not available, using fallback beep')
+        // If no audio file, create a simple beep using Web Audio API
         createSimpleNotificationBeep()
       }
+    } catch (error) {
+      console.warn('❌ Notification sound failed, trying fallback beep:', error)
+      // Fallback to simple beep
+      createSimpleNotificationBeep()
     }
   }
 
@@ -266,6 +346,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         notificationEnabled,
         soundEnabled,
         setSoundEnabled,
+        audioEnabled,
+        enableAudio,
       }}
     >
       {children}

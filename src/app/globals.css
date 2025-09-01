@@ -37,8 +37,45 @@
   --viber-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Explicit Dark Mode Classes for Theme Switching */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  
+  /* Viber Dark Mode Colors */
+  --viber-primary: #7360F2;
+  --viber-secondary: #FF6B00;
+  --viber-tertiary: #59267c;
+  --viber-accent: rgba(115, 96, 242, 0.15);
+  --viber-green: #00D448;
+  --viber-orange: #FF6B00;
+  --viber-teal: #6BB6FF;
+  
+  /* Viber Dark Surfaces */
+  --viber-surface: #1E1E1E;
+  --viber-surface-container: #2A2D3A;
+  --viber-surface-variant: #404040;
+  --viber-surface-bright: #353535;
+  
+  /* Viber Dark Text Colors */
+  --viber-text-primary: #FFFFFF;
+  --viber-text-secondary: #B3B3B3;
+  --viber-text-tertiary: #808080;
+  --viber-text-inverse: #1A1A1A;
+  
+  /* Viber Dark Borders */
+  --viber-border: #404040;
+  --viber-border-variant: #353535;
+  
+  /* Viber Dark Shadows */
+  --viber-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --viber-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --viber-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* System Theme Support - Only when no explicit theme is set */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light):not(.dark) {
     --background: #0a0a0a;
     --foreground: #ededed;
     
@@ -72,6 +109,42 @@
     --viber-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
     --viber-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
   }
+}
+
+/* Explicit Light Mode Classes for Theme Switching */
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Viber Light Mode Colors */
+  --viber-primary: #7360F2;
+  --viber-secondary: #FF6B00;
+  --viber-tertiary: #59267c;
+  --viber-accent: #F3F1FF;
+  --viber-green: #00D448;
+  --viber-orange: #FF6B00;
+  --viber-teal: #6BB6FF;
+  
+  /* Viber Light Surfaces */
+  --viber-surface: #FFFFFF;
+  --viber-surface-container: #F8F9FA;
+  --viber-surface-variant: #F1F3F4;
+  --viber-surface-bright: #FFFFFF;
+  
+  /* Viber Light Text Colors */
+  --viber-text-primary: #1A1A1A;
+  --viber-text-secondary: #5F6368;
+  --viber-text-tertiary: #9AA0A6;
+  --viber-text-inverse: #FFFFFF;
+  
+  /* Viber Light Borders */
+  --viber-border: #E8EAED;
+  --viber-border-variant: #DADCE0;
+  
+  /* Viber Light Shadows */
+  --viber-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --viber-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --viber-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 body {

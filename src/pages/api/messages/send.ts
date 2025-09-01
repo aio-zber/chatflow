@@ -166,16 +166,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 
     // Create notification for receivers
     if (receiverId) {
+      // Check if content is encrypted (starts with 🔐)
+      const isEncrypted = content && content.startsWith('🔐')
+      const notificationContent = isEncrypted 
+        ? `${message.sender.name || message.sender.username}: sent an encrypted message`
+        : `${message.sender.name || message.sender.username}: ${
+            (content || (attachments?.length ? (type === 'voice' ? 'Sent a voice message' : 'Sent an attachment') : '')).toString().substring(0, 100)
+          }${(content || '').length > 100 ? '...' : ''}`
+      
       await prisma.notification.create({
         data: {
           userId: receiverId,
           type: 'new_message',
           title: 'New Message',
-          content: `${message.sender.name || message.sender.username}: ${
-            (content || (attachments?.length ? (type === 'voice' ? 'Sent a voice message' : 'Sent an attachment') : '')).toString().substring(0, 100)
-          }${(content || '').length > 100 ? '...' : ''}`,
+          content: notificationContent,
         }
       })
+    } else if (conversationId) {
+      // For group messages, create notifications for all participants except sender
+      const groupParticipants = await prisma.conversationParticipant.findMany({
+        where: {
+          conversationId: conversationId,
+          userId: { not: session.user.id } // Exclude sender
+        }
+      })
+      
+      if (groupParticipants.length > 0) {
+        // Check if content is encrypted (starts with 🔐)
+        const isEncrypted = content && content.startsWith('🔐')
+        const notificationContent = isEncrypted 
+          ? `${message.sender.name || message.sender.username}: sent an encrypted message`
+          : `${message.sender.name || message.sender.username}: ${
+              (content || (attachments?.length ? (type === 'voice' ? 'Sent a voice message' : 'Sent an attachment') : '')).toString().substring(0, 100)
+            }${(content || '').length > 100 ? '...' : ''}`
+        
+        // Create notifications for all group participants
+        const notificationData = groupParticipants.map(participant => ({
+          userId: participant.userId,
+          type: 'new_message',
+          title: 'New Message',
+          content: notificationContent,
+        }))
+        
+        await prisma.notification.createMany({
+          data: notificationData
+        })
+        
+        console.log(`Created ${notificationData.length} database notifications for group message`)
+      }
     }
 
     // Ensure Socket.IO server is available for real-time updates
@@ -194,16 +232,64 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
       // Emit notification to specific user if direct message
       if (receiverId) {
         console.log(`Emitting new-notification to user: ${receiverId}`)
-        io.emit('new-notification', {
+        // Check if content is encrypted (starts with 🔐)
+        const isEncrypted = content && content.startsWith('🔐')
+        const notificationContent = isEncrypted 
+          ? `${message.sender.name || message.sender.username}: sent an encrypted message`
+          : `${message.sender.name || message.sender.username}: ${
+              (content || (attachments?.length ? (type === 'voice' ? 'Sent a voice message' : 'Sent an attachment') : '')).toString().substring(0, 100)
+            }${(content || '').length > 100 ? '...' : ''}`
+        
+        // Emit to specific user room
+        io.to(`user:${receiverId}`).emit('new-notification', {
           userId: receiverId,
           type: 'new_message',
           title: 'New Message',
-          content: `${message.sender.name || message.sender.username}: ${
-            (content || (attachments?.length ? (type === 'voice' ? 'Sent a voice message' : 'Sent an attachment') : '')).toString().substring(0, 100)
-          }${(content || '').length > 100 ? '...' : ''}`,
+          content: notificationContent,
           messageId: message.id,
           conversationId,
         })
+      } else if (conversationId) {
+        // For group messages, send notifications to all participants except sender
+        console.log(`Fetching all participants for group conversation: ${conversationId}`)
+        const allParticipants = await prisma.conversationParticipant.findMany({
+          where: {
+            conversationId: conversationId,
+            userId: { not: session.user.id } // Exclude sender
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                name: true
+              }
+            }
+          }
+        })
+        
+        console.log(`Found ${allParticipants.length} participants to notify for group message`)
+        
+        // Check if content is encrypted (starts with 🔐)
+        const isEncrypted = content && content.startsWith('🔐')
+        const notificationContent = isEncrypted 
+          ? `${message.sender.name || message.sender.username}: sent an encrypted message`
+          : `${message.sender.name || message.sender.username}: ${
+              (content || (attachments?.length ? (type === 'voice' ? 'Sent a voice message' : 'Sent an attachment') : '')).toString().substring(0, 100)
+            }${(content || '').length > 100 ? '...' : ''}`
+        
+        // Send notification to each participant
+        for (const participant of allParticipants) {
+          console.log(`Emitting new-notification to group participant: ${participant.userId}`)
+          io.to(`user:${participant.userId}`).emit('new-notification', {
+            userId: participant.userId,
+            type: 'new_message',
+            title: 'New Message',
+            content: notificationContent,
+            messageId: message.id,
+            conversationId,
+          })
+        }
       }
     } else {
       console.error('Failed to get Socket.IO instance for real-time updates')

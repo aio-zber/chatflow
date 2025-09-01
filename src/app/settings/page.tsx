@@ -170,7 +170,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center px-8 py-3 bg-[#7360F2] hover:bg-[#6854E8] text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7360F2] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                className="flex items-center space-x-2 px-3 py-2 bg-[#7360F2] text-white rounded-lg hover:bg-[#6854E8]"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Saving...' : 'Save Changes'}
