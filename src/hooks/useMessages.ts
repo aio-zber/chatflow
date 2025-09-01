@@ -51,6 +51,35 @@ interface Message {
   }
   reactions: MessageReaction[]
   attachments: MessageAttachment[]
+  poll?: {
+    id: string
+    question: string
+    allowMultiple: boolean
+    isAnonymous: boolean
+    expiresAt: string | null
+    createdAt: string
+    createdBy: {
+      id: string
+      username: string
+      name: string | null
+      avatar: string | null
+    }
+    options: Array<{
+      id: string
+      text: string
+      order: number
+      voteCount: number
+      hasVoted: boolean
+      voters?: Array<{
+        id: string
+        username: string
+        name: string | null
+        avatar: string | null
+      }>
+    }>
+    totalVotes: number
+    messageId: string
+  }
 }
 
 interface SendMessageData {
@@ -366,9 +395,9 @@ export const useMessages = (conversationId: string | null) => {
 
     const handleNewMessage = (message: Message) => {
       if (message.conversationId === conversationId) {
-        // Always show system messages (like group member changes) regardless of sender
+        // Always show system messages (like group member changes) and polls regardless of sender
         // For regular messages, only show if not from current user (to prevent duplicates)
-        const shouldShow = message.type === 'system' || message.senderId !== session?.user?.id
+        const shouldShow = message.type === 'system' || message.type === 'poll' || message.senderId !== session?.user?.id
         
         if (shouldShow) {
           setMessages(prev => {
@@ -469,11 +498,24 @@ export const useMessages = (conversationId: string | null) => {
       }))
     }
 
+    const handlePollUpdated = (data: { pollId: string; poll: any }) => {
+      setMessages(prev => prev.map(msg => {
+        if (msg.type === 'poll' && msg.poll?.id === data.pollId) {
+          return {
+            ...msg,
+            poll: data.poll
+          }
+        }
+        return msg
+      }))
+    }
+
     socket.on('new-message', handleNewMessage)
     socket.on('message-reaction-updated', handleReactionUpdate)
     socket.on('message-read', handleMessageRead)
     socket.on('message-status-updated', handleMessageStatusUpdate)
     socket.on('user-profile-updated', handleUserProfileUpdated)
+    socket.on('poll-updated', handlePollUpdated)
 
     return () => {
       socket.off('new-message', handleNewMessage)
@@ -481,6 +523,7 @@ export const useMessages = (conversationId: string | null) => {
       socket.off('message-read', handleMessageRead)
       socket.off('message-status-updated', handleMessageStatusUpdate)
       socket.off('user-profile-updated', handleUserProfileUpdated)
+      socket.off('poll-updated', handlePollUpdated)
     }
   }, [socket, conversationId, session?.user?.id])
 
