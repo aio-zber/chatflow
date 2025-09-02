@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -12,6 +12,8 @@ export default function SettingsPage() {
   const [name, setName] = useState(session?.user?.name || '')
   const [bio, setBio] = useState(session?.user?.bio || '')
   const [saving, setSaving] = useState(false)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Update local state when session changes
   useEffect(() => {
@@ -26,6 +28,91 @@ export default function SettingsPage() {
   if (!session) {
     router.push('/auth/signin')
     return null
+  }
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !session?.user?.id) return
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB')
+      return
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+
+    try {
+      setUploadingAvatar(true)
+      console.log('Settings: Uploading avatar:', file.name)
+      
+      // Convert file to base64 since the API expects base64 data
+      const reader = new FileReader()
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string
+          resolve(result)
+        }
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(file)
+      })
+      
+      const imageBase64 = await base64Promise
+      
+      const response = await fetch('/api/upload/avatar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageBase64 }),
+      })
+      
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Upload failed' }))
+        throw new Error(error.error || 'Failed to upload avatar')
+      }
+      
+      const data = await response.json()
+      console.log('Settings: Avatar upload response:', data)
+      
+      // Force session update with new avatar data to clear cache
+      console.log('Settings: Updating session with new avatar')
+      await update({
+        user: {
+          ...session.user,
+          avatar: data.user.avatar
+        }
+      })
+      
+      // Force a complete session refresh to ensure data is current
+      await update()
+      
+      // Broadcast the profile update event
+      window.dispatchEvent(new CustomEvent('profileUpdated', {
+        detail: {
+          userId: session.user.id,
+          userData: { avatar: data.user.avatar }
+        }
+      }))
+      
+      // Add a small delay to ensure DOM updates
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      console.log('Settings: Avatar updated successfully')
+    } catch (error) {
+      console.error('Avatar upload failed:', error)
+      alert('Failed to upload avatar. Please try again.')
+    } finally {
+      setUploadingAvatar(false)
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -110,16 +197,40 @@ export default function SettingsPage() {
         <div className="bg-viber-surface dark:bg-viber-surface rounded-2xl shadow-viber overflow-hidden">
           <div className="px-6 py-6 border-b border-viber-border dark:border-viber-border">
             <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-16 h-16 bg-viber-primary rounded-full flex items-center justify-center overflow-hidden">
+              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <div className="w-16 h-16 bg-viber-primary rounded-full flex items-center justify-center overflow-hidden relative">
                   {session.user.avatar ? (
-                    <img src={`${session.user.avatar}?${new Date().getTime()}`} alt={session.user.name || 'Profile'} className="w-16 h-16 object-cover" />
+                    <img 
+                      src={`${session.user.avatar}?v=${Date.now()}`} 
+                      alt={session.user.name || 'Profile'} 
+                      className="w-16 h-16 object-cover" 
+                      key={session.user.avatar} // Force re-render when avatar changes
+                    />
                   ) : (
                     <span className="text-xl font-semibold text-viber-text-inverse">
                       {(session.user.name || session.user.email || 'U').charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
+                
+                {/* Single purple camera overlay - only upload method */}
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#7360F2] rounded-full flex items-center justify-center shadow-lg hover:bg-[#6854E8] transition-colors duration-200">
+                  {uploadingAvatar ? (
+                    <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" />
+                  ) : (
+                    <Camera className="w-3.5 h-3.5 text-white" />
+                  )}
+                </div>
+                
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  title="Change profile picture"
+                />
               </div>
 
               <div className="flex-1 min-w-0">

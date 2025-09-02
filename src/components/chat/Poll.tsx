@@ -41,9 +41,10 @@ interface PollProps {
   poll: PollData
   onVote: (pollId: string, optionIds: string[]) => void
   className?: string
+  isOwnMessage?: boolean // Add prop to determine message ownership
 }
 
-export function Poll({ poll, onVote, className = '' }: PollProps) {
+export function Poll({ poll, onVote, className = '', isOwnMessage = false }: PollProps) {
   const { data: session } = useSession()
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set())
   const [isVoting, setIsVoting] = useState(false)
@@ -181,102 +182,137 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
   }
 
   return (
-    <div className={`bg-blue-50 dark:bg-blue-950/30 rounded-2xl border border-blue-100 dark:border-blue-800/30 ${isMobile ? 'p-4' : 'p-5'} max-w-sm ${className} ${isMobile ? 'poll-container' : ''} shadow-sm`}>
+    <div className={`w-full ${className}`}>
+      {/* Simple poll layout - directly integrated into message container */}
+      <div className="w-full">
+        {/* Poll Question with underline - matches Viber design */}
+        <div className="mb-3">
+          <h3 className={`text-[16px] font-medium mb-2 ${
+            isOwnMessage 
+              ? 'text-white' 
+              : 'text-gray-900 dark:text-white'
+          }`}>
+            {poll.question}
+          </h3>
+          {/* Underline separator below question */}
+          <div className={`h-px ${
+            isOwnMessage 
+              ? 'bg-white/20' 
+              : 'bg-gray-200 dark:bg-gray-700'
+          }`} />
+        </div>
 
-      {/* Poll Question */}
-      <h3 className="font-medium text-gray-900 dark:text-white mb-3 text-base leading-relaxed">
-        {poll.question}
-      </h3>
-      
-      {/* Gray separator line */}
-      <div className="w-full h-px bg-gray-300 dark:bg-gray-600 mb-4"></div>
-
-      {/* Poll Options */}
-      <div className="space-y-3 mb-5">
-        {poll.options.map((option) => {
-          const percentage = getVotePercentage(option.voteCount)
-          const isSelected = selectedOptions.has(option.id)
-          const isVoted = hasVoted && option.hasVoted
-          
-          return (
-            <div key={option.id} className="relative">
-              <button
-                onClick={() => handleOptionToggle(option.id)}
-                disabled={!canVote}
-                className={`w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg transition-all duration-200 ${
-                  !canVote 
-                    ? 'cursor-not-allowed opacity-75' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer'
-                } ${
-                  isSelected 
-                    ? 'ring-2 ring-[#7360F2] bg-purple-50 dark:bg-purple-900/30' 
-                    : ''
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  {/* Option text */}
-                  <span className="text-gray-900 dark:text-white font-normal text-sm flex-1">
-                    {option.text}
-                  </span>
-                  
-                  {/* Heart icon and percentage */}
-                  <div className="flex items-center space-x-2 ml-3">
-                    {hasVoted && (
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {Math.round(percentage)}%
+        {/* Poll Options - Simple list layout */}
+        <div className="space-y-2 mb-3">
+          {poll.options.map((option) => {
+            const percentage = getVotePercentage(option.voteCount)
+            const isSelected = selectedOptions.has(option.id)
+            const isVoted = hasVoted && option.hasVoted
+            
+            return (
+              <div key={option.id} className="relative">
+                <button
+                  onClick={() => handleOptionToggle(option.id)}
+                  disabled={!canVote}
+                  className={`w-full text-left transition-all duration-200 ${
+                    !canVote 
+                      ? 'cursor-not-allowed' 
+                      : 'cursor-pointer hover:opacity-90'
+                  }`}
+                >
+                  {/* Viber-style option layout with proper progress bar structure */}
+                  <div className="space-y-1">
+                    {/* Option text at top */}
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[15px] font-normal ${
+                        isOwnMessage 
+                          ? 'text-white' 
+                          : 'text-gray-900 dark:text-white'
+                      }`}>
+                        {option.text}
                       </span>
+                      
+                      {/* Heart icon - purple when voted, gray when not */}
+                      <Heart 
+                        className={`w-4 h-4 transition-all duration-200 ${
+                          isVoted || isSelected
+                            ? 'text-[#7360F2] fill-[#7360F2]' 
+                            : isOwnMessage
+                              ? 'text-white/40'
+                              : 'text-gray-400 dark:text-gray-500'
+                        }`}
+                      />
+                    </div>
+                    
+                    {/* Progress bar - always visible when voted, thicker design */}
+                    {hasVoted && (
+                      <div className="relative">
+                        {/* Progress bar background - always visible */}
+                        <div className={`h-1.5 rounded-full ${
+                          isOwnMessage 
+                            ? 'bg-white/20' 
+                            : 'bg-gray-200 dark:bg-gray-700'
+                        }`}>
+                          {/* Progress bar fill */}
+                          <div 
+                            className="h-1.5 bg-[#7360F2] rounded-full transition-all duration-500 ease-out"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
                     )}
                     
-                    {/* Heart icon */}
-                    <Heart 
-                      className={`w-5 h-5 transition-colors ${
-                        isVoted || isSelected
-                          ? 'text-[#7360F2] fill-[#7360F2]' 
-                          : 'text-gray-400 dark:text-gray-500'
-                      }`}
-                    />
+                    {/* Percentage below progress bar */}
+                    {hasVoted && (
+                      <div className="text-left">
+                        <span className={`text-[13px] font-normal ${
+                          isOwnMessage 
+                            ? 'text-white/70' 
+                            : 'text-gray-600 dark:text-gray-400'
+                        }`}>
+                          {Math.round(percentage)}%
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
-                
-                {/* Progress bar under text */}
-                {hasVoted && percentage > 0 && (
-                  <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                    <div 
-                      className="h-1 bg-[#7360F2] rounded-full transition-all duration-500"
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                )}
-              </button>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Vote Button */}
-      {!hasVoted && canVote && selectedOptions.size > 0 && (
-        <button
-          onClick={handleVote}
-          disabled={isVoting}
-          className="w-full bg-[#7360F2] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#6350E9] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
-        >
-          {isVoting ? 'Voting...' : `Vote${poll.allowMultiple && selectedOptions.size > 1 ? ` (${selectedOptions.size})` : ''}`}
-        </button>
-      )}
-
-      {/* Poll Stats */}
-      <div className="mt-4 pt-3">
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <div className="flex items-center space-x-2">
-            {timeLeft && (
-              <div className="flex items-center space-x-1">
-                <Clock className="w-3 h-3" />
-                <span className={isExpired ? 'text-red-500' : 'text-gray-500'}>{timeLeft}</span>
+                </button>
               </div>
-            )}
+            )
+          })}
+        </div>
+
+        {/* Vote Button - Show when can vote and has selections */}
+        {canVote && selectedOptions.size > 0 && (
+          <button
+            onClick={handleVote}
+            disabled={isVoting}
+            className="w-full bg-[#7360F2] text-white py-2.5 px-4 rounded-lg font-medium hover:bg-[#6350E9] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-[14px] mb-3 shadow-sm"
+          >
+            {isVoting ? 'Voting...' : `Vote${poll.allowMultiple && selectedOptions.size > 1 ? ` (${selectedOptions.size})` : ''}`}
+          </button>
+        )}
+
+        {/* Poll Status - Simple format matching poll4.png */}
+        <div className="text-center">
+          <div className={`text-[13px] mb-1 ${
+            isExpired 
+              ? 'text-red-500 font-medium' 
+              : isOwnMessage 
+                ? 'text-white/60' 
+                : 'text-gray-500 dark:text-gray-400'
+          }`}>
+            {isExpired ? 'Expired' : timeLeft || ''} {poll.totalVotes} vote{poll.totalVotes !== 1 ? 's' : ''}
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="font-medium">{poll.totalVotes} vote{poll.totalVotes !== 1 ? 's' : ''}</span>
+          <div className={`text-[12px] ${
+            isOwnMessage 
+              ? 'text-white/50' 
+              : 'text-gray-400 dark:text-gray-500'
+          }`}>
+            {new Date(poll.createdAt).toLocaleDateString('en-US', {
+              weekday: 'short',
+              hour: '2-digit',
+              minute: '2-digit'
+            }).replace(',', '')}
           </div>
         </div>
       </div>
