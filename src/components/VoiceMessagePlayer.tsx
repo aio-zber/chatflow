@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Play, Pause, Volume2, Download } from 'lucide-react'
+import { formatTime12Hour } from '@/utils/dateUtils'
 
 interface VoiceMessagePlayerProps {
   audioUrl: string
@@ -134,7 +135,7 @@ export function VoiceMessagePlayer({
           </span>
           {timestamp && (
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {formatTime12Hour(timestamp)}
             </span>
           )}
         </div>
@@ -256,7 +257,7 @@ export function VoiceMessagePlayer({
       {isOwn && timestamp && (
         <div className="text-right mt-2">
           <span className="text-xs opacity-75">
-            {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {formatTime12Hour(timestamp)}
           </span>
         </div>
       )}

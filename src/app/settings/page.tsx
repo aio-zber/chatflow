@@ -13,6 +13,8 @@ export default function SettingsPage() {
   const [bio, setBio] = useState(session?.user?.bio || '')
   const [saving, setSaving] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [previewAvatar, setPreviewAvatar] = useState<string | null>(null)
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Update local state when session changes
@@ -30,7 +32,7 @@ export default function SettingsPage() {
     return null
   }
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !session?.user?.id) return
 
@@ -47,8 +49,29 @@ export default function SettingsPage() {
     }
 
     try {
+      // Create preview URL for immediate display
+      const previewUrl = URL.createObjectURL(file)
+      setPreviewAvatar(previewUrl)
+      setPendingAvatarFile(file)
+      
+      console.log('Settings: Avatar preview set:', file.name)
+    } catch (error) {
+      console.error('Avatar preview failed:', error)
+      alert('Failed to preview avatar. Please try again.')
+    } finally {
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const handleAvatarSave = async () => {
+    if (!pendingAvatarFile || !session?.user?.id) return
+
+    try {
       setUploadingAvatar(true)
-      console.log('Settings: Uploading avatar:', file.name)
+      console.log('Settings: Uploading avatar:', pendingAvatarFile.name)
       
       // Convert file to base64 since the API expects base64 data
       const reader = new FileReader()
@@ -58,7 +81,7 @@ export default function SettingsPage() {
           resolve(result)
         }
         reader.onerror = () => reject(reader.error)
-        reader.readAsDataURL(file)
+        reader.readAsDataURL(pendingAvatarFile)
       })
       
       const imageBase64 = await base64Promise
@@ -99,6 +122,10 @@ export default function SettingsPage() {
         }
       }))
       
+      // Clear preview state after successful save
+      setPreviewAvatar(null)
+      setPendingAvatarFile(null)
+      
       // Add a small delay to ensure DOM updates
       await new Promise(resolve => setTimeout(resolve, 100))
       
@@ -108,11 +135,16 @@ export default function SettingsPage() {
       alert('Failed to upload avatar. Please try again.')
     } finally {
       setUploadingAvatar(false)
-      // Clear the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
     }
+  }
+
+  const handleAvatarCancel = () => {
+    // Clean up preview URL to prevent memory leaks
+    if (previewAvatar) {
+      URL.revokeObjectURL(previewAvatar)
+    }
+    setPreviewAvatar(null)
+    setPendingAvatarFile(null)
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -196,41 +228,79 @@ export default function SettingsPage() {
 
         <div className="bg-viber-surface dark:bg-viber-surface rounded-2xl shadow-viber overflow-hidden">
           <div className="px-6 py-6 border-b border-viber-border dark:border-viber-border">
-            <div className="flex items-center space-x-4">
-              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                <div className="w-16 h-16 bg-viber-primary rounded-full flex items-center justify-center overflow-hidden relative">
-                  {session.user.avatar ? (
-                    <img 
-                      src={`${session.user.avatar}?v=${Date.now()}`} 
-                      alt={session.user.name || 'Profile'} 
-                      className="w-16 h-16 object-cover" 
-                      key={session.user.avatar} // Force re-render when avatar changes
-                    />
-                  ) : (
-                    <span className="text-xl font-semibold text-viber-text-inverse">
-                      {(session.user.name || session.user.email || 'U').charAt(0).toUpperCase()}
-                    </span>
-                  )}
+            <div className="flex items-start space-x-4">
+              <div className="flex flex-col items-center">
+                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                  <div className="w-16 h-16 bg-viber-primary rounded-full flex items-center justify-center overflow-hidden relative">
+                    {/* Show preview if available, otherwise show current avatar */}
+                    {previewAvatar ? (
+                      <img 
+                        src={previewAvatar} 
+                        alt="Preview" 
+                        className="w-16 h-16 object-cover" 
+                      />
+                    ) : session.user.avatar ? (
+                      <img 
+                        src={`${session.user.avatar}?v=${Date.now()}`} 
+                        alt={session.user.name || 'Profile'} 
+                        className="w-16 h-16 object-cover" 
+                        key={session.user.avatar} // Force re-render when avatar changes
+                      />
+                    ) : (
+                      <span className="text-xl font-semibold text-viber-text-inverse">
+                        {(session.user.name || session.user.email || 'U').charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                    
+                    {/* Preview indicator overlay */}
+                    {previewAvatar && (
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <span className="text-white text-xs font-medium px-2 py-1 bg-black/50 rounded">
+                          Preview
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Single purple camera overlay - only upload method */}
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#7360F2] rounded-full flex items-center justify-center shadow-lg hover:bg-[#6854E8] transition-colors duration-200">
+                    {uploadingAvatar ? (
+                      <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" />
+                    ) : (
+                      <Camera className="w-3.5 h-3.5 text-white" />
+                    )}
+                  </div>
+                  
+                  {/* Hidden file input */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarSelect}
+                    className="hidden"
+                    title="Change profile picture"
+                  />
                 </div>
                 
-                {/* Single purple camera overlay - only upload method */}
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#7360F2] rounded-full flex items-center justify-center shadow-lg hover:bg-[#6854E8] transition-colors duration-200">
-                  {uploadingAvatar ? (
-                    <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" />
-                  ) : (
-                    <Camera className="w-3.5 h-3.5 text-white" />
-                  )}
-                </div>
-                
-                {/* Hidden file input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  className="hidden"
-                  title="Change profile picture"
-                />
+                {/* Avatar preview controls */}
+                {previewAvatar && (
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={handleAvatarSave}
+                      disabled={uploadingAvatar}
+                      className="px-3 py-1 bg-[#7360F2] text-white text-sm rounded-lg hover:bg-[#6854E8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                    >
+                      {uploadingAvatar ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                      onClick={handleAvatarCancel}
+                      disabled={uploadingAvatar}
+                      className="px-3 py-1 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex-1 min-w-0">

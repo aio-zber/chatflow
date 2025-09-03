@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { BarChart3, Clock, Users, Eye, EyeOff, Share2, Copy, Check, Heart } from 'lucide-react'
-import { isMobileDevice, isTouchDevice, triggerHapticFeedback, handleTouchFeedback } from '@/utils/mobile'
+import { Heart } from 'lucide-react'
+import { isMobileDevice, triggerHapticFeedback } from '@/utils/mobile'
+import { useTheme } from '@/context/ThemeContext'
 
 interface PollOption {
   id: string
@@ -41,16 +41,13 @@ interface PollProps {
   poll: PollData
   onVote: (pollId: string, optionIds: string[]) => void
   className?: string
-  isOwnMessage?: boolean // Add prop to determine message ownership
 }
 
-export function Poll({ poll, onVote, className = '', isOwnMessage = false }: PollProps) {
-  const { data: session } = useSession()
+export function Poll({ poll, onVote, className = '' }: PollProps) {
+  const { actualTheme } = useTheme()
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set())
   const [isVoting, setIsVoting] = useState(false)
   const [timeLeft, setTimeLeft] = useState<string | null>(null)
-  const [showShareMenu, setShowShareMenu] = useState(false)
-  const [copied, setCopied] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
   // Detect mobile device on client side only
@@ -141,45 +138,6 @@ export function Poll({ poll, onVote, className = '', isOwnMessage = false }: Pol
     return poll.totalVotes > 0 ? (voteCount / poll.totalVotes) * 100 : 0
   }
 
-  const handleShare = async () => {
-    try {
-      const response = await fetch(`/api/polls/${poll.id}/share`)
-      if (response.ok) {
-        const data = await response.json()
-        const shareUrl = data.poll.shareUrl
-        
-        if (navigator.share && /mobile/i.test(navigator.userAgent)) {
-          await navigator.share({
-            title: poll.question,
-            text: `Check out this poll: ${poll.question}`,
-            url: shareUrl
-          })
-        } else {
-          await navigator.clipboard.writeText(shareUrl)
-          setCopied(true)
-          setTimeout(() => setCopied(false), 2000)
-        }
-      }
-    } catch (error) {
-      console.error('Error sharing poll:', error)
-    }
-    setShowShareMenu(false)
-  }
-
-  const copyPollText = async () => {
-    try {
-      const pollText = `📊 ${poll.question}\n\n${poll.options.map((option, index) => 
-        `${index + 1}. ${option.text} (${option.voteCount} votes)`
-      ).join('\n')}\n\nTotal votes: ${poll.totalVotes}`
-      
-      await navigator.clipboard.writeText(pollText)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (error) {
-      console.error('Error copying poll text:', error)
-    }
-    setShowShareMenu(false)
-  }
 
   return (
     <div className={`w-full ${className}`}>
@@ -188,29 +146,29 @@ export function Poll({ poll, onVote, className = '', isOwnMessage = false }: Pol
         {/* Poll Question with underline - matches Viber design */}
         <div className="mb-3">
           <h3 className={`text-[16px] font-medium mb-2 ${
-            isOwnMessage 
+            actualTheme === 'dark'
               ? 'text-white' 
-              : 'text-gray-900 dark:text-white'
+              : 'text-gray-900'
           }`}>
             {poll.question}
           </h3>
           {/* Underline separator below question */}
           <div className={`h-px ${
-            isOwnMessage 
-              ? 'bg-white/20' 
-              : 'bg-gray-200 dark:bg-gray-700'
+            actualTheme === 'dark'
+              ? 'bg-gray-900' 
+              : 'bg-gray-200'
           }`} />
         </div>
 
-        {/* Poll Options - Simple list layout */}
-        <div className="space-y-2 mb-3">
+        {/* Poll Options - Simple list layout with full width utilization */}
+        <div className="space-y-2 mb-3 w-full">
           {poll.options.map((option) => {
             const percentage = getVotePercentage(option.voteCount)
             const isSelected = selectedOptions.has(option.id)
             const isVoted = hasVoted && option.hasVoted
             
             return (
-              <div key={option.id} className="relative">
+              <div key={option.id} className="relative w-full">
                 <button
                   onClick={() => handleOptionToggle(option.id)}
                   disabled={!canVote}
@@ -221,59 +179,64 @@ export function Poll({ poll, onVote, className = '', isOwnMessage = false }: Pol
                   }`}
                 >
                   {/* Viber-style option layout with proper progress bar structure */}
-                  <div className="space-y-1">
+                  <div className="space-y-1 w-full">
                     {/* Option text at top */}
-                    <div className="flex items-center justify-between">
-                      <span className={`text-[15px] font-normal ${
-                        isOwnMessage 
+                    <div className="flex items-center justify-between gap-3">
+                      <span className={`text-[15px] font-normal flex-1 ${
+                        actualTheme === 'dark'
                           ? 'text-white' 
-                          : 'text-gray-900 dark:text-white'
+                          : 'text-gray-900'
                       }`}>
                         {option.text}
                       </span>
                       
-                      {/* Heart icon - purple when voted, gray when not */}
+                      {/* Heart icon - purple when voted, gray when not, larger size */}
                       <Heart 
-                        className={`w-4 h-4 transition-all duration-200 ${
+                        className={`w-5 h-5 transition-all duration-200 flex-shrink-0 ${
                           isVoted || isSelected
                             ? 'text-[#7360F2] fill-[#7360F2]' 
-                            : isOwnMessage
-                              ? 'text-white/40'
-                              : 'text-gray-400 dark:text-gray-500'
+                            : actualTheme === 'dark'
+                              ? 'text-gray-400'
+                              : 'text-gray-400'
                         }`}
                       />
                     </div>
                     
-                    {/* Progress bar - always visible when voted, thicker design */}
-                    {hasVoted && (
-                      <div className="relative">
-                        {/* Progress bar background - always visible */}
-                        <div className={`h-1.5 rounded-full ${
-                          isOwnMessage 
-                            ? 'bg-white/20' 
-                            : 'bg-gray-200 dark:bg-gray-700'
-                        }`}>
-                          {/* Progress bar fill */}
-                          <div 
-                            className="h-1.5 bg-[#7360F2] rounded-full transition-all duration-500 ease-out"
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
+                    {/* Progress bar - always visible, thicker design, full width container */}
+                    <div className="relative w-full">
+                      {/* Progress bar background - always visible, ensure full width */}
+                      <div className={`h-1.5 w-full rounded-full ${
+                        actualTheme === 'dark'
+                          ? 'bg-[#000000]' 
+                          : 'bg-gray-200'
+                      }`}>
+                        {/* Progress bar fill */}
+                        <div 
+                          className="h-1.5 bg-[#7360F2] rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${percentage}%` }}
+                        />
                       </div>
-                    )}
+                    </div>
                     
-                    {/* Percentage below progress bar */}
-                    {hasVoted && (
-                      <div className="text-left">
-                        <span className={`text-[13px] font-normal ${
-                          isOwnMessage 
-                            ? 'text-white/70' 
-                            : 'text-gray-600 dark:text-gray-400'
-                        }`}>
-                          {Math.round(percentage)}%
-                        </span>
+                    {/* Percentage and vote count below progress bar - horizontal layout */}
+                    <div className="flex justify-between items-center">
+                      {/* Percentage display - left aligned */}
+                      <div className={`text-[13px] font-normal ${
+                        actualTheme === 'dark'
+                          ? 'text-gray-400' 
+                          : 'text-gray-600'
+                      }`}>
+                        {percentage.toFixed(0)}%
                       </div>
-                    )}
+                      {/* Vote count - right aligned */}
+                      <div className={`text-[13px] font-normal ${
+                        actualTheme === 'dark'
+                          ? 'text-gray-400' 
+                          : 'text-gray-600'
+                      }`}>
+                        {option.voteCount} {option.voteCount !== 1 ? '' : ''}
+                      </div>
+                    </div>
                   </div>
                 </button>
               </div>
@@ -293,27 +256,17 @@ export function Poll({ poll, onVote, className = '', isOwnMessage = false }: Pol
         )}
 
         {/* Poll Status - Simple format matching poll4.png */}
-        <div className="text-center">
+        <div className="flex text-center justify-end">
           <div className={`text-[13px] mb-1 ${
             isExpired 
               ? 'text-red-500 font-medium' 
-              : isOwnMessage 
-                ? 'text-white/60' 
-                : 'text-gray-500 dark:text-gray-400'
+              : actualTheme === 'dark'
+                ? 'text-gray-400' 
+                : 'text-gray-500'
           }`}>
             {isExpired ? 'Expired' : timeLeft || ''} {poll.totalVotes} vote{poll.totalVotes !== 1 ? 's' : ''}
           </div>
-          <div className={`text-[12px] ${
-            isOwnMessage 
-              ? 'text-white/50' 
-              : 'text-gray-400 dark:text-gray-500'
-          }`}>
-            {new Date(poll.createdAt).toLocaleDateString('en-US', {
-              weekday: 'short',
-              hour: '2-digit',
-              minute: '2-digit'
-            }).replace(',', '')}
-          </div>
+        
         </div>
       </div>
     </div>

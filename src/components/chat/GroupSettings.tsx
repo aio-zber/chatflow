@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useSocketContext } from '@/context/SocketContext'
 import { 
@@ -82,10 +82,14 @@ export function GroupSettings({
   const [searching, setSearching] = useState(false)
   const [showMediaHistory, setShowMediaHistory] = useState(false)
   const [addingMember, setAddingMember] = useState('')
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
   
   const [editForm, setEditForm] = useState({
     name: '',
     description: '',
+    avatar: '',
   })
 
   const currentUserRole = group?.participants.find(p => p.userId === session?.user?.id)?.role
@@ -203,6 +207,7 @@ export function GroupSettings({
         setEditForm({
           name: data.group.name || '',
           description: data.group.description || '',
+          avatar: data.group.avatar || '',
         })
       }
     } catch (error) {
@@ -225,6 +230,7 @@ export function GroupSettings({
         body: JSON.stringify({
           name: editForm.name.trim() || null,
           description: editForm.description.trim() || null,
+          avatar: editForm.avatar || null,
         }),
       })
 
@@ -402,6 +408,83 @@ export function GroupSettings({
     }
   }
 
+  // Avatar upload handler
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !isAdmin) return
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      console.error('Please select an image file')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      console.error('File size too large. Please select an image under 5MB')
+      return
+    }
+
+    setUploadingAvatar(true)
+    try {
+      // Convert file to base64
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
+
+      const response = await fetch('/api/upload/group-avatar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageBase64: base64,
+          conversationId: conversationId,
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const avatarUrl = data.avatar.url
+        setEditForm(prev => ({ ...prev, avatar: avatarUrl }))
+        
+        // Auto-save the avatar change
+        if (group) {
+          const updateResponse = await fetch(`/api/conversations/${conversationId}/settings`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: group.name,
+              description: group.description,
+              avatar: avatarUrl,
+            }),
+          })
+
+          if (updateResponse.ok) {
+            const updatedData = await updateResponse.json()
+            setGroup(updatedData.group)
+            onGroupUpdated?.(updatedData.group)
+          }
+        }
+      } else {
+        const errorData = await response.json()
+        console.error('Avatar upload failed:', errorData.error || 'Unknown error')
+      }
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
+    } finally {
+      setUploadingAvatar(false)
+      // Clear the input
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = ''
+      }
+    }
+  }
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -426,15 +509,7 @@ export function GroupSettings({
             Group Settings
           </h2>
           <div className="flex items-center space-x-2">
-            {onSearchConversation && (
-              <button
-                onClick={onSearchConversation}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-                title="Search messages in this group"
-              >
-                <Search className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </button>
-            )}
+           
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
@@ -477,13 +552,34 @@ export function GroupSettings({
                 <div className="space-y-6">
                   {/* Group Avatar */}
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-10 h-10 text-white" />
+                    <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                      {group.avatar ? (
+                        <img
+                          src={group.avatar}
+                          alt={group.name || 'Group avatar'}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Users className="w-10 h-10 text-white" />
+                      )}
                     </div>
                     {isAdmin && (
-                      <button className="text-sm text-blue-600 hover:text-blue-700">
-                        Change Photo
-                      </button>
+                      <>
+                        <input
+                          ref={avatarInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden"
+                        />
+                        <button 
+                          onClick={() => avatarInputRef.current?.click()}
+                          disabled={uploadingAvatar}
+                          className="text-sm text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                        >
+                          {uploadingAvatar ? 'Uploading...' : 'Change Photo'}
+                        </button>
+                      </>
                     )}
                   </div>
 
@@ -553,6 +649,7 @@ export function GroupSettings({
                           setEditForm({
                             name: group.name || '',
                             description: group.description || '',
+                            avatar: group.avatar || '',
                           })
                         }}
                         className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"

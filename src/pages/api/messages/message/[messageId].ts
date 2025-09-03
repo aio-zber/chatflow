@@ -226,9 +226,30 @@ async function handleDeleteMessage(
   message: any,
   userId: string
 ) {
-  // Only allow deleting own messages
-  if (message.senderId !== userId) {
-    return res.status(403).json({ error: 'Can only delete your own messages' })
+  // Check if user can delete this message
+  let canDelete = false
+  let deleteReason = ''
+
+  // Users can always delete their own messages
+  if (message.senderId === userId) {
+    canDelete = true
+    deleteReason = 'own_message'
+  } 
+  // For group chats, check if user is an admin
+  else if (message.conversation && message.conversation.isGroup) {
+    const userParticipant = message.conversation.participants.find(p => p.userId === userId)
+    if (userParticipant && userParticipant.role === 'admin') {
+      canDelete = true
+      deleteReason = 'admin_deletion'
+    }
+  }
+
+  if (!canDelete) {
+    return res.status(403).json({ 
+      error: message.conversation?.isGroup 
+        ? 'Only group admins can delete other members\' messages'
+        : 'Can only delete your own messages' 
+    })
   }
 
   try {

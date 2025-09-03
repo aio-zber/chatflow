@@ -5,6 +5,8 @@ import { getCompatibleFileUrl } from '@/utils/fileProxy'
 interface ConversationAvatarProps {
   conversation: {
     isGroup: boolean
+    avatar?: string | null
+    name?: string | null
     otherParticipants: {
       user?: {
         id?: string
@@ -30,9 +32,17 @@ export function ConversationAvatar({ conversation }: ConversationAvatarProps) {
 
     return (
       <div className="relative">
-        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-          <Users className="w-5 h-5 text-white" />
-        </div>
+        {conversation.avatar ? (
+          <img
+            src={getCompatibleFileUrl(conversation.avatar)}
+            alt={conversation.name || 'Group chat'}
+            className="w-10 h-10 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+            <Users className="w-5 h-5 text-white" />
+          </div>
+        )}
         {/* Show online indicator for groups with online members */}
         {onlineMembers > 0 && (
           <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full">

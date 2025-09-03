@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, KeyboardEvent } from 'react'
-import { Send, Paperclip, Image, Smile, X, File, Mic, Sticker } from 'lucide-react'
+import { Send, Paperclip, Image, Smile, X, File, Mic, Sticker, BarChart3 } from 'lucide-react'
 import { VoiceMessageRecorder } from '../VoiceMessage'
 import { StickerPicker } from './StickerPicker'
 
@@ -9,6 +9,7 @@ interface MessageInputProps {
   onSendMessage: (content: string, attachments?: File[]) => void
   onSendVoiceMessage?: (audioBlob: Blob, duration: number) => void
   onTyping?: (isTyping: boolean) => void
+  onCreatePoll?: () => void
   disabled?: boolean
   placeholder?: string
   replyTo?: {
@@ -30,7 +31,8 @@ interface AttachmentPreview {
 export function MessageInput({ 
   onSendMessage, 
   onSendVoiceMessage,
-  onTyping, 
+  onTyping,
+  onCreatePoll,
   disabled = false, 
   placeholder = "Type a message...",
   replyTo,
@@ -484,6 +486,16 @@ export function MessageInput({
             >
               <Sticker className="w-5 h-5" />
             </button>
+            {onCreatePoll && (
+              <button
+                onClick={onCreatePoll}
+                disabled={disabled}
+                className="text-viber-text-tertiary dark:text-viber-text-secondary hover:text-viber-primary dark:hover:text-viber-primary rounded-full p-1 focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Create poll"
+              >
+                <BarChart3 className="w-5 h-5" />
+              </button>
+            )}
             <button
               onClick={() => {
                 setShowEmojiPicker(!showEmojiPicker)

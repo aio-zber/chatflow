@@ -6,8 +6,10 @@ import { useSession } from 'next-auth/react'
 import { Heart, Reply, MoreHorizontal, Check, CheckCheck, Edit3, Trash2, Save, X, Download, Phone, Video } from 'lucide-react'
 import { MessageFormatter } from '../MessageFormatter'
 import { VoiceMessagePlayer } from '../VoiceMessagePlayer'
+import { Poll } from './Poll'
 import { getCompatibleFileUrl } from '@/utils/fileProxy'
 import { useE2EE } from '@/hooks/useE2EE'
+import { formatMessageTime } from '@/utils/dateUtils'
 
 interface Reaction {
   emoji: string
@@ -46,6 +48,35 @@ interface Message {
     size?: number
     duration?: number
   }[]
+  poll?: {
+    id: string
+    question: string
+    allowMultiple: boolean
+    isAnonymous: boolean
+    expiresAt: string | null
+    createdAt: string
+    createdBy: {
+      id: string
+      username: string
+      name: string | null
+      avatar: string | null
+    }
+    options: Array<{
+      id: string
+      text: string
+      order: number
+      voteCount: number
+      hasVoted: boolean
+      voters?: Array<{
+        id: string
+        username: string
+        name: string | null
+        avatar: string | null
+      }>
+    }>
+    totalVotes: number
+    messageId: string
+  }
 }
 
 interface MessageBubbleProps {
@@ -57,11 +88,14 @@ interface MessageBubbleProps {
   onEdit?: (messageId: string, newContent: string) => void
   onDelete?: (messageId: string) => void
   onDeleteForMe?: (messageId: string) => void
+  onVotePoll?: (pollId: string, optionIds: string[]) => void
   scrollToMessageLoading?: string | null
   isLastMessage?: boolean
+  isGroupChat?: boolean
+  currentUserRole?: 'admin' | 'member' | null
 }
 
-export function MessageBubble({ message, conversationId, onReply, onReact, onScrollToMessage, onEdit, onDelete, onDeleteForMe, scrollToMessageLoading, isLastMessage }: MessageBubbleProps) {
+export function MessageBubble({ message, conversationId, onReply, onReact, onScrollToMessage, onEdit, onDelete, onDeleteForMe, onVotePoll, scrollToMessageLoading, isLastMessage, isGroupChat, currentUserRole }: MessageBubbleProps) {
   const { data: session } = useSession()
   const [showActions, setShowActions] = useState(false)
   const [showReactions, setShowReactions] = useState(false)
@@ -349,42 +383,7 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
     }
   }
 
-  const formatTime = (date: Date) => {
-    const now = new Date()
-    const messageDate = new Date(date)
-    
-    // Check if message is from today
-    const isToday = messageDate.toDateString() === now.toDateString()
-    
-    // Check if message is from yesterday
-    const yesterday = new Date(now)
-    yesterday.setDate(yesterday.getDate() - 1)
-    const isYesterday = messageDate.toDateString() === yesterday.toDateString()
-    
-    // Check if message is from this week (within 7 days)
-    const daysDiff = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60 * 60 * 24))
-    const isThisWeek = daysDiff < 7
-    
-    const timeString = messageDate.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
-    
-    if (isToday) {
-      return timeString
-    } else if (isYesterday) {
-      return `Yesterday ${timeString}`
-    } else if (isThisWeek) {
-      return `${messageDate.toLocaleDateString(undefined, { weekday: 'short' })} ${timeString}`
-    } else {
-      return `${messageDate.toLocaleDateString(undefined, { 
-        month: 'short', 
-        day: 'numeric',
-        ...(messageDate.getFullYear() !== now.getFullYear() && { year: 'numeric' })
-      })} ${timeString}`
-    }
-  }
+  // Using utility function for consistent 12-hour timestamp formatting
 
   const getStatusIcon = () => {
     switch (message.status) {
@@ -592,13 +591,13 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
 
   return (
     <div className={`flex ${isCallMessage ? 'justify-center' : isOwnMessage ? 'justify-end' : 'justify-start'} group px-2`} data-message-id={message.id} role="article">
-      <div className={`flex message-bubble ${isMobile ? getMobileContainerClass() : 'max-w-[85%] sm:max-w-[70%]'} ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'} items-end space-x-2 relative`}>
+      <div className={`${message.type === 'poll' ? 'min-w-[40%]' : 'flex'} message-bubble ${isMobile ? getMobileContainerClass() : 'max-w-[85%] sm:max-w-[70%]'}  ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'} items-end space-x-2 relative`}>
         {/* Avatar for received messages */}
         {!isOwnMessage && (
           <div className="flex-shrink-0 mb-1">
             {message.senderImage ? (
               <img
-                src={message.senderImage}
+                src={getCompatibleFileUrl(message.senderImage)}
                 alt={message.senderName}
                 className="w-8 h-8 rounded-full object-cover"
               />
@@ -668,10 +667,10 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
             className={`
               message-content relative ${isMobile ? 'px-3 py-2' : 'px-4 py-2'} rounded-2xl max-w-full break-words overflow-wrap-anywhere hyphens-auto
               ${isMobile ? 'text-sm leading-relaxed' : 'text-sm'}
+              
               ${isCallMessage
                 ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-xl'
-                : isOwnMessage
-                ? 'bg-blue-600 text-white rounded-br-md'
+            
                 : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-bl-md'
               }
             `}
@@ -750,9 +749,8 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
                 <textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  className={`w-full resize-none border-0 p-0 bg-transparent focus:outline-none text-sm leading-relaxed break-words overflow-wrap-anywhere hyphens-auto ${
-                    isOwnMessage ? 'text-white placeholder-white/70' : 'text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400'
-                  }`}
+                  className="w-full resize-none border-0 p-0 bg-transparent focus:outline-none text-sm leading-relaxed break-words overflow-wrap-anywhere hyphens-auto
+                    text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   rows={Math.max(1, editContent.split('\n').length)}
                   autoFocus
                   onKeyDown={(e) => {
@@ -767,22 +765,14 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={handleEdit}
-                    className={`p-1 rounded-md focus:outline-none ${
-                      isOwnMessage 
-                        ? 'text-white/80 hover:text-white hover:bg-white/10' 
-                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
-                    }`}
+                    className="p-1 rounded-md focus:outline-none text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                     title="Save changes (Enter)"
                   >
                     <Save className="w-3 h-3" />
                   </button>
                   <button
                     onClick={handleCancelEdit}
-                    className={`p-1 rounded-md focus:outline-none ${
-                      isOwnMessage 
-                        ? 'text-white/80 hover:text-white hover:bg-white/10' 
-                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
-                    }`}
+                    className="p-1 rounded-md focus:outline-none text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                     title="Cancel editing (Esc)"
                   >
                     <X className="w-3 h-3" />
@@ -794,7 +784,7 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
               (message as any).type === 'deleted' ? (
                 <div className="flex items-center space-x-2 text-sm italic opacity-75">
                   <span className="text-gray-500 dark:text-gray-400">🗑️</span>
-                  <span className={isOwnMessage ? 'text-white/70' : 'text-gray-500 dark:text-gray-400'}>
+                  <span className="text-gray-500 dark:text-gray-400">
                     {isOwnMessage 
                       ? 'You deleted this message' 
                       : `${message.senderName} deleted this message`
@@ -809,10 +799,16 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
                      message.content.includes('declined') ? '❌' :
                      message.content.includes('ended') ? '✅' : '📞'}
                   </span>
-                  <span className={`italic ${isOwnMessage ? 'text-white/90' : 'text-gray-700 dark:text-gray-300'}`}>
+                  <span className="italic text-gray-700 dark:text-gray-300">
                     {message.content}
                   </span>
                 </div>
+              ) : message.type === 'poll' && message.poll ? (
+                <Poll
+                  poll={message.poll}
+                  onVote={onVotePoll || (() => {})}
+                  className="max-w-none"
+                />
               ) : (
                 <MessageFormatter 
                   content={message.content}
@@ -895,11 +891,8 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
             )}
 
             {/* Timestamp and status */}
-            <div className={`
-              flex items-center justify-end space-x-1 mt-1 text-xs
-              ${isOwnMessage ? 'text-white/70' : 'text-gray-500 dark:text-gray-400'}
-            `}>
-              <span>{formatTime(message.timestamp)}</span>
+            <div className="flex items-center justify-end space-x-1 mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <span>{formatMessageTime(message.timestamp)}</span>
               {isOwnMessage && <span data-testid="message-status">{getStatusIcon()}</span>}
             </div>
 
@@ -974,8 +967,8 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
                           </button>
                         )}
 
-                        {/* Delete option (only for own messages) */}
-                        {isOwnMessage && onDelete && (
+                        {/* Delete option - Only admins can delete in group chats */}
+                        {(!isGroupChat && isOwnMessage && onDelete) && (
                           <button
                             onClick={handleDelete}
                             disabled={isDeleting}
@@ -989,9 +982,25 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
                             <span>Delete</span>
                           </button>
                         )}
+                        
+                        {/* Admin delete option in group chats */}
+                        {isGroupChat && !isOwnMessage && currentUserRole === 'admin' && onDelete && (
+                          <button
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2 disabled:opacity-50"
+                          >
+                            {isDeleting ? (
+                              <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                            <span>Delete (Admin)</span>
+                          </button>
+                        )}
 
-                        {/* Delete for me option (only for others' messages) */}
-                        {!isOwnMessage && onDeleteForMe && (
+                        {/* Delete for me option - for group members' own messages or others' messages */}
+                        {((isGroupChat && isOwnMessage) || !isOwnMessage) && onDeleteForMe && (
                           <button
                             onClick={handleDeleteForMe}
                             disabled={isDeletingForMe}
@@ -1075,11 +1084,11 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
             <div 
               className={`flex flex-wrap gap-1 mt-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
               style={{
-                display: 'flex !important',
-                flexDirection: 'row !important',
-                flexWrap: 'wrap !important',
-                gap: '4px !important',
-                alignItems: 'center !important'
+                display: 'flex' as const,
+                flexDirection: 'row' as const,
+                flexWrap: 'wrap' as const,
+                gap: '4px',
+                alignItems: 'center' as const
               }}
             >
               {groupedReactions.map((reactionGroup, index) => (

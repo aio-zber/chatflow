@@ -14,7 +14,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { conversationId } = req.query
-  const { cursor, limit = '50' } = req.query
+  const { cursor, limit = '50', bulkLoad } = req.query
+  
+  // Allow larger batches for bulk loading scenarios (e.g., scrollToMessage)
+  // but cap at reasonable limits for performance
+  let parsedLimit = parseInt(limit as string)
+  if (bulkLoad === 'true') {
+    parsedLimit = Math.min(parsedLimit, 200) // Max 200 for bulk loads
+  } else {
+    parsedLimit = Math.min(parsedLimit, 100) // Max 100 for regular loads
+  }
 
   try {
     const conversation = await prisma.conversation.findFirst({
@@ -84,9 +93,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         },
         attachments: true,
+        poll: {
+          include: {
+            options: {
+              orderBy: { order: 'asc' },
+              include: {
+                votes: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        avatar: true,
+                      }
+                    }
+                  }
+                },
+                _count: {
+                  select: { votes: true }
+                }
+              }
+            },
+            createdBy: {
+              select: {
+                id: true,
+                username: true,
+                name: true,
+                avatar: true,
+              }
+            },
+            _count: {
+              select: { votes: true }
+            }
+          }
+        },
       },
       orderBy: { createdAt: 'desc' },
-      take: parseInt(limit as string),
+      take: parsedLimit,
       ...(cursor && {
         skip: 1,
         cursor: {
@@ -107,9 +151,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     })
 
+    // Process messages to format poll data correctly
+    const processedMessages = messages.map(msg => {
+      if (msg.poll) {
+        return {
+          ...msg,
+          poll: {
+            id: msg.poll.id,
+            question: msg.poll.question,
+            allowMultiple: msg.poll.allowMultiple,
+            isAnonymous: msg.poll.isAnonymous,
+            expiresAt: msg.poll.expiresAt,
+            createdAt: msg.poll.createdAt,
+            createdBy: msg.poll.createdBy,
+            options: msg.poll.options.map(option => ({
+              id: option.id,
+              text: option.text,
+              order: option.order,
+              voteCount: option._count.votes,
+              hasVoted: option.votes.some(vote => vote.user.id === session.user.id),
+              voters: msg.poll.isAnonymous ? [] : option.votes.map(vote => vote.user)
+            })),
+            totalVotes: msg.poll._count.votes,
+            messageId: msg.id
+          }
+        }
+      }
+      return msg
+    })
+
     res.json({
-      messages: messages.reverse(),
-      nextCursor: messages.length === parseInt(limit as string) ? messages[0]?.id : null,
+      messages: processedMessages.reverse(),
+      nextCursor: messages.length === parsedLimit ? messages[0]?.id : null,
     })
   } catch (error) {
     console.error('Get messages error:', error)

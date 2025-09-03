@@ -1,0 +1,1843 @@
+07:20:10.307 main-app.js?v=1756855209898:1846 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+07:20:10.450 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.451 SignalClientWrapper.ts:18 🔐 SignalClient: Attempting to load native libsignal-client...
+07:20:10.451 SignalClientWrapper.ts:22 🔐 SignalClient: Checking browser environment for native support...
+07:20:10.451 SignalClientWrapper.ts:29 🔐 SignalClient: Browser capabilities: {hasWebAssembly: true, hasSharedArrayBuffer: true, hasWasm: true, userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb', crossOriginIsolated: true}
+07:20:10.452 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: false, hasSession: false, socketConnected: undefined, socketId: undefined}
+07:20:10.452 GlobalNotificationListener.tsx:35 GlobalNotificationListener: Waiting for socket connection and user session {socket: false, session: false, socketConnected: undefined}
+07:20:10.453 NotificationContext.tsx:114 🎵 Setting up user interaction listeners for audio enablement...
+07:20:10.453 NotificationContext.tsx:133 🎵 User interaction listeners added for: click, touchstart, keydown, mousedown
+07:20:10.456 NotificationContext.tsx:136 🎵 Cleaning up user interaction listeners
+07:20:10.456 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.457 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: false, hasSession: false, socketConnected: undefined, socketId: undefined}
+07:20:10.457 GlobalNotificationListener.tsx:35 GlobalNotificationListener: Waiting for socket connection and user session {socket: false, session: false, socketConnected: undefined}
+07:20:10.457 NotificationContext.tsx:114 🎵 Setting up user interaction listeners for audio enablement...
+07:20:10.457 NotificationContext.tsx:133 🎵 User interaction listeners added for: click, touchstart, keydown, mousedown
+07:20:10.472 SignalClientWrapper.ts:67 🔐 SignalClient: Native loading failed, falling back to shim: Cannot find module 'node-gyp-build'
+loadSignalClient @ SignalClientWrapper.ts:67
+await in loadSignalClient
+initializeSignalClient @ SignalClientWrapper.ts:224
+initializeE2EE @ useE2EE.ts:44
+eval @ useE2EE.ts:198
+commitHookEffectListMount @ react-dom.development.js:21102
+commitHookPassiveMountEffects @ react-dom.development.js:23154
+commitPassiveMountOnFiber @ react-dom.development.js:23259
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23256
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23370
+recursivelyTraversePassiveMountEffects @ react-dom.development.js:23237
+commitPassiveMountOnFiber @ react-dom.development.js:23267
+commitPassiveMountEffects @ react-dom.development.js:23225
+flushPassiveEffectsImpl @ react-dom.development.js:26497
+flushPassiveEffects @ react-dom.development.js:26438
+eval @ react-dom.development.js:26172
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+07:20:10.473 SignalClientWrapper.ts:92 🔐 SignalClient: Creating browser-compatible shim...
+07:20:10.473 SignalClientWrapper.ts:73 🔐 SignalClient: Using browser-compatible shim implementation
+07:20:10.473 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.473 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.473Z'}
+07:20:10.473 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.473 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.473 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.473Z'}
+07:20:10.474 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.476 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: false, hasSession: false, socketConnected: undefined, socketId: undefined}
+07:20:10.477 GlobalNotificationListener.tsx:35 GlobalNotificationListener: Waiting for socket connection and user session {socket: false, session: false, socketConnected: undefined}
+07:20:10.491 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: false, hasSession: true, socketConnected: undefined, socketId: undefined}
+07:20:10.491 GlobalNotificationListener.tsx:35 GlobalNotificationListener: Waiting for socket connection and user session {socket: false, session: true, socketConnected: undefined}
+07:20:10.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.492 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.493 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: false, isFullyInitialized: false}
+07:20:10.494 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.495 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 0
+07:20:10.495 ChatSidebar.tsx:163 ChatSidebar: Socket state - connected: false initialized: false
+07:20:10.495 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.496 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.496 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.496 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.497 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.497 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.498 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: false, isFullyInitialized: false}
+07:20:10.498 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.500 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.500 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.501 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: false, isFullyInitialized: false}
+07:20:10.501 SocketContext.tsx:199 User ID changed from null to cmeifml0h001okung0i95m8s6
+07:20:10.501 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.501 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.501 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: false, isFullyInitialized: false}
+07:20:10.502 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.502 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 0
+07:20:10.502 ChatSidebar.tsx:163 ChatSidebar: Socket state - connected: false initialized: false
+07:20:10.502 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.502 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.502 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.502 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.502 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.502 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.503 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: false, isFullyInitialized: false}
+07:20:10.503 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.503 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.503 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.503 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: false, isFullyInitialized: false}
+07:20:10.503 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.504 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.504Z'}
+07:20:10.504 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.504 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.504 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.504Z'}
+07:20:10.504 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.504 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.504 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.504Z'}
+07:20:10.504 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.504 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.504 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.504Z'}
+07:20:10.504 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.505 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.505 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.505Z'}
+07:20:10.505 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.505 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.505 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.505Z'}
+07:20:10.505 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.505 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.505 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.505Z'}
+07:20:10.505 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.505 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.505 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.505Z'}
+07:20:10.505 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.505 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.505 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.505Z'}
+07:20:10.505 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.505 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.506 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.506Z'}
+07:20:10.506 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.506 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.506 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.507 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 0, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 4, …}
+07:20:10.509 SocketContext.tsx:220 Initializing Socket.IO client connection for user: cmeifml0h001okung0i95m8s6
+07:20:10.516 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: true, hasSession: true, socketConnected: false, socketId: undefined}
+07:20:10.516 GlobalNotificationListener.tsx:35 GlobalNotificationListener: Waiting for socket connection and user session {socket: true, session: true, socketConnected: false}
+07:20:10.517 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.517 ChatSidebar.tsx:163 ChatSidebar: Socket state - connected: false initialized: false
+07:20:10.517 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.517 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.518 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.518 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.518 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.518 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.522 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.523 ChatSidebar.tsx:381 ChatSidebar: Filtered 0 -> 0 conversations
+07:20:10.523 ChatSidebar.tsx:382 ChatSidebar: Final conversation list: []
+07:20:10.524 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: true, hasSession: true, socketConnected: false, socketId: undefined}
+07:20:10.524 GlobalNotificationListener.tsx:35 GlobalNotificationListener: Waiting for socket connection and user session {socket: true, session: true, socketConnected: false}
+07:20:10.525 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.528 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.529 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 6, …}
+07:20:10.532 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.533 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.534 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.534 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 3
+07:20:10.535 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmf2d71b4000fkuqfazdkrfmc
+07:20:10.535 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.535 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.535 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.535 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.536 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.536 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.536 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.536 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.536 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.536Z'}
+07:20:10.536 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.537 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.537 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.537Z'}
+07:20:10.537 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.539 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.541 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.541 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.541 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.542 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.543 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.549 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.549 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.549 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.549 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.550 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.552 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.554 ChatSidebar.tsx:242 🚫 ChatSidebar: Blocked users changed, count: 0
+07:20:10.554 ChatSidebar.tsx:243 🚫 ChatSidebar: Blocked user IDs: []
+07:20:10.554 ChatSidebar.tsx:244 🚫 ChatSidebar: Users who blocked us, count: 0
+07:20:10.554 ChatSidebar.tsx:245 🚫 ChatSidebar: Blocker user IDs: []
+07:20:10.555 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.555 ChatSidebar.tsx:252 🔄 ChatSidebar: Immediate conversation refresh trigger
+07:20:10.556 ChatSidebar.tsx:381 ChatSidebar: Filtered 3 -> 3 conversations
+07:20:10.556 ChatSidebar.tsx:382 ChatSidebar: Final conversation list: (3) [{…}, {…}, {…}]
+07:20:10.567 ChatSidebar.tsx:201 🔐 Sidebar: Successfully decrypted message with conversationId: cmew64hqq0008kud8i3zywuwd
+07:20:10.583 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.586 SocketContext.tsx:247 SocketContext: Socket connected successfully: hCxRBtm2eJkayXZSAAAZ
+07:20:10.586 SocketContext.tsx:248 SocketContext: Socket transport: polling
+07:20:10.586 SocketContext.tsx:254 SocketContext: Emitting user-online for: cmeifml0h001okung0i95m8s6
+07:20:10.586 SocketContext.tsx:259 SocketContext: 👤 Emitted join-user-room for: user:cmeifml0h001okung0i95m8s6
+07:20:10.586 useConversations.ts:260 Socket connected (useConversations), refetching conversations...
+07:20:10.586 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.586 useConversations.ts:260 Socket connected (useConversations), refetching conversations...
+07:20:10.586 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.587 useConversations.ts:260 Socket connected (useConversations), refetching conversations...
+07:20:10.587 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.587 SocketContext.tsx:86 Auto-joining all user conversations...
+07:20:10.587 useConversations.ts:260 Socket connected (useConversations), refetching conversations...
+07:20:10.587 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.590 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: true, hasSession: true, socketConnected: true, socketId: 'hCxRBtm2eJkayXZSAAAZ'}
+07:20:10.590 GlobalNotificationListener.tsx:43 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+07:20:10.590 GlobalNotificationListener.tsx:48 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+07:20:10.591 GlobalNotificationListener.tsx:170 ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+07:20:10.591 ChatSidebar.tsx:163 ChatSidebar: Socket state - connected: true initialized: false
+07:20:10.591 SocketContext.tsx:86 Auto-joining all user conversations...
+07:20:10.593 ChatSidebar.tsx:201 🔐 Sidebar: Successfully decrypted message with conversationId: cmetirm5q0011kui982p0lxjb
+07:20:10.594 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.597 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.598 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 15, …}
+07:20:10.598 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 15, …}
+07:20:10.607 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.607 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.607 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 16, …}
+07:20:10.608 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.610 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.610 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.611 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.612 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 3
+07:20:10.612 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmf2d71b4000fkuqfazdkrfmc
+07:20:10.612 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:10.612 useConversations.ts:69 🔍 fetchConversations: Starting fetch with session: {hasSession: true, userId: 'cmeifml0h001okung0i95m8s6', userEmail: 'tester@gmail.test'}
+07:20:10.612 useConversations.ts:271 useConversations: Socket not fully available yet for event listeners {socket: true, isFullyInitialized: false}
+07:20:10.613 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.613 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.613Z'}
+07:20:10.613 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.613 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:10.613 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:10.613Z'}
+07:20:10.613 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:10.618 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.618 ChatSidebar.tsx:381 ChatSidebar: Filtered 3 -> 3 conversations
+07:20:10.619 ChatSidebar.tsx:382 ChatSidebar: Final conversation list: (3) [{…}, {…}, {…}]
+07:20:10.622 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.622 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.636 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.651 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.652 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.666 ChatSidebar.tsx:260 🔄 ChatSidebar: Secondary conversation refresh trigger
+07:20:10.668 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.668 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.669 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.672 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.676 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.677 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.698 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.699 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.700 ChatSidebar.tsx:381 ChatSidebar: Filtered 3 -> 3 conversations
+07:20:10.700 ChatSidebar.tsx:382 ChatSidebar: Final conversation list: (3) [{…}, {…}, {…}]
+07:20:10.701 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 3
+07:20:10.701 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmf2d71b4000fkuqfazdkrfmc
+07:20:10.716 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.716 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.730 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.730 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.743 SocketContext.tsx:92 SocketContext: Found 3 conversations to join
+07:20:10.743 SocketContext.tsx:94 SocketContext: Auto-joining conversation 1/3: cmew64hqq0008kud8i3zywuwd (Test)
+07:20:10.743 SocketContext.tsx:57 SocketContext: Attempting to join room: conversation:cmew64hqq0008kud8i3zywuwd
+07:20:10.743 SocketContext.tsx:58 SocketContext: Socket connected: true, Socket ID: hCxRBtm2eJkayXZSAAAZ
+07:20:10.743 SocketContext.tsx:61 SocketContext: Successfully joined room: conversation:cmew64hqq0008kud8i3zywuwd
+07:20:10.743 SocketContext.tsx:62 SocketContext: Total joined rooms: 1
+07:20:10.743 SocketContext.tsx:94 SocketContext: Auto-joining conversation 2/3: cmeifnahq003ekungumhkl6ux (Unnamed)
+07:20:10.743 SocketContext.tsx:57 SocketContext: Attempting to join room: conversation:cmeifnahq003ekungumhkl6ux
+07:20:10.743 SocketContext.tsx:58 SocketContext: Socket connected: true, Socket ID: hCxRBtm2eJkayXZSAAAZ
+07:20:10.743 SocketContext.tsx:61 SocketContext: Successfully joined room: conversation:cmeifnahq003ekungumhkl6ux
+07:20:10.744 SocketContext.tsx:62 SocketContext: Total joined rooms: 1
+07:20:10.744 SocketContext.tsx:94 SocketContext: Auto-joining conversation 3/3: cmetirm5q0011kui982p0lxjb (Unnamed)
+07:20:10.744 SocketContext.tsx:57 SocketContext: Attempting to join room: conversation:cmetirm5q0011kui982p0lxjb
+07:20:10.744 SocketContext.tsx:58 SocketContext: Socket connected: true, Socket ID: hCxRBtm2eJkayXZSAAAZ
+07:20:10.744 SocketContext.tsx:61 SocketContext: Successfully joined room: conversation:cmetirm5q0011kui982p0lxjb
+07:20:10.744 SocketContext.tsx:62 SocketContext: Total joined rooms: 1
+07:20:10.744 SocketContext.tsx:99 Socket fully initialized with all conversations joined
+07:20:10.745 useConversations.ts:275 🚀 useConversations: Setting up socket event listeners
+07:20:10.746 useConversations.ts:275 🚀 useConversations: Setting up socket event listeners
+07:20:10.746 ChatSidebar.tsx:163 ChatSidebar: Socket state - connected: true initialized: true
+07:20:10.746 useConversations.ts:275 🚀 useConversations: Setting up socket event listeners
+07:20:10.746 useConversations.ts:275 🚀 useConversations: Setting up socket event listeners
+07:20:10.757 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.757 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.770 SocketContext.tsx:92 SocketContext: Found 3 conversations to join
+07:20:10.770 SocketContext.tsx:94 SocketContext: Auto-joining conversation 1/3: cmew64hqq0008kud8i3zywuwd (Test)
+07:20:10.770 SocketContext.tsx:57 SocketContext: Attempting to join room: conversation:cmew64hqq0008kud8i3zywuwd
+07:20:10.770 SocketContext.tsx:58 SocketContext: Socket connected: true, Socket ID: hCxRBtm2eJkayXZSAAAZ
+07:20:10.770 SocketContext.tsx:61 SocketContext: Successfully joined room: conversation:cmew64hqq0008kud8i3zywuwd
+07:20:10.770 SocketContext.tsx:62 SocketContext: Total joined rooms: 1
+07:20:10.770 SocketContext.tsx:94 SocketContext: Auto-joining conversation 2/3: cmeifnahq003ekungumhkl6ux (Unnamed)
+07:20:10.770 SocketContext.tsx:57 SocketContext: Attempting to join room: conversation:cmeifnahq003ekungumhkl6ux
+07:20:10.770 SocketContext.tsx:58 SocketContext: Socket connected: true, Socket ID: hCxRBtm2eJkayXZSAAAZ
+07:20:10.770 SocketContext.tsx:61 SocketContext: Successfully joined room: conversation:cmeifnahq003ekungumhkl6ux
+07:20:10.770 SocketContext.tsx:62 SocketContext: Total joined rooms: 1
+07:20:10.770 SocketContext.tsx:94 SocketContext: Auto-joining conversation 3/3: cmetirm5q0011kui982p0lxjb (Unnamed)
+07:20:10.770 SocketContext.tsx:57 SocketContext: Attempting to join room: conversation:cmetirm5q0011kui982p0lxjb
+07:20:10.770 SocketContext.tsx:58 SocketContext: Socket connected: true, Socket ID: hCxRBtm2eJkayXZSAAAZ
+07:20:10.770 SocketContext.tsx:61 SocketContext: Successfully joined room: conversation:cmetirm5q0011kui982p0lxjb
+07:20:10.770 SocketContext.tsx:62 SocketContext: Total joined rooms: 1
+07:20:10.770 SocketContext.tsx:99 Socket fully initialized with all conversations joined
+07:20:10.785 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.786 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:10.797 useConversations.ts:83 🔍 fetchConversations: Response received: {status: 200, statusText: 'OK', ok: true}
+07:20:10.798 useConversations.ts:96 🔍 fetchConversations: Success data: {conversationsCount: 3}
+07:20:11.009 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.009 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.025 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.038 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.038 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 25, …}
+07:20:11.044 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.045 ChatSidebar.tsx:381 ChatSidebar: Filtered 3 -> 3 conversations
+07:20:11.045 ChatSidebar.tsx:382 ChatSidebar: Final conversation list: (3) [{…}, {…}, {…}]
+07:20:11.051 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.051 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 27, …}
+07:20:11.051 ChatSidebar.tsx:381 ChatSidebar: Filtered 3 -> 3 conversations
+07:20:11.051 ChatSidebar.tsx:382 ChatSidebar: Final conversation list: (3) [{…}, {…}, {…}]
+07:20:11.056 ChatSidebar.tsx:268 🔄 ChatSidebar: Tertiary conversation refresh trigger
+07:20:11.056 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 3, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 28, …}
+07:20:11.802 NotificationContext.tsx:119 🎵 User interaction detected: mousedown
+07:20:11.803 NotificationContext.tsx:63 🎵 enableAudio called, current state: {audioEnabled: false, hasAudioContext: false}
+07:20:11.803 NotificationContext.tsx:69 🎵 Creating new AudioContext...
+07:20:11.815 NotificationContext.tsx:83 🎵 AudioContext is ready, enabling audio
+07:20:11.816 NotificationContext.tsx:89 🎵 Initializing notification audio file...
+07:20:11.817 GlobalNotificationListener.tsx:173 🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+07:20:11.817 NotificationContext.tsx:136 🎵 Cleaning up user interaction listeners
+07:20:11.818 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered {hasSocket: true, hasSession: true, socketConnected: true, socketId: 'hCxRBtm2eJkayXZSAAAZ'}
+07:20:11.818 GlobalNotificationListener.tsx:43 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+07:20:11.819 GlobalNotificationListener.tsx:48 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+07:20:11.819 GlobalNotificationListener.tsx:170 ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+07:20:11.845 NotificationContext.tsx:100 Notification audio loaded successfully
+07:20:12.026 useMessages.ts:153 🔄 fetchMessages called: {cursor: 'initial', limit: 150, bulkLoad: true, conversationId: 'cmew64hq...', requestKey: 'cmew64hqq0008kud8i3zywuwd-initial-150-true'}
+07:20:12.027 useMessages.ts:173 🌐 Making request to: http://localhost:3000/api/messages/cmew64hqq0008kud8i3zywuwd?limit=150&bulkLoad=true
+07:20:12.028 ChatWindow.tsx:188 🔄 ChatWindow: Conversation participants count: 3
+07:20:12.029 ChatWindow.tsx:189 🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+07:20:12.029 ChatWindow.tsx:800 ChatWindow: Joining conversation room cmew64hqq0008kud8i3zywuwd
+07:20:12.206 useMessages.ts:182 📦 Received 56 messages, nextCursor: none
+07:20:12.206 useMessages.ts:193 📝 Setting initial 56 messages
+07:20:12.263 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:12.264  🔐 E2EE: Initializing libsignal-client...
+07:20:12.264  🔐 E2EE: Initializing libsignal-client...
+07:20:12.265  🔐 E2EE: Initializing libsignal-client...
+07:20:12.265  🔐 E2EE: Initializing libsignal-client...
+07:20:12.265  🔐 E2EE: Initializing libsignal-client...
+07:20:12.265  🔐 E2EE: Initializing libsignal-client...
+07:20:12.266  🔐 E2EE: Initializing libsignal-client...
+07:20:12.266  🔐 E2EE: Initializing libsignal-client...
+07:20:12.267  🔐 E2EE: Initializing libsignal-client...
+07:20:12.267  🔐 E2EE: Initializing libsignal-client...
+07:20:12.267  🔐 E2EE: Initializing libsignal-client...
+07:20:12.268  🔐 E2EE: Initializing libsignal-client...
+07:20:12.268  🔐 E2EE: Initializing libsignal-client...
+07:20:12.268  🔐 E2EE: Initializing libsignal-client...
+07:20:12.268  🔐 E2EE: Initializing libsignal-client...
+07:20:12.269  🔐 E2EE: Initializing libsignal-client...
+07:20:12.269  🔐 E2EE: Initializing libsignal-client...
+07:20:12.269  🔐 E2EE: Initializing libsignal-client...
+07:20:12.270  🔐 E2EE: Initializing libsignal-client...
+07:20:12.270  🔐 E2EE: Initializing libsignal-client...
+07:20:12.270  🔐 E2EE: Initializing libsignal-client...
+07:20:12.271  🔐 E2EE: Initializing libsignal-client...
+07:20:12.271  🔐 E2EE: Initializing libsignal-client...
+07:20:12.271  🔐 E2EE: Initializing libsignal-client...
+07:20:12.272  🔐 E2EE: Initializing libsignal-client...
+07:20:12.272  🔐 E2EE: Initializing libsignal-client...
+07:20:12.272  🔐 E2EE: Initializing libsignal-client...
+07:20:12.273  🔐 E2EE: Initializing libsignal-client...
+07:20:12.273  🔐 E2EE: Initializing libsignal-client...
+07:20:12.273  🔐 E2EE: Initializing libsignal-client...
+07:20:12.274  🔐 E2EE: Initializing libsignal-client...
+07:20:12.274  🔐 E2EE: Initializing libsignal-client...
+07:20:12.274  🔐 E2EE: Initializing libsignal-client...
+07:20:12.275  🔐 E2EE: Initializing libsignal-client...
+07:20:12.276  🔐 E2EE: Initializing libsignal-client...
+07:20:12.276  🔐 E2EE: Initializing libsignal-client...
+07:20:12.277  🔐 E2EE: Initializing libsignal-client...
+07:20:12.277  🔐 E2EE: Initializing libsignal-client...
+07:20:12.277  🔐 E2EE: Initializing libsignal-client...
+07:20:12.278  🔐 E2EE: Initializing libsignal-client...
+07:20:12.278  🔐 E2EE: Initializing libsignal-client...
+07:20:12.278  🔐 E2EE: Initializing libsignal-client...
+07:20:12.279  🔐 E2EE: Initializing libsignal-client...
+07:20:12.279  🔐 E2EE: Initializing libsignal-client...
+07:20:12.280  🔐 E2EE: Initializing libsignal-client...
+07:20:12.280  🔐 E2EE: Initializing libsignal-client...
+07:20:12.280  🔐 E2EE: Initializing libsignal-client...
+07:20:12.280  🔐 E2EE: Initializing libsignal-client...
+07:20:12.281  🔐 E2EE: Initializing libsignal-client...
+07:20:12.281  🔐 E2EE: Initializing libsignal-client...
+07:20:12.281  🔐 E2EE: Initializing libsignal-client...
+07:20:12.282  🔐 E2EE: Initializing libsignal-client...
+07:20:12.282  🔐 E2EE: Initializing libsignal-client...
+07:20:12.282  🔐 E2EE: Initializing libsignal-client...
+07:20:12.283  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.284  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.285  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.286  🔐 E2EE: Initializing libsignal-client...
+07:20:12.287  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.287  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.287Z'}
+07:20:12.287  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.287  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.287  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.287Z'}
+07:20:12.287  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.287  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.287  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.287Z'}
+07:20:12.287  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.288  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.288  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.288Z'}
+07:20:12.288  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.288  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.288  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.288Z'}
+07:20:12.288  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.288  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.288  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.288Z'}
+07:20:12.288  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.289  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.289  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.289Z'}
+07:20:12.289  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.289  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.289  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.289Z'}
+07:20:12.289  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.289  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.290  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.289Z'}
+07:20:12.290  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.290  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.290  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.290Z'}
+07:20:12.290  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.290  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.290  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.290Z'}
+07:20:12.290  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.290  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.291  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.291Z'}
+07:20:12.291  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.291  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.291  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.291Z'}
+07:20:12.291  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.291  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.291  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.291Z'}
+07:20:12.291  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.292  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.292  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.292Z'}
+07:20:12.292  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.292  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.292  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.292Z'}
+07:20:12.292  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.292  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.292  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.292Z'}
+07:20:12.292  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.293  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.293  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.293Z'}
+07:20:12.293  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.293  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.293  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.293Z'}
+07:20:12.293  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.293  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.293  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.293Z'}
+07:20:12.293  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.293  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.294  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.294Z'}
+07:20:12.294  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.294  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.294  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.294Z'}
+07:20:12.294  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.294  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.294  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.294Z'}
+07:20:12.294  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.294  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.295  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.295Z'}
+07:20:12.295  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.295  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.295  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.295Z'}
+07:20:12.295  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.295  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.295  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.295Z'}
+07:20:12.295  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.295  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.296  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.296Z'}
+07:20:12.296  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.296  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.296  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.296Z'}
+07:20:12.296  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.296  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.296  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.296Z'}
+07:20:12.296  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.297  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.297  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.297Z'}
+07:20:12.297  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.297  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.297  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.297Z'}
+07:20:12.297  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.297  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.298  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.298Z'}
+07:20:12.298  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.298  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.298  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.298Z'}
+07:20:12.298  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.298  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.298  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.298Z'}
+07:20:12.298  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.298  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.299  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.299Z'}
+07:20:12.299  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.299  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.299  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.299Z'}
+07:20:12.299  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.299  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.299  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.299Z'}
+07:20:12.299  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.299  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.300  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.300Z'}
+07:20:12.300  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.300  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.300  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.300Z'}
+07:20:12.300  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.300  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.300  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.300Z'}
+07:20:12.300  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.300  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.300  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.300Z'}
+07:20:12.300  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.301  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.301  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.301Z'}
+07:20:12.301  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.301  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.301  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.301Z'}
+07:20:12.301  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.301  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.301  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.301Z'}
+07:20:12.301  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.301  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.301  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.301Z'}
+07:20:12.302  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.302  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.302  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.302Z'}
+07:20:12.302  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.302  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.302  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.302Z'}
+07:20:12.302  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.302  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.302  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.302Z'}
+07:20:12.302  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.303  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.303  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.303Z'}
+07:20:12.303  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.303  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.303  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.303Z'}
+07:20:12.303  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.303  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.303  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.303Z'}
+07:20:12.303  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.303  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.304  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.304Z'}
+07:20:12.304  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.304  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.304  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.304Z'}
+07:20:12.304  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.304  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.304  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.304Z'}
+07:20:12.304  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.305  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.305  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.305Z'}
+07:20:12.305  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.305  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.305  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.305Z'}
+07:20:12.305  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.305  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.305  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.305Z'}
+07:20:12.305  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.306  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.306  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.306Z'}
+07:20:12.306  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.306  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.306  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.306Z'}
+07:20:12.306  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.306  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.306  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.306Z'}
+07:20:12.306  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.306  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.306  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.306Z'}
+07:20:12.306  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.306  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.306  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.306Z'}
+07:20:12.307  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.307  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.307  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.307Z'}
+07:20:12.307  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.307  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.307  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.307Z'}
+07:20:12.307  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.307  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.307  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.307Z'}
+07:20:12.307  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.307  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.307  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.307Z'}
+07:20:12.307  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.308  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.308  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.308Z'}
+07:20:12.308  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.308  🔐 E2EE: libsignal-client successfully loaded
+07:20:12.308  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.308Z'}
+07:20:12.308 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.308 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.308 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.308Z'}
+07:20:12.308 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.308 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.308 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.308Z'}
+07:20:12.309 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.309 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.309 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.309Z'}
+07:20:12.309 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.309 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.309 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.309Z'}
+07:20:12.309 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.309 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.309 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.309Z'}
+07:20:12.309 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.309 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.309 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.309Z'}
+07:20:12.309 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.309 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.310 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.310Z'}
+07:20:12.310 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.310 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.310 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.310Z'}
+07:20:12.310 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.310 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.310 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.310Z'}
+07:20:12.310 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.310 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.310 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.310Z'}
+07:20:12.310 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.310 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.310 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.310Z'}
+07:20:12.310 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.311 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.311 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.311Z'}
+07:20:12.311 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.311 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.311 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.311Z'}
+07:20:12.311 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.311 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.311 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.311Z'}
+07:20:12.311 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.311 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.311 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.311Z'}
+07:20:12.311 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.312 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.312 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.312Z'}
+07:20:12.312 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.312 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.312 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.312Z'}
+07:20:12.312 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.312 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.312 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.312Z'}
+07:20:12.312 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.312 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.312 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.312Z'}
+07:20:12.312 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.312 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.312 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.312Z'}
+07:20:12.312 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.312 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.313 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.313 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.313Z'}
+07:20:12.313 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.314 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.314 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.314Z'}
+07:20:12.314 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.314 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.314 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.314Z'}
+07:20:12.314 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.314 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.314 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.314Z'}
+07:20:12.314 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.314 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.314 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.314Z'}
+07:20:12.314 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.314 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.314 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.314Z'}
+07:20:12.314 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.315 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.315 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.315Z'}
+07:20:12.315 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.316 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.316 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.316Z'}
+07:20:12.316 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.316 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.316 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.316Z'}
+07:20:12.316 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.316 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.316 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.316Z'}
+07:20:12.316 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.316 useE2EE.ts:47 🔐 E2EE: libsignal-client successfully loaded
+07:20:12.316 SignalClientWrapper.ts:351 🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:12.316Z'}
+07:20:12.317 useE2EE.ts:55 🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:12.338 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.374 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.389 useAutoScroll.ts:113 Auto-scroll: Successfully scrolled to bottom for conversation cmew64hqq0008kud8i3zywuwd
+07:20:12.391 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.395 useAutoScroll.ts:288 Instant scroll: Successfully reached bottom for conversation cmew64hqq0008kud8i3zywuwd
+07:20:12.403 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.415 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.426 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.438 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.449 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.460 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.474 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.485 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.496 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.507 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.517 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.532 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.543 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.555 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.569 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.581 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.591 useAutoScroll.ts:113 Auto-scroll: Successfully scrolled to bottom for conversation cmew64hqq0008kud8i3zywuwd
+07:20:12.592 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.603 ChatWindow.tsx:309 🔓 E2EE: Successfully decrypted message content
+07:20:12.891 useAutoScroll.ts:113 Auto-scroll: Successfully scrolled to bottom for conversation cmew64hqq0008kud8i3zywuwd
+07:20:14.307 ChatWindow.tsx:807 ChatWindow: Leaving conversation room cmew64hqq0008kud8i3zywuwd
+07:20:14.308 useMessages.ts:153 🔄 fetchMessages called: {cursor: 'initial', limit: 150, bulkLoad: true, conversationId: 'cmeifnah...', requestKey: 'cmeifnahq003ekungumhkl6ux-initial-150-true'}
+07:20:14.308 useMessages.ts:173 🌐 Making request to: http://localhost:3000/api/messages/cmeifnahq003ekungumhkl6ux?limit=150&bulkLoad=true
+07:20:14.311 ChatWindow.tsx:800 ChatWindow: Joining conversation room cmeifnahq003ekungumhkl6ux
+07:20:14.351 useMessages.ts:182 📦 Received 150 messages, nextCursor: cmf0rpjt...
+07:20:14.351 useMessages.ts:193 📝 Setting initial 150 messages
+07:20:14.441  🔐 E2EE: Initializing libsignal-client...
+07:20:14.441  🔐 E2EE: Initializing libsignal-client...
+07:20:14.441  🔐 E2EE: Initializing libsignal-client...
+07:20:14.442  🔐 E2EE: Initializing libsignal-client...
+07:20:14.442  🔐 E2EE: Initializing libsignal-client...
+07:20:14.442  🔐 E2EE: Initializing libsignal-client...
+07:20:14.443  🔐 E2EE: Initializing libsignal-client...
+07:20:14.443  🔐 E2EE: Initializing libsignal-client...
+07:20:14.443  🔐 E2EE: Initializing libsignal-client...
+07:20:14.444  🔐 E2EE: Initializing libsignal-client...
+07:20:14.444  🔐 E2EE: Initializing libsignal-client...
+07:20:14.444  🔐 E2EE: Initializing libsignal-client...
+07:20:14.445  🔐 E2EE: Initializing libsignal-client...
+07:20:14.445  🔐 E2EE: Initializing libsignal-client...
+07:20:14.445  🔐 E2EE: Initializing libsignal-client...
+07:20:14.445  🔐 E2EE: Initializing libsignal-client...
+07:20:14.446  🔐 E2EE: Initializing libsignal-client...
+07:20:14.446  🔐 E2EE: Initializing libsignal-client...
+07:20:14.446  🔐 E2EE: Initializing libsignal-client...
+07:20:14.447  🔐 E2EE: Initializing libsignal-client...
+07:20:14.447  🔐 E2EE: Initializing libsignal-client...
+07:20:14.447  🔐 E2EE: Initializing libsignal-client...
+07:20:14.448  🔐 E2EE: Initializing libsignal-client...
+07:20:14.448  🔐 E2EE: Initializing libsignal-client...
+07:20:14.448  🔐 E2EE: Initializing libsignal-client...
+07:20:14.449  🔐 E2EE: Initializing libsignal-client...
+07:20:14.449  🔐 E2EE: Initializing libsignal-client...
+07:20:14.449  🔐 E2EE: Initializing libsignal-client...
+07:20:14.450  🔐 E2EE: Initializing libsignal-client...
+07:20:14.450  🔐 E2EE: Initializing libsignal-client...
+07:20:14.450  🔐 E2EE: Initializing libsignal-client...
+07:20:14.451  🔐 E2EE: Initializing libsignal-client...
+07:20:14.451  🔐 E2EE: Initializing libsignal-client...
+07:20:14.451  🔐 E2EE: Initializing libsignal-client...
+07:20:14.452  🔐 E2EE: Initializing libsignal-client...
+07:20:14.452  🔐 E2EE: Initializing libsignal-client...
+07:20:14.452  🔐 E2EE: Initializing libsignal-client...
+07:20:14.453  🔐 E2EE: Initializing libsignal-client...
+07:20:14.453  🔐 E2EE: Initializing libsignal-client...
+07:20:14.453  🔐 E2EE: Initializing libsignal-client...
+07:20:14.454  🔐 E2EE: Initializing libsignal-client...
+07:20:14.454  🔐 E2EE: Initializing libsignal-client...
+07:20:14.455  🔐 E2EE: Initializing libsignal-client...
+07:20:14.455  🔐 E2EE: Initializing libsignal-client...
+07:20:14.455  🔐 E2EE: Initializing libsignal-client...
+07:20:14.456  🔐 E2EE: Initializing libsignal-client...
+07:20:14.456  🔐 E2EE: Initializing libsignal-client...
+07:20:14.456  🔐 E2EE: Initializing libsignal-client...
+07:20:14.457  🔐 E2EE: Initializing libsignal-client...
+07:20:14.457  🔐 E2EE: Initializing libsignal-client...
+07:20:14.457  🔐 E2EE: Initializing libsignal-client...
+07:20:14.457  🔐 E2EE: Initializing libsignal-client...
+07:20:14.458  🔐 E2EE: Initializing libsignal-client...
+07:20:14.458  🔐 E2EE: Initializing libsignal-client...
+07:20:14.458  🔐 E2EE: Initializing libsignal-client...
+07:20:14.459  🔐 E2EE: Initializing libsignal-client...
+07:20:14.459  🔐 E2EE: Initializing libsignal-client...
+07:20:14.459  🔐 E2EE: Initializing libsignal-client...
+07:20:14.460  🔐 E2EE: Initializing libsignal-client...
+07:20:14.460  🔐 E2EE: Initializing libsignal-client...
+07:20:14.460  🔐 E2EE: Initializing libsignal-client...
+07:20:14.461  🔐 E2EE: Initializing libsignal-client...
+07:20:14.461  🔐 E2EE: Initializing libsignal-client...
+07:20:14.461  🔐 E2EE: Initializing libsignal-client...
+07:20:14.461  🔐 E2EE: Initializing libsignal-client...
+07:20:14.462  🔐 E2EE: Initializing libsignal-client...
+07:20:14.462  🔐 E2EE: Initializing libsignal-client...
+07:20:14.462  🔐 E2EE: Initializing libsignal-client...
+07:20:14.463  🔐 E2EE: Initializing libsignal-client...
+07:20:14.463  🔐 E2EE: Initializing libsignal-client...
+07:20:14.463  🔐 E2EE: Initializing libsignal-client...
+07:20:14.464  🔐 E2EE: Initializing libsignal-client...
+07:20:14.464  🔐 E2EE: Initializing libsignal-client...
+07:20:14.464  🔐 E2EE: Initializing libsignal-client...
+07:20:14.464  🔐 E2EE: Initializing libsignal-client...
+07:20:14.465  🔐 E2EE: Initializing libsignal-client...
+07:20:14.465  🔐 E2EE: Initializing libsignal-client...
+07:20:14.465  🔐 E2EE: Initializing libsignal-client...
+07:20:14.466  🔐 E2EE: Initializing libsignal-client...
+07:20:14.466  🔐 E2EE: Initializing libsignal-client...
+07:20:14.466  🔐 E2EE: Initializing libsignal-client...
+07:20:14.466  🔐 E2EE: Initializing libsignal-client...
+07:20:14.467  🔐 E2EE: Initializing libsignal-client...
+07:20:14.467  🔐 E2EE: Initializing libsignal-client...
+07:20:14.467  🔐 E2EE: Initializing libsignal-client...
+07:20:14.468  🔐 E2EE: Initializing libsignal-client...
+07:20:14.468  🔐 E2EE: Initializing libsignal-client...
+07:20:14.468  🔐 E2EE: Initializing libsignal-client...
+07:20:14.469  🔐 E2EE: Initializing libsignal-client...
+07:20:14.469  🔐 E2EE: Initializing libsignal-client...
+07:20:14.469  🔐 E2EE: Initializing libsignal-client...
+07:20:14.469  🔐 E2EE: Initializing libsignal-client...
+07:20:14.470  🔐 E2EE: Initializing libsignal-client...
+07:20:14.470  🔐 E2EE: Initializing libsignal-client...
+07:20:14.470  🔐 E2EE: Initializing libsignal-client...
+07:20:14.471  🔐 E2EE: Initializing libsignal-client...
+07:20:14.471  🔐 E2EE: Initializing libsignal-client...
+07:20:14.471  🔐 E2EE: Initializing libsignal-client...
+07:20:14.472  🔐 E2EE: Initializing libsignal-client...
+07:20:14.472  🔐 E2EE: Initializing libsignal-client...
+07:20:14.472  🔐 E2EE: Initializing libsignal-client...
+07:20:14.473  🔐 E2EE: Initializing libsignal-client...
+07:20:14.473 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.473 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.473 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.474 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.474 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.474 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.475 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.475 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.475 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.475 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.476 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.476 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.476 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.477 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.477 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.477 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.478 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.478 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.478 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.478 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.479 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.479 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.479 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.480 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.480 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.480 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.481 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.481 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.481 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.482 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.482 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.482 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.482 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.483 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.483 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.483 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.484 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.484 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.484 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.485 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.485 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.485 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.485 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.486 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.486 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.486 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.487 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.487 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.488 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.489 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.490 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491 useE2EE.ts:41 🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.491  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.492  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.493  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: Initializing libsignal-client...
+07:20:14.494  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.494  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.494Z'}
+07:20:14.494  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.494  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.494  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.494Z'}
+07:20:14.494  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.495  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.495  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.495Z'}
+07:20:14.495  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.495  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.495  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.495Z'}
+07:20:14.495  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.495  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.495  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.495Z'}
+07:20:14.495  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.496  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.496  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.496Z'}
+07:20:14.496  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.496  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.497  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.497Z'}
+07:20:14.497  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.497  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.497  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.497Z'}
+07:20:14.497  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.497  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.497  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.497Z'}
+07:20:14.498  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.498  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.498  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.498Z'}
+07:20:14.498  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.498  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.498  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.498Z'}
+07:20:14.498  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.499  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.499  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.499Z'}
+07:20:14.499  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.499  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.499  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.499Z'}
+07:20:14.499  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.499  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.500  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.500Z'}
+07:20:14.500  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.500  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.500  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.500Z'}
+07:20:14.500  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.500  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.500  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.500Z'}
+07:20:14.500  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.501  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.501  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.501Z'}
+07:20:14.501  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.501  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.501  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.501Z'}
+07:20:14.501  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.501  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.501  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.501Z'}
+07:20:14.501  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.502  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.502  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.502Z'}
+07:20:14.502  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.502  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.503  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.502Z'}
+07:20:14.503  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.503  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.503  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.503Z'}
+07:20:14.503  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.503  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.503  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.503Z'}
+07:20:14.504  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.504  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.504  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.504Z'}
+07:20:14.504  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.504  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.505  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.505Z'}
+07:20:14.505  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.505  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.505  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.505Z'}
+07:20:14.505  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.505  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.505  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.505Z'}
+07:20:14.505  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.506  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.506  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.506Z'}
+07:20:14.506  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.506  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.506  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.506Z'}
+07:20:14.507  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.507  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.507  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.507Z'}
+07:20:14.507  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.507  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.507  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.507Z'}
+07:20:14.507  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.508  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.508  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.508Z'}
+07:20:14.508  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.508  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.508  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.508Z'}
+07:20:14.508  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.508  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.508  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.508Z'}
+07:20:14.508  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.509  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.509  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.509Z'}
+07:20:14.509  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.509  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.509  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.509Z'}
+07:20:14.509  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.509  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.509  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.509Z'}
+07:20:14.510  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.510  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.510  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.510Z'}
+07:20:14.510  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.510  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.510  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.510Z'}
+07:20:14.510  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.511  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.511  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.511Z'}
+07:20:14.511  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.511  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.511  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.511Z'}
+07:20:14.511  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.511  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.512  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.512Z'}
+07:20:14.512  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.512  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.512  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.512Z'}
+07:20:14.512  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.512  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.512  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.512Z'}
+07:20:14.513  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.513  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.513  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.513Z'}
+07:20:14.513  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.513  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.513  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.513Z'}
+07:20:14.513  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.513  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.514  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.514Z'}
+07:20:14.514  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.514  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.514  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.514Z'}
+07:20:14.514  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.514  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.514  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.514Z'}
+07:20:14.515  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.515  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.515  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.515Z'}
+07:20:14.515  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.515  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.515  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.515Z'}
+07:20:14.515  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.515  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.515  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.515Z'}
+07:20:14.515  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.516  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.516  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.516Z'}
+07:20:14.516  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.516  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.516  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.516Z'}
+07:20:14.516  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.516  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.516  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.516Z'}
+07:20:14.517  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.517  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.517  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.517Z'}
+07:20:14.517  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.517  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.517  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.517Z'}
+07:20:14.518  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.518  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.518  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.518Z'}
+07:20:14.518  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.518  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.518  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.518Z'}
+07:20:14.518  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.519  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.519  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.519Z'}
+07:20:14.519  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.519  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.519  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.519Z'}
+07:20:14.519  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.519  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.519  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.519Z'}
+07:20:14.520  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.520  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.520  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.520Z'}
+07:20:14.520  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.520  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.520  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.520Z'}
+07:20:14.520  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.521  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.521  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.521Z'}
+07:20:14.521  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.521  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.521  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.521Z'}
+07:20:14.521  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.521  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.522  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.522Z'}
+07:20:14.522  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.522  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.522  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.522Z'}
+07:20:14.522  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.522  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.522  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.522Z'}
+07:20:14.522  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.522  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.523  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.523Z'}
+07:20:14.523  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.523  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.523  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.523Z'}
+07:20:14.523  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.523  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.523  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.523Z'}
+07:20:14.523  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.523  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.524  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.524Z'}
+07:20:14.524  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.524  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.524  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.524Z'}
+07:20:14.524  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.524  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.524  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.524Z'}
+07:20:14.524  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.524  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.524  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.524Z'}
+07:20:14.524  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.525  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.525  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.525Z'}
+07:20:14.525  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.525  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.525  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.525Z'}
+07:20:14.525  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.525  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.525  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.525Z'}
+07:20:14.525  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.525  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.525  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.525Z'}
+07:20:14.525  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.526  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.526  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.526Z'}
+07:20:14.526  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.526  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.526  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.526Z'}
+07:20:14.526  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.526  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.526  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.526Z'}
+07:20:14.526  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.526  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.527  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.527Z'}
+07:20:14.527  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.527  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.527  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.527Z'}
+07:20:14.527  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.527  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.527  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.527Z'}
+07:20:14.527  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.527  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.527  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.527Z'}
+07:20:14.527  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.527  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.528  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.528Z'}
+07:20:14.528  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.528  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.528  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.528Z'}
+07:20:14.528  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.528  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.528  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.528Z'}
+07:20:14.528  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.528  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.528  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.528Z'}
+07:20:14.528  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.529  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.529  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.529Z'}
+07:20:14.529  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.529  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.529  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.529Z'}
+07:20:14.529  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.529  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.529  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.529Z'}
+07:20:14.529  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.529  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.530  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.530Z'}
+07:20:14.530  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.530  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.530  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.530Z'}
+07:20:14.530  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.530  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.530  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.530Z'}
+07:20:14.530  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.530  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.530  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.530Z'}
+07:20:14.530  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.530  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.531  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.531Z'}
+07:20:14.531  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.531  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.531  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.531Z'}
+07:20:14.531  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.531  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.531  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.531Z'}
+07:20:14.531  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.531  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.531  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.531Z'}
+07:20:14.531  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.531  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.532  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.532Z'}
+07:20:14.532  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.532  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.532  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.532Z'}
+07:20:14.532  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.532  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.532  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.532Z'}
+07:20:14.532  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.532  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.532  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.532Z'}
+07:20:14.532  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.533  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.533  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.533Z'}
+07:20:14.533  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.533  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.533  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.533Z'}
+07:20:14.533  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.533  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.533  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.533Z'}
+07:20:14.533  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.534  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.534  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.534Z'}
+07:20:14.534  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.534  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.534  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.534Z'}
+07:20:14.534  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.534  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.534  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.534Z'}
+07:20:14.534  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.534  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.535  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.535Z'}
+07:20:14.535  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.535  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.535  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.535Z'}
+07:20:14.535  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.535  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.535  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.535Z'}
+07:20:14.535  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.535  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.535  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.535Z'}
+07:20:14.535  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.535  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.535  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.535Z'}
+07:20:14.536  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.536  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.536  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.536Z'}
+07:20:14.536  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.536  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.536  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.536Z'}
+07:20:14.536  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.536  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.537  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.537Z'}
+07:20:14.537  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.537  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.537  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.537Z'}
+07:20:14.537  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.537  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.537  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.537Z'}
+07:20:14.537  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.537  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.537  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.537Z'}
+07:20:14.537  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.537  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.538  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.538Z'}
+07:20:14.538  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.538  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.538  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.538Z'}
+07:20:14.538  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.538  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.538  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.538Z'}
+07:20:14.538  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.538  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.538  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.538Z'}
+07:20:14.538  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.539  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.539  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.539Z'}
+07:20:14.539  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.539  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.539  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.539Z'}
+07:20:14.539  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.539  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.539  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.539Z'}
+07:20:14.539  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.539  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.539  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.539Z'}
+07:20:14.539  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.540  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.540  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.540Z'}
+07:20:14.540  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.540  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.540  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.540Z'}
+07:20:14.540  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.540  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.540  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.540Z'}
+07:20:14.540  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.541  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.541  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.541Z'}
+07:20:14.541  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.541  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.541  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.541Z'}
+07:20:14.541  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.542  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.542  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.542Z'}
+07:20:14.542  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.543  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.543  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.543Z'}
+07:20:14.543  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.543  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.543  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.543Z'}
+07:20:14.543  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.543  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.543  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.543Z'}
+07:20:14.544  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.544  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.544  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.544Z'}
+07:20:14.544  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.544  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.544  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.544Z'}
+07:20:14.544  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.544  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.545  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.545Z'}
+07:20:14.545  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.545  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.545  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.545Z'}
+07:20:14.545  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.545  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.545  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.545Z'}
+07:20:14.545  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.545  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.545  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.545Z'}
+07:20:14.546  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.546  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.546  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.546Z'}
+07:20:14.546  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.546  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.546  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.546Z'}
+07:20:14.546  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.546  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.546  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.546Z'}
+07:20:14.547  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.547  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.547  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.547Z'}
+07:20:14.547  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.547  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.547  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.547Z'}
+07:20:14.547  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.548  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.548  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.548Z'}
+07:20:14.548  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.548  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.548  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.548Z'}
+07:20:14.548  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.548  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.548  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.548Z'}
+07:20:14.548  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.548  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.548  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.548Z'}
+07:20:14.548  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.548  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.548  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.548Z'}
+07:20:14.548  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.548  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.548  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.548Z'}
+07:20:14.548  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.549  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.549  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.549Z'}
+07:20:14.549  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.550  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.550  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.550Z'}
+07:20:14.550  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.550  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.550  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.550Z'}
+07:20:14.550  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.550  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.550  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.550Z'}
+07:20:14.550  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.550  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.550  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.550Z'}
+07:20:14.550  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.550  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.550  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.550Z'}
+07:20:14.550  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.551  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.551  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.551Z'}
+07:20:14.551  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.551  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.551  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.551Z'}
+07:20:14.551  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.551  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.551  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.551Z'}
+07:20:14.551  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.551  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.551  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.551Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.552  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.552  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.552Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.552  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.552  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.552Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.552  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.552  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.552Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.552  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.552  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.552Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.552  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.552  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.552Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.552  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.552  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.552Z'}
+07:20:14.552  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.553  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.553  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.553Z'}
+07:20:14.553  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.554  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.554  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.554Z'}
+07:20:14.554  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.554  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.554  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.554Z'}
+07:20:14.554  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.554  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.554  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.554Z'}
+07:20:14.554  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.554  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.554  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.554Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.555  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.555  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.555Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.555  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.555  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.555Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.555  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.555  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.555Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.555  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.555  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.555Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.555  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.555  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.555Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.555  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.555  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.555Z'}
+07:20:14.555  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.556  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.556  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.556Z'}
+07:20:14.556  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.556  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.556  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.556Z'}
+07:20:14.556  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.556  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.556  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.556Z'}
+07:20:14.556  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.556  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.556  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.556Z'}
+07:20:14.556  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.557  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.557  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.557  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.557Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.558  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.558  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.558Z'}
+07:20:14.558  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}
+07:20:14.559  🔐 E2EE: Using browser shim - providing basic encryption only
+07:20:14.559  🔐 E2EE: libsignal-client successfully loaded
+07:20:14.559  🔐 SignalClient Status: {available: true, error: null, features: Array(8), isShim: true, timestamp: '2025-09-02T23:20:14.559Z'}

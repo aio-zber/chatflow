@@ -11,6 +11,7 @@ import { useE2EE } from '@/hooks/useE2EE'
 import { useSocketContext } from '@/context/SocketContext'
 import { UserSelectionModal } from './UserSelectionModal'
 import { ConversationAvatar } from './ConversationAvatar'
+import { formatConversationTime } from '@/utils/dateUtils'
 
 interface ChatSidebarProps {
   selectedConversationId: string | null
@@ -49,11 +50,7 @@ function formatTime(date: Date | string) {
     } else if (diffInMinutes < 60) {
       return `${diffInMinutes}m`
     } else {
-      return messageDate.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
+      return formatConversationTime(messageDate)
     }
   } else if (isYesterday) {
     return 'Yesterday'

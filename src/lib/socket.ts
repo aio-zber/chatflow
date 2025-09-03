@@ -165,6 +165,17 @@ export const initializeSocketIO = (req: NextApiRequest, res: NextApiResponseServ
         const conversationRoom = io.sockets.adapter.rooms.get(`conversation:${conversationId}`)
         console.log(`[SOCKET] Conversation room has ${conversationRoom?.size || 0} members`)
         console.log(`[SOCKET] Socket ${socket.id} is now in rooms:`, Array.from(socket.rooms))
+        
+        // Debug: List all sockets in this conversation room
+        if (conversationRoom) {
+          console.log(`[SOCKET] All sockets in conversation:${conversationId}:`)
+          conversationRoom.forEach(socketId => {
+            const connectedSocket = io.sockets.sockets.get(socketId)
+            if (connectedSocket) {
+              console.log(`[SOCKET]   - ${socketId} (User: ${connectedSocket.data.userId || 'unknown'})`)
+            }
+          })
+        }
       })
 
       socket.on('leave-room', (conversationId: string) => {
@@ -1645,6 +1656,12 @@ export const getSocketInstance = (req: NextApiRequest, res: NextApiResponse) => 
   if (!serverRes.socket?.server?.io) {
     initializeSocketIO(req, serverRes)
   }
+  
+  // Always update the global instance in case it was reset
+  if (serverRes.socket?.server?.io) {
+    setGlobalSocketIO(serverRes.socket.server.io)
+  }
+  
   return serverRes.socket.server.io
 }
 

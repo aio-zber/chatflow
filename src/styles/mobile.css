@@ -1,0 +1,84 @@
+/* Mobile-specific styles for React Native considerations */
+
+.mobile-scroll-optimization {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.touch-active {
+  background-color: rgba(116, 96, 242, 0.1) !important;
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .poll-container {
+    margin: 0 -1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .message-input-mobile {
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e5e5;
+    z-index: 100;
+  }
+  
+  .chat-messages-mobile {
+    padding-bottom: 80px; /* Account for fixed input */
+  }
+  
+  .poll-option-mobile {
+    min-height: 44px; /* iOS minimum touch target */
+    padding: 12px 16px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .poll-share-menu-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e5e5;
+    border-radius: 16px 16px 0 0;
+    padding: 20px;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+  }
+}
+
+/* Handle safe areas on iOS */
+@supports (padding: max(0px)) {
+  .mobile-safe-area {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Touch-friendly buttons */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    font-size: 16px;
+  }
+}

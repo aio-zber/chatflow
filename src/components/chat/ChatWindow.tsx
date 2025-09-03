@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { MessageBubble } from './MessageBubble'
 import { MessageInput } from './MessageInput'
+import { PollModal } from './PollModal'
 import { GroupSettings } from './GroupSettings'
 import { UserInfoModal } from './UserInfoModal'
 import { CallModal } from './CallModal'
@@ -47,6 +48,35 @@ interface MessageBubbleMessage {
     size?: number
     duration?: number
   }[]
+  poll?: {
+    id: string
+    question: string
+    allowMultiple: boolean
+    isAnonymous: boolean
+    expiresAt: string | null
+    createdAt: string
+    createdBy: {
+      id: string
+      username: string
+      name: string | null
+      avatar: string | null
+    }
+    options: Array<{
+      id: string
+      text: string
+      order: number
+      voteCount: number
+      hasVoted: boolean
+      voters?: Array<{
+        id: string
+        username: string
+        name: string | null
+        avatar: string | null
+      }>
+    }>
+    totalVotes: number
+    messageId: string
+  }
 }
 
 interface TypingUser {
@@ -59,8 +89,10 @@ interface ChatWindowProps {
 }
 
 export function ChatWindow({ conversationId }: ChatWindowProps) {
+  console.log('🏠 ChatWindow mounted/re-rendered with conversationId:', conversationId)
+  
   const { data: session } = useSession()
-  const { socket } = useSocketContext()
+  const { socket, joinConversationRoom } = useSocketContext()
   const { playNotificationSound, soundEnabled } = useNotifications()
   const { conversations, loading: conversationsLoading, markConversationAsRead, forceRefreshKey, triggerRefresh } = useConversations(conversationId)
   const { messages, loading: messagesLoading, error: messagesError, sendMessage, loadMore, hasMore, loadingMore: messagesLoadingMore, scrollToMessageLoading, markMessagesAsRead, reactToMessage, scrollToMessage } = useMessages(conversationId)
@@ -76,6 +108,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const [isBlockLoading, setIsBlockLoading] = useState(false)
   const [showGroupSettings, setShowGroupSettings] = useState(false)
   const [showUserInfo, setShowUserInfo] = useState(false)
+  const [showPollModal, setShowPollModal] = useState(false)
   const [showCall, setShowCall] = useState(false)
   const [callType, setCallType] = useState<'voice' | 'video'>('voice')
   const [callId, setCallId] = useState<string | null>(null)
@@ -98,6 +131,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   // Find the current conversation from the conversations list
   const conversation = conversations.find(conv => conv.id === conversationId)
+  
+  // Get current user's role in the conversation
+  const currentUserRole = conversation?.participants.find(p => p.userId === session?.user?.id)?.role || null
   
   // Add a forced refresh state for group changes
   const [groupRefreshKey, setGroupRefreshKey] = useState(0)
@@ -351,7 +387,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         url: att.fileUrl,
         type: att.fileType === 'audio/webm' || att.fileType.startsWith('audio/') ? 'voice' as const : (att.fileType.startsWith('image/') ? 'image' as const : 'file' as const),
         size: att.fileSize
-      })) || []
+      })) || [],
+      poll: msg.poll
     }
   })
 
@@ -888,44 +925,82 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     }
   }, [socket, conversationId, session?.user?.id])
 
+  // Throttled scroll handler to prevent excessive loading
+  const lastScrollTime = useRef(0)
+  const scrollThrottleDelay = 200 // ms
+  
   // Handle scroll to show/hide scroll button and load more messages
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current
     if (!container) return
 
+    // Throttle scroll handling to prevent excessive calls
+    const now = Date.now()
+    if (now - lastScrollTime.current < scrollThrottleDelay) {
+      return
+    }
+    lastScrollTime.current = now
+
     const { scrollTop, scrollHeight, clientHeight } = container
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight
     const isNearBottom = distanceFromBottom < 100
-    const isNearTop = scrollTop < 100
+    const isNearTop = scrollTop < 200 // Increased trigger zone for smoother infinite scroll
+    
+    // Debug logging for scroll events
+    if (isNearTop || isNearBottom) {
+      console.log('📍 Scroll position:', { 
+        scrollTop, 
+        scrollHeight, 
+        clientHeight, 
+        isNearTop, 
+        isNearBottom, 
+        hasMore, 
+        loading: messagesLoading, 
+        loadingMore: messagesLoadingMore, 
+        autoScroll 
+      })
+    }
     
     setShowScrollButton(!isNearBottom && transformedMessages.length > 0)
     setAutoScroll(isNearBottom)
 
-    // Only load more messages if we're near the top AND not trying to auto-scroll to bottom
-    // Add additional checks to prevent unwanted load-more triggers
-    if (isNearTop && hasMore && !messagesLoading && !messagesLoadingMore && !showSearch && !autoScroll) {
-      // Don't load more if we're within the first 1 second of opening a conversation
-      // This prevents immediate load-more when auto-scrolling to bottom
-      const now = Date.now()
+    // Load more messages when near the top - removed autoScroll restriction
+    if (isNearTop && hasMore && !messagesLoading && !messagesLoadingMore && !showSearch) {
       const conversationOpenTime = conversationId ? conversationOpenTimeRef.current[conversationId] || 0 : 0
       
-      if (now - conversationOpenTime > 1000) {
+      if (now - conversationOpenTime > 500) { // Further reduced delay
+        console.log('🔄 Infinite scroll triggered - loading more messages')
         // Store current scroll position before loading more messages
         scrollPositionRef.current = {
           scrollTop,
           scrollHeight
         }
         
-        loadMore()
+        loadMore({ limit: 200, bulkLoad: true }) // Large batches for automatic infinite scroll
+      } else {
+        console.log('⏱️ Too early for infinite scroll:', now - conversationOpenTime, 'ms since open')
       }
+    } else if (isNearTop) {
+      console.log('🚫 Scroll conditions not met:', { 
+        hasMore, 
+        loading: messagesLoading, 
+        loadingMore: messagesLoadingMore, 
+        showSearch 
+      })
     }
   }, [transformedMessages.length, hasMore, messagesLoading, messagesLoadingMore, showSearch, loadMore, autoScroll, conversationId])
 
   useEffect(() => {
     const container = messagesContainerRef.current
     if (container) {
+      console.log('📜 Attaching scroll event listener to messages container')
       container.addEventListener('scroll', handleScroll)
-      return () => container.removeEventListener('scroll', handleScroll)
+      return () => {
+        console.log('📜 Removing scroll event listener from messages container')
+        container.removeEventListener('scroll', handleScroll)
+      }
+    } else {
+      console.log('⚠️ Messages container ref not found when trying to attach scroll listener')
     }
   }, [handleScroll])
 
@@ -1088,6 +1163,166 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   const handleReact = (messageId: string, emoji: string) => {
     reactToMessage(messageId, emoji)
+  }
+
+  const handleCreatePoll = async (pollData: {
+    question: string
+    options: string[]
+    allowMultiple: boolean
+    isAnonymous: boolean
+    expiresInMinutes?: number
+  }) => {
+    if (!conversationId) return
+
+    console.log('🔥 FRONTEND: handleCreatePoll called with:', {
+      question: pollData.question,
+      optionsCount: pollData.options.length,
+      conversationId,
+      userId: session?.user?.id
+    })
+
+    try {
+      const response = await fetch('/api/polls', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...pollData,
+          conversationId,
+        }),
+      })
+
+      console.log('🔥 FRONTEND: Poll creation response status:', response.status)
+
+      if (!response.ok) {
+        throw new Error('Failed to create poll')
+      }
+
+      // Add poll immediately for current user to prevent delay
+      try {
+        const pollResponseData = await response.json()
+        console.log('🔥 FRONTEND: Poll creation response data:', pollResponseData)
+        
+        if (pollResponseData.success && pollResponseData.poll && pollResponseData.message) {
+          const messageData = {
+            id: pollResponseData.message.id,
+            content: pollResponseData.message.content,
+            type: 'poll' as const,
+            status: 'sent' as const,
+            senderId: pollResponseData.message.senderId,
+            senderName: session?.user?.name || 'You',
+            senderImage: session?.user?.avatar || undefined,
+            timestamp: new Date(pollResponseData.message.createdAt),
+            reactions: [],
+            attachments: [],
+            poll: {
+              id: pollResponseData.poll.id,
+              question: pollResponseData.poll.question,
+              allowMultiple: pollResponseData.poll.allowMultiple,
+              isAnonymous: pollResponseData.poll.isAnonymous,
+              expiresAt: pollResponseData.poll.expiresAt,
+              createdAt: pollResponseData.poll.createdAt,
+              createdBy: pollResponseData.poll.createdBy,
+              options: pollResponseData.poll.options.map((option: any) => ({
+                id: option.id,
+                text: option.text,
+                order: option.order,
+                voteCount: option._count?.votes || 0,
+                hasVoted: false,
+                voters: []
+              })),
+              totalVotes: pollResponseData.poll._count?.votes || 0,
+              messageId: pollResponseData.message.id
+            }
+          }
+          
+          // Add message immediately
+          console.log('🔥 FRONTEND: Dispatching add-immediate-message event with:', messageData.id)
+          if (window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('add-immediate-message', { detail: messageData }))
+            console.log('🔥 FRONTEND: add-immediate-message event dispatched successfully')
+          }
+        }
+      } catch (parseError) {
+        console.error('🔥 FRONTEND: Error parsing poll response:', parseError)
+        // Fall back to socket events only
+      }
+      
+      // Still scroll to show the new poll
+      setTimeout(() => scrollOnSendMessage(), 100)
+    } catch (error) {
+      console.error('❌ Error creating poll:', error)
+    }
+  }
+
+  const handleVotePoll = async (pollId: string, optionIds: string[]) => {
+    console.log('🔥 FRONTEND: handleVotePoll called with:', {
+      pollId,
+      optionIds,
+      userId: session?.user?.id,
+      conversationId
+    })
+    
+    try {
+      const response = await fetch(`/api/polls/${pollId}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          optionIds,
+        }),
+      })
+
+      console.log('🔥 FRONTEND: Vote response status:', response.status)
+
+      if (!response.ok) {
+        throw new Error('Failed to vote on poll')
+      }
+
+      // Add immediate vote feedback for current user
+      try {
+        const voteResponseData = await response.json()
+        console.log('🔥 FRONTEND: Vote response data:', voteResponseData)
+        
+        if (voteResponseData.success && voteResponseData.poll) {
+          const updatedPollData = {
+            id: voteResponseData.poll.id,
+            question: voteResponseData.poll.question,
+            allowMultiple: voteResponseData.poll.allowMultiple,
+            isAnonymous: voteResponseData.poll.isAnonymous,
+            expiresAt: voteResponseData.poll.expiresAt,
+            createdAt: voteResponseData.poll.createdAt,
+            createdBy: voteResponseData.poll.createdBy,
+            options: voteResponseData.poll.options.map((option: any) => ({
+              id: option.id,
+              text: option.text,
+              order: option.order,
+              voteCount: option._count?.votes || 0,
+              hasVoted: option.votes?.some((vote: any) => vote.userId === session?.user?.id) || false,
+              voters: voteResponseData.poll.isAnonymous ? [] : (option.votes?.map((vote: any) => vote.user) || [])
+            })),
+            totalVotes: voteResponseData.poll._count?.votes || 0,
+            messageId: voteResponseData.poll.messageId
+          }
+          
+          // Dispatch immediate poll update
+          console.log('🔥 FRONTEND: Dispatching update-immediate-poll event with pollId:', voteResponseData.poll.id)
+          if (window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('update-immediate-poll', { 
+              detail: { pollId: voteResponseData.poll.id, poll: updatedPollData }
+            }))
+            console.log('🔥 FRONTEND: update-immediate-poll event dispatched successfully')
+          }
+        }
+      } catch (parseError) {
+        console.error('Error parsing vote response:', parseError)
+        // Fall back to socket events only
+      }
+    } catch (error) {
+      console.error('Error voting on poll:', error)
+    }
   }
 
   const handleEditMessage = async (messageId: string, newContent: string) => {
@@ -1379,10 +1614,18 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       <div className="flex items-center justify-between p-4 bg-viber-surface dark:bg-viber-surface border-b border-viber-border dark:border-viber-border">
         <div className="flex items-center space-x-3 flex-1">
           {conversation?.isGroup ? (
-            <div className="w-12 h-12 bg-viber-primary rounded-full flex items-center justify-center shadow-sm">
-              <span className="text-viber-text-inverse font-semibold text-lg">
-                {conversation.participants.length}
-              </span>
+            <div className="w-12 h-12 bg-viber-primary rounded-full flex items-center justify-center shadow-sm overflow-hidden">
+              {conversation.avatar ? (
+                <img
+                  src={getCompatibleFileUrl(conversation.avatar)}
+                  alt={conversation.name || 'Group avatar'}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-viber-text-inverse font-semibold text-lg">
+                  {conversation.participants.length}
+                </span>
+              )}
             </div>
           ) : (
             <div className="relative">
@@ -1545,23 +1788,26 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           </div>
         )}
         
-        {/* Show "Load more" button if there are more messages and not currently loading */}
+        {/* Show "Load more" button as fallback when infinite scroll is not triggered */}
         {hasMore && !messagesLoadingMore && !showSearch && transformedMessages.length > 0 && (
           <div className="flex justify-center py-2 mb-2">
             <button
               onClick={() => {
                 const container = messagesContainerRef.current
                 if (container) {
+                  console.log('📱 Load More button clicked - loading bulk messages')
                   scrollPositionRef.current = {
                     scrollTop: container.scrollTop,
                     scrollHeight: container.scrollHeight
                   }
-                  loadMore()
+                  // Use large bulk loading for manual button clicks
+                  loadMore({ limit: 250, bulkLoad: true })
                 }
               }}
-              className="text-sm text-viber-primary hover:text-viber-secondary bg-viber-surface dark:bg-viber-surface px-4 py-2 rounded-full hover:bg-viber-accent dark:hover:bg-viber-accent transition-all duration-200 border border-viber-border dark:border-viber-border shadow-sm font-medium"
+              disabled={messagesLoadingMore}
+              className="text-sm text-viber-primary hover:text-viber-secondary bg-viber-surface dark:bg-viber-surface px-4 py-2 rounded-full hover:bg-viber-accent dark:hover:bg-viber-accent transition-all duration-200 border border-viber-border dark:border-viber-border shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Load older messages
+              {messagesLoadingMore ? 'Loading...' : 'Load older messages'}
             </button>
           </div>
         )}
@@ -1596,7 +1842,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                   onEdit={handleEditMessage}
                   onDelete={handleDeleteMessage}
                   onDeleteForMe={handleDeleteForMe}
+                  onVotePoll={handleVotePoll}
                   scrollToMessageLoading={scrollToMessageLoading}
+                  isGroupChat={conversation?.isGroup}
+                  currentUserRole={currentUserRole}
                 />
               ))}
             </>
@@ -1622,7 +1871,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 onEdit={handleEditMessage}
                 onDelete={handleDeleteMessage}
                 onDeleteForMe={handleDeleteForMe}
+                onVotePoll={handleVotePoll}
                 scrollToMessageLoading={scrollToMessageLoading}
+                isGroupChat={conversation?.isGroup}
+                currentUserRole={currentUserRole}
               />
             ))
           )
@@ -1664,6 +1916,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         onSendMessage={handleSendMessage}
         onSendVoiceMessage={handleSendVoiceMessage}
         onTyping={handleTyping}
+        onCreatePoll={() => setShowPollModal(true)}
         replyTo={replyTo ? {
           id: replyTo.id,
           content: replyTo.content,
@@ -1696,6 +1949,14 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           onClose={() => setShowSafetyNumber(false)}
         />
       )}
+
+      {/* Poll Creation Modal */}
+      <PollModal
+        isOpen={showPollModal}
+        onClose={() => setShowPollModal(false)}
+        onCreatePoll={handleCreatePoll}
+        conversationId={conversationId}
+      />
 
       {/* Group Settings Modal */}
       {conversationId && (

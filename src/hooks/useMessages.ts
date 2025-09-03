@@ -120,8 +120,43 @@ export const useMessages = (conversationId: string | null) => {
     currentNextCursorRef.current = nextCursor
   }, [messages, hasMore, nextCursor])
 
-  const fetchMessages = useCallback(async (cursor?: string) => {
+  // Helper function to get current state using refs
+  const getCurrentStateFromRefs = useCallback(() => {
+    return {
+      messages: currentMessagesRef.current,
+      hasMore: currentHasMoreRef.current,
+      nextCursor: currentNextCursorRef.current
+    }
+  }, [])
+
+  // Add a ref to track if a request is already in progress to prevent duplicates
+  const requestInProgressRef = useRef<Set<string>>(new Set())
+
+  const fetchMessages = useCallback(async (cursor?: string, options?: { limit?: number, bulkLoad?: boolean }) => {
     if (!conversationId || !session?.user?.id) return
+
+    // Create a unique key for this request to prevent rapid duplicates (shorter timeframe)
+    const requestKey = `${conversationId}-${cursor || 'initial'}`
+    
+    // Check if this exact request is already in progress (less restrictive)
+    if (requestInProgressRef.current.has(requestKey)) {
+      console.log(`🚫 Duplicate request blocked: ${requestKey}`)
+      return
+    }
+
+    // Mark this request as in progress
+    requestInProgressRef.current.add(requestKey)
+
+    // Debug logging to track loading behavior
+    const requestLimit = options?.limit || 75
+    const isBulkLoad = options?.bulkLoad || false
+    console.log(`🔄 fetchMessages called:`, {
+      cursor: cursor ? cursor.substring(0, 8) + '...' : 'initial',
+      limit: requestLimit,
+      bulkLoad: isBulkLoad,
+      conversationId: conversationId.substring(0, 8) + '...',
+      requestKey
+    })
 
     try {
       if (cursor) {
@@ -132,7 +167,10 @@ export const useMessages = (conversationId: string | null) => {
       
       const url = new URL(`/api/messages/${conversationId}`, window.location.origin)
       if (cursor) url.searchParams.set('cursor', cursor)
+      if (options?.limit) url.searchParams.set('limit', options.limit.toString())
+      if (options?.bulkLoad) url.searchParams.set('bulkLoad', 'true')
 
+      console.log(`🌐 Making request to: ${url.toString()}`)
       const response = await fetch(url.toString())
       
       if (!response.ok) {
@@ -141,14 +179,18 @@ export const useMessages = (conversationId: string | null) => {
 
       const data = await response.json()
       
+      console.log(`📦 Received ${data.messages?.length || 0} messages, nextCursor: ${data.nextCursor ? data.nextCursor.substring(0, 8) + '...' : 'none'}`)
+      
       if (cursor) {
         // When loading more messages, deduplicate by ID to prevent React key conflicts
         setMessages(prev => {
           const existingIds = new Set(prev.map(msg => msg.id))
           const newMessages = data.messages.filter(msg => !existingIds.has(msg.id))
+          console.log(`📝 Adding ${newMessages.length} new messages (filtered from ${data.messages.length}), total will be: ${prev.length + newMessages.length}`)
           return [...newMessages, ...prev]
         })
       } else {
+        console.log(`📝 Setting initial ${data.messages?.length || 0} messages`)
         setMessages(data.messages || [])
       }
       
@@ -163,6 +205,11 @@ export const useMessages = (conversationId: string | null) => {
       } else {
         setLoading(false)
       }
+      
+      // Mark this request as complete after a short delay to prevent rapid duplicates
+      setTimeout(() => {
+        requestInProgressRef.current.delete(requestKey)
+      }, 100)
     }
   }, [conversationId, session?.user?.id])
 
@@ -231,13 +278,95 @@ export const useMessages = (conversationId: string | null) => {
     }
   }, [session?.user])
 
-  const loadMore = useCallback(async () => {
-    if (nextCursor && !loading && !loadingMore) {
-      await fetchMessages(nextCursor)
+  // Create a stable loadMore function using refs to avoid recreation loops
+  const loadMore = useCallback(async (options?: { limit?: number, bulkLoad?: boolean }) => {
+    // Use refs to get current state without causing recreations
+    const currentState = getCurrentStateFromRefs()
+    
+    console.log('🔄 loadMore called:', { 
+      hasNextCursor: !!currentState.nextCursor, 
+      loading, 
+      loadingMore, 
+      options 
+    })
+    
+    if (currentState.nextCursor && !loading && !loadingMore) {
+      console.log('✅ Loading more messages with cursor:', currentState.nextCursor.substring(0, 8) + '...')
+      await fetchMessages(currentState.nextCursor, options)
       return true // Return true if we attempted to load
+    } else {
+      console.log('❌ Cannot load more:', { 
+        hasNextCursor: !!currentState.nextCursor, 
+        loading, 
+        loadingMore 
+      })
     }
     return false // Return false if we couldn't load
-  }, [nextCursor, loading, loadingMore, fetchMessages])
+  }, [loading, loadingMore, fetchMessages, getCurrentStateFromRefs])
+
+  // Improved bulk loading function using the centralized fetchMessages
+  const loadMoreBulk = useCallback(async (targetMessageId?: string, maxBatches = 5) => {
+    const currentState = getCurrentStateFromRefs()
+    if (!currentState.nextCursor || loading || loadingMore) {
+      return false
+    }
+
+    console.log(`🚀 Starting bulk load for ${maxBatches} batches, target: ${targetMessageId || 'none'}`)
+    
+    let batchesLoaded = 0
+    let currentCursor = currentState.nextCursor
+    let foundTarget = false
+
+    // Load multiple batches in sequence with larger batch sizes
+    while (batchesLoaded < maxBatches && currentCursor && !foundTarget) {
+      try {
+        console.log(`📦 Loading batch ${batchesLoaded + 1}/${maxBatches} with cursor: ${currentCursor.substring(0, 8)}...`)
+        
+        // Use the centralized fetchMessages function for consistency
+        await fetchMessages(currentCursor, { limit: 200, bulkLoad: true })
+        
+        // Check if we found the target message
+        if (targetMessageId) {
+          const currentState = getCurrentStateFromRefs()
+          foundTarget = currentState.messages.some(msg => msg.id === targetMessageId)
+          if (foundTarget) {
+            console.log(`🎯 Found target message ${targetMessageId} in batch ${batchesLoaded + 1}`)
+          }
+        }
+        
+        // Wait for state update before getting the next cursor
+        await new Promise(resolve => setTimeout(resolve, 50))
+        
+        // Update our local cursor tracking from the updated state
+        const updatedState = getCurrentStateFromRefs()
+        
+        // Only continue if we got a new cursor (different from the current one)
+        if (updatedState.nextCursor && updatedState.nextCursor !== currentCursor) {
+          currentCursor = updatedState.nextCursor
+        } else {
+          console.log(`📛 No new cursor received or same cursor, stopping bulk load`)
+          break
+        }
+        
+        batchesLoaded++
+        
+        // If we found the target or no more batches available, stop
+        if (foundTarget || !updatedState.nextCursor || !updatedState.hasMore) {
+          break
+        }
+        
+        // Small delay between batches to allow UI updates
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+      } catch (error) {
+        console.error('Bulk load error:', error)
+        break
+      }
+    }
+
+    console.log(`✅ Bulk load completed: ${batchesLoaded} batches loaded, found target: ${foundTarget}`)
+    return foundTarget || batchesLoaded > 0
+  }, [loading, loadingMore, fetchMessages, getCurrentStateFromRefs])
 
   // Debounced scroll to message to prevent multiple simultaneous calls
   const [scrollToMessageDebounce, setScrollToMessageDebounce] = useState<{[key: string]: number}>({})
@@ -330,7 +459,7 @@ export const useMessages = (conversationId: string | null) => {
       setMessages([])
       setNextCursor(null)
       setHasMore(false)
-      fetchMessages()
+      fetchMessages(undefined, { limit: 150, bulkLoad: true }) // Initial load with bulk loading
     }
   }, [conversationId, fetchMessages])
 
@@ -394,10 +523,21 @@ export const useMessages = (conversationId: string | null) => {
     if (!socket || !conversationId) return
 
     const handleNewMessage = (message: Message) => {
+      console.log('🔌 Socket received new-message event:', {
+        messageId: message.id,
+        type: message.type,
+        senderId: message.senderId,
+        conversationId: message.conversationId,
+        targetConversationId: conversationId,
+        hasPoll: !!message.poll
+      })
+      
       if (message.conversationId === conversationId) {
-        // Always show system messages (like group member changes) and polls regardless of sender
+        // Always show system messages and polls regardless of sender
         // For regular messages, only show if not from current user (to prevent duplicates)
         const shouldShow = message.type === 'system' || message.type === 'poll' || message.senderId !== session?.user?.id
+        
+        console.log('📋 Message show logic:', { shouldShow, type: message.type, senderId: message.senderId, currentUserId: session?.user?.id })
         
         if (shouldShow) {
           setMessages(prev => {
@@ -417,6 +557,13 @@ export const useMessages = (conversationId: string | null) => {
                 conversationId: message.conversationId,
                 content: message.content
               })
+            } else if (message.type === 'poll') {
+              console.log('📊 useMessages: Adding POLL message:', message.content.substring(0, 50))
+              console.log('📊 useMessages: Poll details:', { 
+                id: message.id, 
+                pollId: message.poll?.id,
+                question: message.poll?.question
+              })
             } else {
               console.log('📨 useMessages: Adding regular message:', message.type, message.content.substring(0, 50))
             }
@@ -428,6 +575,8 @@ export const useMessages = (conversationId: string | null) => {
         } else {
           console.log('❌ useMessages: Message not shown (shouldShow=false):', { type: message.type, senderId: message.senderId, currentUserId: session?.user?.id })
         }
+      } else {
+        console.log('❌ useMessages: Message for different conversation:', { messageConversation: message.conversationId, currentConversation: conversationId })
       }
     }
 
@@ -499,8 +648,15 @@ export const useMessages = (conversationId: string | null) => {
     }
 
     const handlePollUpdated = (data: { pollId: string; poll: any }) => {
+      console.log('🔌 Socket received poll-updated event:', {
+        pollId: data.pollId,
+        poll: data.poll ? 'Poll data present' : 'No poll data',
+        conversationId: conversationId
+      })
+      
       setMessages(prev => prev.map(msg => {
         if (msg.type === 'poll' && msg.poll?.id === data.pollId) {
+          console.log('📊 Updating poll in message:', msg.id, 'with new poll data')
           return {
             ...msg,
             poll: data.poll
@@ -526,6 +682,49 @@ export const useMessages = (conversationId: string | null) => {
       socket.off('poll-updated', handlePollUpdated)
     }
   }, [socket, conversationId, session?.user?.id])
+
+  // Handle immediate message addition (for current user's polls)
+  useEffect(() => {
+    const handleImmediateMessage = (event: CustomEvent) => {
+      const message = event.detail
+      if (message && message.conversationId === conversationId) {
+        setMessages(prev => {
+          // Prevent duplicate messages by checking for existing ID
+          if (prev.some(m => m.id === message.id)) {
+            console.log('📨 useMessages: Immediate duplicate message ignored:', message.id)
+            return prev
+          }
+          
+          console.log('📨 useMessages: Adding immediate message:', message.type, message.content?.substring(0, 50))
+          return [...prev, message]
+        })
+      }
+    }
+
+    const handleImmediatePollUpdate = (event: CustomEvent) => {
+      const { pollId, poll } = event.detail
+      if (pollId && poll) {
+        setMessages(prev => prev.map(msg => {
+          if (msg.type === 'poll' && msg.poll?.id === pollId) {
+            console.log('📊 useMessages: Immediate poll update:', pollId)
+            return {
+              ...msg,
+              poll: poll
+            }
+          }
+          return msg
+        }))
+      }
+    }
+
+    window.addEventListener('add-immediate-message', handleImmediateMessage as EventListener)
+    window.addEventListener('update-immediate-poll', handleImmediatePollUpdate as EventListener)
+    
+    return () => {
+      window.removeEventListener('add-immediate-message', handleImmediateMessage as EventListener)
+      window.removeEventListener('update-immediate-poll', handleImmediatePollUpdate as EventListener)
+    }
+  }, [conversationId])
 
   // Scroll to a specific message by ID
   const scrollToMessage = useCallback(async (messageId: string) => {
@@ -595,17 +794,50 @@ export const useMessages = (conversationId: string | null) => {
       return
     }
     
-    // Message not in current messages - try to load older messages
-    let attempts = 0
-    const maxAttempts = 10 // Reasonable max attempts
-    let consecutiveNoNewMessages = 0
-    const maxConsecutiveNoNew = 2 // Reduced to fail faster
+    // Message not in current messages - try bulk loading for faster results
+    console.log(`Bulk loading messages to find message ${messageId}`)
     
-    while (attempts < maxAttempts && consecutiveNoNewMessages < maxConsecutiveNoNew) {
+    const bulkLoadResult = await loadMoreBulk(messageId, 15) // Load up to 15 batches (3000 messages)
+    
+    if (bulkLoadResult) {
+      // Check if message exists now
+      const finalState = getCurrentState()
+      messageExists = finalState.messages.some((msg: Message) => msg.id === messageId)
+      
+      if (messageExists) {
+        // Found the message, try to scroll to it with retry logic
+        let scrollAttempts = 0
+        const maxScrollAttempts = 5
+        
+        const tryScroll = () => {
+          if (scrollToMessageElement()) {
+            return true
+          }
+          
+          scrollAttempts++
+          if (scrollAttempts < maxScrollAttempts) {
+            setTimeout(tryScroll, 100 * scrollAttempts)
+          } else {
+            console.warn(`Message ${messageId} loaded but could not scroll to it after ${maxScrollAttempts} attempts`)
+          }
+          return false
+        }
+        
+        setTimeout(tryScroll, 200)
+        return
+      }
+    }
+    
+    // If bulk loading didn't work, fall back to incremental loading
+    console.log('Bulk loading completed, falling back to incremental loading if needed')
+    
+    let attempts = 0
+    const maxAttempts = 5 // Reduced max attempts since bulk loading should handle most cases
+    
+    while (attempts < maxAttempts) {
       try {
         // Get current state before loading
         const currentState = getCurrentState()
-        const messageCountBefore = currentState.messages.length
         
         // Check if we have more messages to load
         if (!currentState.hasMore && !currentState.nextCursor) {
@@ -613,24 +845,23 @@ export const useMessages = (conversationId: string | null) => {
           break
         }
         
-        // Load more messages using the loadMore function
-        const didLoad = await loadMore()
+        // Load more messages with larger batches
+        const didLoad = await loadMore({ limit: 200, bulkLoad: true })
         if (!didLoad) {
           console.warn('Could not load more messages - no cursor or already loading')
           break
         }
         attempts++
         
-        // Wait for state update with shorter intervals
-        const waitTime = Math.min(150 + (attempts * 50), 400)
-        await new Promise(resolve => setTimeout(resolve, waitTime))
+        // Shorter wait time for better responsiveness
+        await new Promise(resolve => setTimeout(resolve, 100))
         
         // Get updated messages state
         const updatedState = getCurrentState()
         messageExists = updatedState.messages.some((msg: Message) => msg.id === messageId)
         
         if (messageExists) {
-          // Found the message, try to scroll to it with retry logic
+          // Found the message, try to scroll to it
           let scrollAttempts = 0
           const maxScrollAttempts = 5
           
@@ -652,37 +883,19 @@ export const useMessages = (conversationId: string | null) => {
           return
         }
         
-        // Check if we actually loaded new messages
-        const newMessagesCount = updatedState.messages.length - messageCountBefore
-        if (newMessagesCount === 0) {
-          consecutiveNoNewMessages++
-          // If we can't load more messages but have the same cursor, we might be at the end
-          if (updatedState.nextCursor === currentState.nextCursor || !updatedState.nextCursor) {
-            console.warn('Reached end of available messages')
-            break
-          }
-        } else {
-          consecutiveNoNewMessages = 0 // Reset counter if we got new messages
-        }
-        
       } catch (error) {
         console.error('Error loading more messages while searching for target message:', error)
         break
       }
     }
     
-    // Provide detailed feedback on why we stopped searching
-    if (attempts >= maxAttempts) {
-      console.warn(`Reached maximum attempts (${maxAttempts}) searching for message ${messageId}`)
-    } else if (consecutiveNoNewMessages >= maxConsecutiveNoNew) {
-      console.warn(`Message ${messageId} not found after loading all available messages (${consecutiveNoNewMessages} consecutive empty loads)`)
-    }
+    console.warn(`Message ${messageId} not found after bulk and incremental loading`)
     } catch (outerError) {
       console.error('Unexpected error in scrollToMessage:', outerError)
     } finally {
       setScrollToMessageLoading(null)
     }
-  }, [loadMore, scrollToMessageLoading, scrollToMessageDebounce])
+  }, [loadMore, loadMoreBulk, scrollToMessageLoading, scrollToMessageDebounce])
 
   return {
     messages,
@@ -693,6 +906,7 @@ export const useMessages = (conversationId: string | null) => {
     scrollToMessageLoading,
     sendMessage,
     loadMore,
+    loadMoreBulk,
     markMessagesAsRead,
     reactToMessage,
     scrollToMessage,
