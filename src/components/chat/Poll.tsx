@@ -48,6 +48,11 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set())
   const [isVoting, setIsVoting] = useState(false)
   const [timeLeft, setTimeLeft] = useState<string | null>(null)
+  // OPTIMIZATION MARK START: On-demand poll details loading
+  const [pollDetails, setPollDetails] = useState<PollData | null>(null)
+  const [showingDetails, setShowingDetails] = useState(false)
+  const [loadingDetails, setLoadingDetails] = useState(false)
+  // OPTIMIZATION MARK END
   const [isMobile, setIsMobile] = useState(false)
 
   // Detect mobile device on client side only
@@ -109,6 +114,36 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
       return newSelection
     })
   }
+
+  // OPTIMIZATION MARK START: Load detailed poll data on demand
+  const loadPollDetails = async () => {
+    if (loadingDetails || pollDetails) return
+    
+    setLoadingDetails(true)
+    try {
+      const response = await fetch(`/api/polls/details/${poll.id}`)
+      if (response.ok) {
+        const details = await response.json()
+        setPollDetails(details)
+        setShowingDetails(true)
+      } else {
+        console.error('Failed to load poll details')
+      }
+    } catch (error) {
+      console.error('Error loading poll details:', error)
+    } finally {
+      setLoadingDetails(false)
+    }
+  }
+
+  const togglePollDetails = () => {
+    if (!showingDetails && !pollDetails) {
+      loadPollDetails()
+    } else {
+      setShowingDetails(!showingDetails)
+    }
+  }
+  // OPTIMIZATION MARK END
 
   const handleVote = async () => {
     if (selectedOptions.size === 0 || !canVote) return
@@ -254,6 +289,59 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
             {isVoting ? 'Voting...' : `Vote${poll.allowMultiple && selectedOptions.size > 1 ? ` (${selectedOptions.size})` : ''}`}
           </button>
         )}
+
+        {/* OPTIMIZATION MARK START: Poll details toggle */}
+        {!poll.isAnonymous && poll.totalVotes > 0 && (
+          <div className="pt-2 pb-2 text-center">
+            <button
+              onClick={togglePollDetails}
+              disabled={loadingDetails}
+              className={`text-sm px-3 py-1 rounded-full transition-all duration-200 ${
+                actualTheme === 'dark'
+                  ? 'text-blue-400 hover:bg-gray-800 disabled:text-gray-500'
+                  : 'text-blue-600 hover:bg-gray-100 disabled:text-gray-400'
+              } ${loadingDetails ? 'opacity-50' : 'hover:opacity-80'}`}
+            >
+              {loadingDetails ? 'Loading...' : (showingDetails ? 'Hide Details' : 'Show Voters')}
+            </button>
+          </div>
+        )}
+        
+        {/* Show detailed poll information when requested */}
+        {showingDetails && pollDetails && (
+          <div className={`mt-2 p-3 rounded-lg border ${
+            actualTheme === 'dark'
+              ? 'bg-gray-900 border-gray-800'
+              : 'bg-gray-50 border-gray-200'
+          }`}>
+            {pollDetails.options.map((option) => (
+              <div key={option.id} className="mb-3 last:mb-0">
+                <div className={`text-sm font-medium mb-1 ${
+                  actualTheme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {option.text} ({option.voteCount} vote{option.voteCount !== 1 ? 's' : ''})
+                </div>
+                {option.voters && option.voters.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {option.voters.map((voter) => (
+                      <span
+                        key={voter.id}
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          actualTheme === 'dark'
+                            ? 'bg-gray-800 text-gray-300'
+                            : 'bg-white text-gray-600'
+                        }`}
+                      >
+                        {voter.name || voter.username}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {/* OPTIMIZATION MARK END */}
 
         {/* Poll Status - Simple format matching poll4.png */}
         <div className="flex text-center justify-end">

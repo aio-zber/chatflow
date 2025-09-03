@@ -15,7 +15,7 @@ A comprehensive real-time messaging platform built with Next.js 14, featuring in
 - **F-008**: ✅ Group chats with admin controls (2-100 members)
 - **F-009**: ✅ Channels with moderation and discovery
 - **F-010**: ✅ Real-time notifications (desktop, sound, badges)
-- **F-011**: ✅ Notification center with history and filtering
+- **F-011**: ✅ Notification center with history
 - **F-012**: ✅ Responsive design (mobile-first approach)
 - **F-013**: ✅ Dark/light mode with custom themes
 - **F-014**: ✅ WCAG 2.1 AA accessibility compliance

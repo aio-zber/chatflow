@@ -39,6 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'Conversation not found' })
     }
 
+    // OPTIMIZATION MARK START: Separate main message query from poll data
+    // This fixes the 1-message loading issue caused by complex poll queries
     const messages = await prisma.message.findMany({
       where: { 
         conversationId: conversationId as string,
@@ -93,39 +95,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         },
         attachments: true,
+        // OPTIMIZATION: Only get poll ID, not full poll data
         poll: {
-          include: {
-            options: {
-              orderBy: { order: 'asc' },
-              include: {
-                votes: {
-                  include: {
-                    user: {
-                      select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        avatar: true,
-                      }
-                    }
-                  }
-                },
-                _count: {
-                  select: { votes: true }
-                }
-              }
-            },
-            createdBy: {
-              select: {
-                id: true,
-                username: true,
-                name: true,
-                avatar: true,
-              }
-            },
-            _count: {
-              select: { votes: true }
-            }
+          select: {
+            id: true,
           }
         },
       },
@@ -138,6 +111,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       }),
     })
+    // OPTIMIZATION MARK END
+
+    // OPTIMIZATION MARK START: Efficient poll data loading
+    // Load poll data separately to avoid query complexity issues
+    const messageIds = messages.map(msg => msg.id)
+    const pollsData = await prisma.poll.findMany({
+      where: {
+        messageId: {
+          in: messageIds
+        }
+      },
+      include: {
+        options: {
+          orderBy: { order: 'asc' },
+          include: {
+            _count: {
+              select: { votes: true }
+            }
+          }
+        },
+        createdBy: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            avatar: true,
+          }
+        },
+        _count: {
+          select: { votes: true }
+        }
+      }
+    })
+
+    // OPTIMIZATION: Get user votes separately for better performance
+    const userVotes = pollsData.length > 0 ? await prisma.pollVote.findMany({
+      where: {
+        userId: session.user.id,
+        pollId: {
+          in: pollsData.map(poll => poll.id)
+        }
+      },
+      select: {
+        pollId: true,
+        optionId: true,
+      }
+    }) : []
+
+    // Create efficient lookup maps
+    const pollsMap = new Map(pollsData.map(poll => [poll.messageId, poll]))
+    const userVotesMap = new Map(userVotes.map(vote => [`${vote.pollId}-${vote.optionId}`, true]))
+    // OPTIMIZATION MARK END
 
     await prisma.conversationParticipant.update({
       where: {
@@ -151,38 +176,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     })
 
-    // Process messages to format poll data correctly
+    // OPTIMIZATION MARK START: Efficient poll processing using lookup maps
+    // Process messages to format poll data correctly without expensive queries
     const processedMessages = messages.map(msg => {
-      if (msg.poll) {
+      if (msg.poll && pollsMap.has(msg.id)) {
+        const pollData = pollsMap.get(msg.id)!
         return {
           ...msg,
           poll: {
-            id: msg.poll.id,
-            question: msg.poll.question,
-            allowMultiple: msg.poll.allowMultiple,
-            isAnonymous: msg.poll.isAnonymous,
-            expiresAt: msg.poll.expiresAt,
-            createdAt: msg.poll.createdAt,
-            createdBy: msg.poll.createdBy,
-            options: msg.poll.options.map(option => ({
+            id: pollData.id,
+            question: pollData.question,
+            allowMultiple: pollData.allowMultiple,
+            isAnonymous: pollData.isAnonymous,
+            expiresAt: pollData.expiresAt,
+            createdAt: pollData.createdAt,
+            createdBy: pollData.createdBy,
+            options: pollData.options.map(option => ({
               id: option.id,
               text: option.text,
               order: option.order,
               voteCount: option._count.votes,
-              hasVoted: option.votes.some(vote => vote.user.id === session.user.id),
-              voters: msg.poll.isAnonymous ? [] : option.votes.map(vote => vote.user)
+              // OPTIMIZATION: Use efficient map lookup instead of expensive .some() queries
+              hasVoted: userVotesMap.has(`${pollData.id}-${option.id}`),
+              voters: pollData.isAnonymous ? [] : [] // Skip voter details for performance
             })),
-            totalVotes: msg.poll._count.votes,
+            totalVotes: pollData._count.votes,
             messageId: msg.id
           }
         }
       }
       return msg
     })
+    // OPTIMIZATION MARK END
 
     res.json({
       messages: processedMessages.reverse(),
-      nextCursor: messages.length === parsedLimit ? messages[0]?.id : null,
+      nextCursor: processedMessages.length === parsedLimit ? processedMessages[0]?.id : null,
     })
   } catch (error) {
     console.error('Get messages error:', error)

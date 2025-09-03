@@ -976,7 +976,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           scrollHeight
         }
         
-        loadMore({ limit: 200, bulkLoad: true }) // Large batches for automatic infinite scroll
+        loadMore() // Simple load more matching commit version
       } else {
         console.log('⏱️ Too early for infinite scroll:', now - conversationOpenTime, 'ms since open')
       }
@@ -1800,8 +1800,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                     scrollTop: container.scrollTop,
                     scrollHeight: container.scrollHeight
                   }
-                  // Use large bulk loading for manual button clicks
-                  loadMore({ limit: 250, bulkLoad: true })
+                  // Simple load more matching commit version
+                  loadMore()
                 }
               }}
               disabled={messagesLoadingMore}
