@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Plus, Trash2, BarChart3, Clock, Users, Eye, EyeOff } from 'lucide-react'
+import { X, Plus, Trash2, BarChart3, Clock, Users } from 'lucide-react'
 
 interface PollModalProps {
   isOpen: boolean
@@ -20,7 +20,6 @@ export function PollModal({ isOpen, onClose, onCreatePoll, conversationId }: Pol
   const [question, setQuestion] = useState('')
   const [options, setOptions] = useState(['', ''])
   const [allowMultiple, setAllowMultiple] = useState(false)
-  const [isAnonymous, setIsAnonymous] = useState(false)
   const [hasExpiration, setHasExpiration] = useState(false)
   const [expirationHours, setExpirationHours] = useState(24)
   const [isCreating, setIsCreating] = useState(false)
@@ -57,7 +56,7 @@ export function PollModal({ isOpen, onClose, onCreatePoll, conversationId }: Pol
         question: trimmedQuestion,
         options: trimmedOptions,
         allowMultiple,
-        isAnonymous,
+        isAnonymous: false,
         expiresInMinutes: hasExpiration ? expirationHours * 60 : undefined
       })
       
@@ -65,7 +64,6 @@ export function PollModal({ isOpen, onClose, onCreatePoll, conversationId }: Pol
       setQuestion('')
       setOptions(['', ''])
       setAllowMultiple(false)
-      setIsAnonymous(false)
       setHasExpiration(false)
       setExpirationHours(24)
       onClose()
@@ -188,24 +186,6 @@ export function PollModal({ isOpen, onClose, onCreatePoll, conversationId }: Pol
               </label>
             </div>
 
-            {/* Anonymous */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <EyeOff className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  Anonymous voting
-                </span>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#7360F2]/20 dark:peer-focus:ring-[#7360F2]/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7360F2]"></div>
-              </label>
-            </div>
 
             {/* Expiration */}
             <div className="space-y-2">

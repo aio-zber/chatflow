@@ -111,7 +111,7 @@ async function handleVote(req: NextApiRequest, res: NextApiResponse, pollId: str
             include: {
               votes: {
                 include: {
-                  user: poll.isAnonymous ? false : {
+                  user: {
                     select: {
                       id: true,
                       username: true,
@@ -145,6 +145,13 @@ async function handleVote(req: NextApiRequest, res: NextApiResponse, pollId: str
       throw new Error('Failed to update poll')
     }
 
+    // Update conversation timestamp to move it to top of sidebar
+    await prisma.conversation.update({
+      where: { id: poll.conversationId },
+      data: { updatedAt: new Date() }
+    })
+
+
     // Emit socket event for real-time updates - ensure socket instance is available
     let io = getIO()
     if (!io) {
@@ -168,7 +175,7 @@ async function handleVote(req: NextApiRequest, res: NextApiResponse, pollId: str
           order: option.order,
           voteCount: option._count.votes,
           hasVoted: option.votes.some(vote => vote.userId === userId),
-          voters: updatedPoll.isAnonymous ? [] : option.votes.map(vote => vote.user)
+          voters: option.votes.map(vote => vote.user)
         })),
         totalVotes: updatedPoll._count.votes,
         messageId: updatedPoll.messageId
@@ -201,7 +208,7 @@ async function handleVote(req: NextApiRequest, res: NextApiResponse, pollId: str
             order: option.order,
             voteCount: option._count.votes,
             hasVoted: option.votes.some(vote => vote.userId === participant.userId),
-            voters: updatedPoll.isAnonymous ? [] : option.votes.map(vote => vote.user)
+            voters: option.votes.map(vote => vote.user)
           }))
         }
         
@@ -210,6 +217,7 @@ async function handleVote(req: NextApiRequest, res: NextApiResponse, pollId: str
           pollId: updatedPoll.id,
           poll: personalizedPollData
         })
+ 
       })
 
       console.log(`Emitting poll-updated to conversation:${poll.conversationId}`)

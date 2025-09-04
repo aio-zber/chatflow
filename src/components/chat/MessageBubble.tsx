@@ -481,6 +481,66 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
     }
   }
 
+  // Special rendering for voice messages - don't nest in blue containers
+  const hasVoiceAttachment = message.attachments?.some(att => att.type === 'voice')
+  if (hasVoiceAttachment && message.attachments?.length === 1 && (!message.content || message.content.trim() === '')) {
+    // Pure voice message - render without message bubble container
+    const voiceAttachment = message.attachments.find(att => att.type === 'voice')!
+    
+    return (
+      <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} group px-2`} data-message-id={message.id} role="article">
+        <div className={`flex ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'} items-end space-x-2 relative max-w-[85%] sm:max-w-[70%]`}>
+          {/* Avatar for received messages */}
+          {!isOwnMessage && (
+            <div className="flex-shrink-0 mb-1">
+              {message.senderImage ? (
+                <img
+                  src={getCompatibleFileUrl(message.senderImage)}
+                  alt={message.senderName}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-medium">
+                    {message.senderName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Voice message player directly */}
+          <div className="relative">
+            {/* Sender name for received messages */}
+            {!isOwnMessage && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 ml-3">
+                {message.senderName}
+              </p>
+            )}
+            
+            <VoiceMessagePlayer
+              audioUrl={getCompatibleFileUrl(voiceAttachment.url)}
+              duration={voiceAttachment.duration || 0}
+              isOwn={isOwnMessage}
+              senderName={isOwnMessage ? undefined : message.senderName}
+              timestamp={message.timestamp}
+            />
+            
+            {/* Timestamp and status for own messages */}
+            {isOwnMessage && (
+              <div className="flex items-center justify-end space-x-1 mt-1">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {formatMessageTime(message.timestamp)}
+                </span>
+                {getStatusIcon()}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Special rendering for system messages including call traces
   if (isSystemMessage) {
     // Check if this is a call trace system message

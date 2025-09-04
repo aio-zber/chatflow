@@ -192,6 +192,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             options: {
               orderBy: { order: 'asc' },
               include: {
+                votes: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        avatar: true
+                      }
+                    }
+                  }
+                },
                 _count: {
                   select: { votes: true }
                 }
@@ -287,7 +299,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               voteCount: option._count.votes,
               // OPTIMIZATION: Use efficient map lookup instead of expensive .some() queries
               hasVoted: userVotesMap.has(`${pollData.id}-${option.id}`),
-              voters: pollData.isAnonymous ? [] : [] // Skip voter details for performance
+              voters: pollData.isAnonymous ? [] : option.votes.map(vote => vote.user)
             })),
             totalVotes: pollData._count.votes,
             messageId: msg.id

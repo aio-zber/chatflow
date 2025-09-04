@@ -10,7 +10,6 @@ const createPollSchema = z.object({
   options: z.array(z.string().min(1).max(200)).min(2).max(10),
   conversationId: z.string(),
   allowMultiple: z.boolean().optional().default(false),
-  isAnonymous: z.boolean().optional().default(false),
   expiresInMinutes: z.number().min(1).max(10080).optional() // max 1 week
 })
 
@@ -29,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 async function handleCreatePoll(req: NextApiRequest, res: NextApiResponse, userId: string) {
   try {
-    const { question, options, conversationId, allowMultiple, isAnonymous, expiresInMinutes } = 
+    const { question, options, conversationId, allowMultiple, expiresInMinutes } = 
       createPollSchema.parse(req.body)
 
     // Verify user is a participant in the conversation
@@ -92,7 +91,7 @@ async function handleCreatePoll(req: NextApiRequest, res: NextApiResponse, userI
         data: {
           question,
           allowMultiple,
-          isAnonymous,
+          isAnonymous: false,
           expiresAt,
           createdById: userId,
           conversationId,
@@ -127,8 +126,32 @@ async function handleCreatePoll(req: NextApiRequest, res: NextApiResponse, userI
         }
       })
 
+      // Update conversation timestamp to move it to top of sidebar  
+      await tx.conversation.update({
+        where: { id: conversationId },
+        data: { updatedAt: new Date() }
+      })
+
       return { message, poll }
     })
+
+    // Create database notifications for poll creation
+    const participantsToNotify = conversation.participants.filter(p => p.userId !== userId)
+    if (participantsToNotify.length > 0) {
+      const senderName = result.message.sender.name || result.message.sender.username
+      const notificationContent = `${senderName} created a poll: ${result.poll.question}`
+      
+      await prisma.notification.createMany({
+        data: participantsToNotify.map(participant => ({
+          userId: participant.userId,
+          type: 'new_message',
+          title: 'New Poll',
+          content: notificationContent,
+        }))
+      })
+      
+      console.log(`Created ${participantsToNotify.length} database notifications for poll creation`)
+    }
 
     // Emit socket event for real-time updates - ensure socket instance is available
     let io = getIO()
@@ -145,7 +168,7 @@ async function handleCreatePoll(req: NextApiRequest, res: NextApiResponse, userI
         id: result.poll.id,
         question: result.poll.question,
         allowMultiple: result.poll.allowMultiple,
-        isAnonymous: result.poll.isAnonymous,
+        isAnonymous: false,
         expiresAt: result.poll.expiresAt,
         createdAt: result.poll.createdAt,
         createdBy: result.poll.createdBy,
@@ -207,6 +230,24 @@ async function handleCreatePoll(req: NextApiRequest, res: NextApiResponse, userI
 
       console.log(`Emitting to conversation:${conversationId}`)
       io.to(`conversation:${conversationId}`).emit('new-message', messageData)
+      
+      // Send notifications to all participants except sender (similar to group messages)
+      console.log('Sending poll creation notifications to participants')
+      const participantsToNotify = conversation.participants.filter(p => p.userId !== userId)
+      const senderName = result.message.sender.name || result.message.sender.username
+      const notificationContent = `${senderName} created a poll: ${result.poll.question}`
+      
+      for (const participant of participantsToNotify) {
+        console.log(`Emitting new-notification for poll to participant: ${participant.userId}`)
+        io.to(`user:${participant.userId}`).emit('new-notification', {
+          userId: participant.userId,
+          type: 'new_message',
+          title: 'New Poll',
+          content: notificationContent,
+          messageId: result.message.id,
+          conversationId: conversationId,
+        })
+      }
       
       console.log('All poll creation socket events emitted')
     } else {

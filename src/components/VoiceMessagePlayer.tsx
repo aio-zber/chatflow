@@ -118,11 +118,8 @@ export function VoiceMessagePlayer({
 
   return (
     <div className={`
-      relative max-w-sm p-3 rounded-lg
-      ${isOwn 
-        ? 'bg-blue-600 text-white ml-auto' 
-        : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-      }
+      relative max-w-sm p-3 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 shadow-sm
+      ${isOwn ? 'ml-auto' : ''}
       ${className}
     `}>
       <audio ref={audioRef} src={audioUrl} preload="metadata" />
@@ -147,14 +144,7 @@ export function VoiceMessagePlayer({
         <button
           onClick={togglePlayback}
           disabled={!isLoaded}
-          className={`
-            flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors
-            ${isOwn 
-              ? 'bg-blue-500 hover:bg-blue-400 text-white' 
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }
-            disabled:opacity-50 disabled:cursor-not-allowed
-          `}
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {!isLoaded ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -184,10 +174,7 @@ export function VoiceMessagePlayer({
                 return (
                   <div
                     key={`waveform-bg-${i}`}
-                    className={`
-                      w-1 rounded-full transition-colors
-                      ${isOwn ? 'bg-blue-300' : 'bg-gray-300 dark:bg-gray-500'}
-                    `}
+                    className="w-1 rounded-full bg-gray-300 dark:bg-gray-500"
                     style={{ height: `${height}px` }}
                   />
                 )
@@ -205,10 +192,7 @@ export function VoiceMessagePlayer({
                   return (
                     <div
                       key={`waveform-progress-${i}`}
-                      className={`
-                        w-1 rounded-full
-                        ${isOwn ? 'bg-white' : 'bg-blue-600'}
-                      `}
+                      className="w-1 rounded-full bg-blue-600"
                       style={{ height: `${height}px` }}
                     />
                   )
@@ -217,11 +201,7 @@ export function VoiceMessagePlayer({
             </div>
 
             {/* Current time indicator */}
-            <div 
-              className={`
-                absolute top-0 bottom-0 w-0.5 transition-all
-                ${isOwn ? 'bg-white' : 'bg-blue-600'}
-              `}
+            <div className="absolute top-0 bottom-0 w-0.5 bg-blue-600 transition-all"
               style={{ left: `${progress}%` }}
             />
           </div>
