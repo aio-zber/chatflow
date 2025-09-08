@@ -20,7 +20,7 @@ export class ScreenShareManager {
         throw new Error('Screen sharing is not supported in this browser')
       }
 
-      const constraints: DisplayMediaStreamConstraints = {
+      const constraints: any = {
         video: options.video ? {
           cursor: 'always',
           displaySurface: 'monitor'
@@ -34,7 +34,6 @@ export class ScreenShareManager {
 
       // Add system audio if supported and requested
       if (options.systemAudio && 'getDisplayMedia' in navigator.mediaDevices) {
-        // @ts-expect-error - systemAudio is experimental
         constraints.audio = {
           ...constraints.audio,
           systemAudio: 'include'
@@ -74,14 +73,28 @@ export class ScreenShareManager {
 
   stopScreenShare(): void {
     if (this.screenStream) {
-      // Stop all tracks
+      // Stop all tracks with proper cleanup
       this.screenStream.getTracks().forEach(track => {
-        track.stop()
-        console.log('Stopped screen share track:', track.kind)
+        try {
+          if (track.readyState !== 'ended') {
+            track.stop()
+          }
+          console.log('Stopped screen share track:', track.kind, 'readyState:', track.readyState)
+        } catch (error) {
+          console.warn('Error stopping screen share track:', error)
+        }
       })
       
+      // Clear the stream reference
       this.screenStream = null
+      
+      // Notify listeners about the change
       this.onStreamChange?.(null)
+      
+      // Force garbage collection hint for the browser
+      setTimeout(() => {
+        console.log('Screen share cleanup completed')
+      }, 100)
     }
   }
 
@@ -109,19 +122,72 @@ export class ScreenShareManager {
       }
       
       const videoTrack = this.screenStream.getVideoTracks()[0]
-      if (videoTrack) {
+      if (videoTrack && videoTrack.readyState === 'live') {
         await sender.replaceTrack(videoTrack)
         console.log('Replaced video track with screen share')
+      } else {
+        throw new Error('Screen share video track is not available or not live')
       }
     } else {
+      // When switching back to camera, ensure we have a live camera stream
       if (!this.originalStream) {
         throw new Error('No original stream available')
       }
       
-      const videoTrack = this.originalStream.getVideoTracks()[0]
-      if (videoTrack) {
+      let videoTrack = this.originalStream.getVideoTracks()[0]
+      
+      // Check if the original video track is still live
+      if (!videoTrack || videoTrack.readyState !== 'live') {
+        console.log('Original camera track not live, requesting new camera stream...')
+        
+        try {
+          // Get a fresh camera stream
+          const freshCameraStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              frameRate: { ideal: 30 },
+              facingMode: 'user'
+            },
+            audio: false  // Only video for track replacement
+          })
+          
+          videoTrack = freshCameraStream.getVideoTracks()[0]
+          
+          // Update the original stream with the fresh camera track
+          if (videoTrack) {
+            // Remove old video tracks from original stream
+            this.originalStream.getVideoTracks().forEach(track => {
+              this.originalStream!.removeTrack(track)
+              track.stop()
+            })
+            
+            // Add fresh camera track to original stream
+            this.originalStream.addTrack(videoTrack)
+            console.log('Updated original stream with fresh camera track')
+          }
+        } catch (error) {
+          console.error('Failed to get fresh camera stream:', error)
+          throw new Error('Failed to restore camera: ' + (error as Error).message)
+        }
+      }
+      
+      if (videoTrack && videoTrack.readyState === 'live') {
         await sender.replaceTrack(videoTrack)
-        console.log('Replaced video track with camera')
+        console.log('Replaced video track with camera (live track confirmed)')
+        
+        // Force a brief pause and resume to ensure the track change is processed
+        setTimeout(() => {
+          if (videoTrack.enabled) {
+            videoTrack.enabled = false
+            setTimeout(() => {
+              videoTrack.enabled = true
+              console.log('Camera track re-enabled to ensure proper display')
+            }, 100)
+          }
+        }, 200)
+      } else {
+        throw new Error('Camera video track is not available or not live')
       }
     }
   }
@@ -160,8 +226,7 @@ export function getScreenShareCapabilities(): {
   }
 
   // Check for system audio support (experimental)
-  const systemAudioSupported = 'getDisplayMedia' in navigator.mediaDevices && 
-    typeof MediaTrackSupportedConstraints !== 'undefined'
+  const systemAudioSupported = 'getDisplayMedia' in navigator.mediaDevices
 
   return {
     supported: true,

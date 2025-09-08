@@ -78,6 +78,13 @@ async function createCallTrace(call: any, status: 'missed' | 'completed' | 'decl
     })
     console.log(`[CALL] Created ${status} call trace message: ${traceMessage.id}`)
     
+    // CRITICAL FIX: Update conversation timestamp to ensure it moves to top of sidebar
+    await prisma.conversation.update({
+      where: { id: call.conversationId },
+      data: { updatedAt: new Date() }
+    })
+    console.log(`[CALL] Updated conversation timestamp for call trace: ${call.conversationId}`)
+    
     // Broadcast trace message with sender details
     const messageWithSender = await prisma.message.findUnique({
       where: { id: traceMessage.id },
@@ -89,11 +96,12 @@ async function createCallTrace(call: any, status: 'missed' | 'completed' | 'decl
     })
     
     if (messageWithSender) {
-      io.to(`conversation:${call.conversationId}`).emit('message_received', {
+      // Emit as 'new-message' to ensure it's handled by useConversations and moves conversation to top
+      io.to(`conversation:${call.conversationId}`).emit('new-message', {
         ...messageWithSender,
         status: 'sent'
       })
-      console.log(`[CALL] ✅ Broadcasted ${status} call trace message`)
+      console.log(`[CALL] ✅ Broadcasted ${status} call trace message via new-message event`)
     }
     
     // Cleanup trace key after successful creation (allow new traces for different statuses)
