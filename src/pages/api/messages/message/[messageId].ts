@@ -226,21 +226,63 @@ async function handleDeleteMessage(
   message: any,
   userId: string
 ) {
-  // Check if user can delete this message
+  // ENHANCED: Check if user can delete this message with detailed logging
   let canDelete = false
   let deleteReason = ''
+  let deleteScope = 'for_sender' // 'for_sender' or 'for_everyone'
 
-  // Users can always delete their own messages
+  // ENHANCED: Handle admin deleting own message in group chats specially
   if (message.senderId === userId) {
-    canDelete = true
-    deleteReason = 'own_message'
-  } 
-  // For group chats, check if user is an admin
+    // Check if this is a group chat and user is an admin
+    if (message.conversation && message.conversation.isGroup) {
+      const userParticipant = message.conversation.participants.find(p => p.userId === userId)
+      if (userParticipant && userParticipant.role === 'admin') {
+        // Admin deleting their own message - use admin attribution
+        canDelete = true
+        deleteReason = 'admin_deletion'
+        deleteScope = 'for_everyone'
+        console.log('[API] Admin deleting own message for everyone:', {
+          messageId: message.id,
+          adminId: userId,
+          adminRole: userParticipant.role
+        })
+      } else {
+        // Regular user deleting own message
+        canDelete = true
+        deleteReason = 'own_message'
+        deleteScope = 'for_everyone'
+        console.log('[API] User deleting own message for everyone:', { messageId: message.id, userId })
+      }
+    } else {
+      // Direct message - regular own message deletion
+      canDelete = true
+      deleteReason = 'own_message'
+      deleteScope = 'for_everyone'
+      console.log('[API] User deleting own message for everyone:', { messageId: message.id, userId })
+    }
+  }
+  // For group chats, check if user is an admin deleting others' messages
   else if (message.conversation && message.conversation.isGroup) {
     const userParticipant = message.conversation.participants.find(p => p.userId === userId)
     if (userParticipant && userParticipant.role === 'admin') {
       canDelete = true
       deleteReason = 'admin_deletion'
+      deleteScope = 'for_everyone' // Admin deletions are always for everyone
+      console.log('[API] Admin deleting message for everyone:', {
+        messageId: message.id,
+        adminId: userId,
+        originalSenderId: message.senderId,
+        conversationId: message.conversationId,
+        isAdminDeletingOwnMessage: message.senderId === userId,
+        adminRole: userParticipant.role
+      })
+    } else {
+      console.log('[API] User is not an admin, cannot delete other\'s message:', {
+        userId,
+        userRole: userParticipant?.role || 'not_found',
+        messageId: message.id,
+        originalSenderId: message.senderId
+      })
     }
   }
 
@@ -253,6 +295,19 @@ async function handleDeleteMessage(
   }
 
   try {
+    // ENHANCED: Get admin information for proper attribution
+    let adminInfo = null
+    if (deleteReason === 'admin_deletion') {
+      adminInfo = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          username: true
+        }
+      })
+    }
+
     // Instead of deleting, update the message to show it was deleted
     // Delete related data first (due to foreign key constraints)
     await prisma.messageReaction.deleteMany({
@@ -269,14 +324,43 @@ async function handleDeleteMessage(
       data: { replyToId: null },
     })
 
-    // Update the message to show it was deleted instead of removing it
+    // ENHANCED: Create proper deletion attribution message
+    let deletionMessage: string
+
+    if (deleteReason === 'admin_deletion') {
+      if (adminInfo) {
+        // For admin deletions, show admin's display name following the required format
+        const adminDisplayName = adminInfo.name || adminInfo.username
+        deletionMessage = `${adminDisplayName} deleted this message`
+
+        console.log('[API] Creating admin deletion attribution:', {
+          adminId: adminInfo.id,
+          adminDisplayName,
+          messageId: message.id,
+          originalSenderId: message.senderId
+        })
+      } else {
+        // Fallback if admin info couldn't be retrieved
+        console.warn('[API] Admin info not found for deletion, using fallback message')
+        deletionMessage = 'An admin deleted this message'
+      }
+    } else if (deleteReason === 'own_message') {
+      // For own message deletions
+      deletionMessage = 'This message was deleted'
+    } else {
+      // Fallback for any other cases
+      deletionMessage = 'This message was deleted'
+    }
+
+    // ENHANCED: Update the message to show it was deleted with proper attribution
     const updatedMessage = await prisma.message.update({
       where: { id: message.id },
       data: {
-        content: '',
+        content: deletionMessage,
         type: 'deleted',
         status: 'sent',
         updatedAt: new Date(),
+        // Store deletion metadata in a way that's consistent with the schema
       },
       include: {
         sender: {
@@ -398,7 +482,16 @@ async function handleDeleteMessage(
       console.warn('Socket.IO instance not available for message-updated event')
     }
 
-    return res.status(200).json({ message: updatedMessage })
+    return res.status(200).json({
+      message: updatedMessage,
+      deleteReason,
+      deleteScope,
+      adminInfo: deleteReason === 'admin_deletion' ? {
+        id: adminInfo?.id,
+        displayName: adminInfo?.name || adminInfo?.username
+      } : null,
+      success: true
+    })
   } catch (error) {
     console.error('Error deleting message:', error)
     return res.status(500).json({ error: 'Failed to delete message' })

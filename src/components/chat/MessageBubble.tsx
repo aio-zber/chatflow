@@ -845,10 +845,11 @@ export function MessageBubble({ message, conversationId, onReply, onReact, onScr
                 <div className="flex items-center space-x-2 text-sm italic opacity-75">
                   <span className="text-gray-500 dark:text-gray-400">🗑️</span>
                   <span className="text-gray-500 dark:text-gray-400">
-                    {isOwnMessage 
-                      ? 'You deleted this message' 
+                    {/* ENHANCED: Use server-provided deletion message for proper admin attribution */}
+                    {message.content || (isOwnMessage
+                      ? 'You deleted this message'
                       : `${message.senderName} deleted this message`
-                    }
+                    )}
                   </span>
                 </div>
               ) : isCallMessage ? (

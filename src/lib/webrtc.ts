@@ -41,9 +41,31 @@ export class WebRTCService {
   // ENHANCED: Parallel connection management for group calls
   private connectionSetupQueue = new Set<string>()
   private groupCallOptimization = {
-    maxConcurrentConnections: 3, // Limit concurrent setup for stability
-    connectionBatchDelay: 500, // Delay between batches
-    isGroupCallMode: false
+    maxConcurrentConnections: 2, // Reduced from 3 to 2 for better stability
+    connectionBatchDelay: 750, // Increased from 500ms to 750ms for more reliable setup
+    isGroupCallMode: false,
+    connectionRetryDelays: [1000, 2000, 4000], // Progressive retry delays
+    maxGroupSize: 6 // Maximum participants for stable group calls
+  }
+
+  // Track failed connections for better error handling
+  private failedConnections = new Set<string>()
+  private connectionAttempts = new Map<string, number>()
+
+  // Browser-specific handling
+  private browserInfo = {
+    isChrome: false,
+    isFirefox: false,
+    isSafari: false,
+    isEdge: false,
+    version: 0
+  }
+
+  // Network edge case handling
+  private networkStatus = {
+    quality: 'good' as 'poor' | 'fair' | 'good' | 'excellent',
+    lastQualityCheck: Date.now(),
+    consecutiveFailures: 0
   }
   
   private readonly config: WebRTCConfig = {
@@ -83,6 +105,9 @@ export class WebRTCService {
   private boundHandleRemoteAnswer: (data: { callId: string; fromUserId: string; answer: RTCSessionDescriptionInit }) => void
   private boundHandleRemoteIceCandidate: (data: { callId: string; fromUserId: string; candidate: RTCIceCandidateInit }) => void
   private boundHandleParticipantLeft: (data: { participantId: string }) => void
+
+  // Audio state synchronization callback
+  public onRemoteAudioStateChanged?: (participantId: string, isMuted: boolean, isEnabled: boolean) => void
 
   // CRITICAL: Optimize SDP for ultra-low latency real-time communication
   private optimizeSdpForLowLatency(sdp: string): string {
@@ -162,14 +187,91 @@ export class WebRTCService {
   constructor(socket: Socket, userId: string) {
     this.socket = socket
     this.currentUserId = userId
-    
+
+    // ENHANCED: Initialize browser detection and network monitoring
+    this.initializeBrowserDetection()
+    this.initializeNetworkMonitoring()
+
     // Bind methods once to ensure proper cleanup
     this.boundHandleRemoteOffer = this.handleRemoteOffer.bind(this)
     this.boundHandleRemoteAnswer = this.handleRemoteAnswer.bind(this)
     this.boundHandleRemoteIceCandidate = this.handleRemoteIceCandidate.bind(this)
     this.boundHandleParticipantLeft = this.handleParticipantLeft.bind(this)
-    
+
     this.setupSocketListeners()
+  }
+
+  // ENHANCED: Browser detection for browser-specific optimizations
+  private initializeBrowserDetection() {
+    if (typeof window === 'undefined') return
+
+    const userAgent = window.navigator.userAgent
+
+    // Chrome detection
+    const chromeMatch = userAgent.match(/Chrome\/(\d+)/)
+    if (chromeMatch && !userAgent.includes('Edge')) {
+      this.browserInfo.isChrome = true
+      this.browserInfo.version = parseInt(chromeMatch[1])
+    }
+
+    // Firefox detection
+    const firefoxMatch = userAgent.match(/Firefox\/(\d+)/)
+    if (firefoxMatch) {
+      this.browserInfo.isFirefox = true
+      this.browserInfo.version = parseInt(firefoxMatch[1])
+    }
+
+    // Safari detection
+    const safariMatch = userAgent.match(/Safari\/(\d+)/)
+    if (safariMatch && !userAgent.includes('Chrome')) {
+      this.browserInfo.isSafari = true
+      this.browserInfo.version = parseInt(safariMatch[1])
+    }
+
+    // Edge detection
+    const edgeMatch = userAgent.match(/Edge\/(\d+)/)
+    if (edgeMatch) {
+      this.browserInfo.isEdge = true
+      this.browserInfo.version = parseInt(edgeMatch[1])
+    }
+
+    console.log('[WebRTC] Browser detected:', this.browserInfo)
+  }
+
+  // ENHANCED: Network monitoring for adaptive quality
+  private initializeNetworkMonitoring() {
+    if (typeof window === 'undefined' || !('connection' in navigator)) return
+
+    const connection = (navigator as any).connection
+    if (connection) {
+      const updateNetworkStatus = () => {
+        const effectiveType = connection.effectiveType
+
+        switch (effectiveType) {
+          case 'slow-2g':
+          case '2g':
+            this.networkStatus.quality = 'poor'
+            break
+          case '3g':
+            this.networkStatus.quality = 'fair'
+            break
+          case '4g':
+            this.networkStatus.quality = 'good'
+            break
+          default:
+            this.networkStatus.quality = 'excellent'
+        }
+
+        this.networkStatus.lastQualityCheck = Date.now()
+        console.log('[WebRTC] Network quality updated:', this.networkStatus.quality)
+      }
+
+      // Initial check
+      updateNetworkStatus()
+
+      // Monitor changes
+      connection.addEventListener('change', updateNetworkStatus)
+    }
   }
 
   private setupSocketListeners() {
@@ -219,26 +321,52 @@ export class WebRTCService {
         }
       }
 
-      // ENHANCED: Progressive fallback with optimized constraints for better compatibility and performance
+      // ENHANCED: Browser-specific and network-adaptive constraints
       const createConstraints = (highQuality: boolean = true) => {
+        const audioConstraints: any = {
+          // Base configuration
+          echoCancellation: true, // Keep for call quality
+          sampleSize: 16,
+          channelCount: 1, // Mono for lower bandwidth and processing
+          volume: 1.0,
+        }
+
+        // Browser-specific optimizations
+        if (this.browserInfo.isChrome) {
+          // Chrome-specific optimizations
+          audioConstraints.googEchoCancellation = true
+          audioConstraints.googAutoGainControl = this.networkStatus.quality === 'poor'
+          audioConstraints.googNoiseSuppression = this.networkStatus.quality === 'poor'
+          audioConstraints.googHighpassFilter = false
+          audioConstraints.googTypingNoiseDetection = false
+          audioConstraints.latency = this.networkStatus.quality === 'poor' ? 0.02 : 0.005
+        } else if (this.browserInfo.isFirefox) {
+          // Firefox-specific optimizations
+          audioConstraints.noiseSuppression = this.networkStatus.quality === 'poor'
+          audioConstraints.autoGainControl = this.networkStatus.quality === 'poor'
+        } else if (this.browserInfo.isSafari) {
+          // Safari-specific optimizations (more conservative)
+          audioConstraints.noiseSuppression = true
+          audioConstraints.autoGainControl = true
+          audioConstraints.latency = 0.01 // Less aggressive for Safari
+        } else {
+          // Default for other browsers
+          audioConstraints.noiseSuppression = false
+          audioConstraints.autoGainControl = false
+          audioConstraints.latency = 0.005
+        }
+
+        // Network-adaptive settings
+        if (this.networkStatus.quality === 'poor') {
+          audioConstraints.sampleRate = 24000 // Lower sample rate for poor connections
+        } else if (this.networkStatus.quality === 'fair') {
+          audioConstraints.sampleRate = 32000 // Medium sample rate
+        } else {
+          audioConstraints.sampleRate = highQuality ? 48000 : 32000 // High sample rate
+        }
+
         return {
-          audio: {
-            // CRITICAL: Ultra-low latency audio configuration
-            echoCancellation: true, // Keep for call quality
-            noiseSuppression: false, // DISABLE for lower latency
-            autoGainControl: false, // DISABLE for lower latency
-            sampleRate: highQuality ? 48000 : 24000, // Optimized sample rates
-            sampleSize: 16,
-            channelCount: 1, // Mono for lower bandwidth and processing
-            latency: 0.005, // 5ms target latency (very aggressive)
-            volume: 1.0,
-            // Additional low-latency constraints
-            googEchoCancellation: false, // Disable Google's EC for speed
-            googNoiseSuppression: false, // Disable Google's NS for speed
-            googAutoGainControl: false, // Disable Google's AGC for speed
-            googHighpassFilter: false, // Disable filtering for speed
-            googTypingNoiseDetection: false // Disable typing detection
-          },
+          audio: audioConstraints,
           video: isVideo ? {
             width: highQuality ? { ideal: 1280, max: 1920 } : { ideal: 640, max: 1280 },
             height: highQuality ? { ideal: 720, max: 1080 } : { ideal: 480, max: 720 },
@@ -789,8 +917,18 @@ export class WebRTCService {
       return
     }
 
+    // CRITICAL: Enforce group call size limit for stability
+    if (participantIds.length > this.groupCallOptimization.maxGroupSize) {
+      console.error(`[WebRTC] ❌ Group call size exceeded: ${participantIds.length}/${this.groupCallOptimization.maxGroupSize}`)
+      throw new Error(`Group calls are limited to ${this.groupCallOptimization.maxGroupSize} participants for optimal performance.`)
+    }
+
     // Enable group call optimization
     this.groupCallOptimization.isGroupCallMode = true
+
+    // Clear any previous failed connections
+    this.failedConnections.clear()
+    this.connectionAttempts.clear()
 
     // Process participants in batches to avoid overwhelming the system
     const batches = this.createConnectionBatches(participantIds)
@@ -1180,22 +1318,42 @@ export class WebRTCService {
         muted: event.track.muted
       })
 
-      // FIRST CALL AUDIO FIX: Ensure remote audio tracks are properly enabled and unmuted
+      // ENHANCED AUDIO TRACK STATE MANAGEMENT
       if (event.track.kind === 'audio') {
-        // Force enable the track even if it appears enabled (first call reliability)
-        event.track.enabled = true
-        
-        // CRITICAL FIX: Also unmute the track if it's muted
-        if (event.track.muted) {
-          console.log('[WebRTC] 🔧 UNMUTING muted remote audio track from:', participantId)
-          // Note: We can't directly unmute MediaStreamTracks, but we ensure they're enabled
-        }
-        
-        console.log('[WebRTC] 🎵 Remote audio track configured for first call:', {
+        // Store initial track state
+        const initialState = {
           enabled: event.track.enabled,
           muted: event.track.muted,
-          readyState: event.track.readyState,
-          participantId
+          readyState: event.track.readyState
+        }
+
+        // Force enable the track for proper audio flow
+        event.track.enabled = true
+
+        // Add track event listeners for proper state synchronization
+        event.track.addEventListener('mute', () => {
+          console.log('[WebRTC] 🔇 Remote audio track muted:', participantId)
+          this.onRemoteAudioStateChanged?.(participantId, true, event.track.enabled)
+        })
+
+        event.track.addEventListener('unmute', () => {
+          console.log('[WebRTC] 🔊 Remote track unmuted:', event.track.kind, 'for:', participantId)
+          this.onRemoteAudioStateChanged?.(participantId, false, event.track.enabled)
+        })
+
+        event.track.addEventListener('ended', () => {
+          console.warn('[WebRTC] 🛑 Remote audio track ended:', participantId)
+          this.onRemoteAudioStateChanged?.(participantId, true, false)
+        })
+
+        console.log('[WebRTC] 🎵 Remote audio track configured:', {
+          participantId,
+          initial: initialState,
+          current: {
+            enabled: event.track.enabled,
+            muted: event.track.muted,
+            readyState: event.track.readyState
+          }
         })
       }
       
@@ -1567,15 +1725,33 @@ export class WebRTCService {
       })
       
       console.log('[WebRTC] Creating offer with low-latency options...')
-      
-      // CRITICAL: Create offer with ultra-low-latency optimization
-      const offer = await pc.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true,
-        // ULTRA-LOW LATENCY: Disable all processing that causes delay
-        voiceActivityDetection: false,   // Disable VAD for consistent low latency
-        iceRestart: false               // Avoid ICE restart delays
-      })
+
+      // Check if this is a retry attempt
+      const attemptCount = this.connectionAttempts.get(participantId) || 0
+      this.connectionAttempts.set(participantId, attemptCount + 1)
+
+      // CRITICAL: Create offer with ultra-low-latency optimization and improved error handling
+      let offer: RTCSessionDescriptionInit
+      try {
+        offer = await pc.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true,
+          // ULTRA-LOW LATENCY: Disable all processing that causes delay
+          voiceActivityDetection: false,   // Disable VAD for consistent low latency
+          iceRestart: attemptCount > 1     // Only restart ICE on retry attempts
+        })
+      } catch (offerError) {
+        console.error('[WebRTC] ❌ Failed to create offer:', offerError)
+        this.failedConnections.add(participantId)
+
+        // Retry with basic options if advanced options fail
+        if (attemptCount < 2) {
+          console.log('[WebRTC] 🔄 Retrying offer creation with basic options...')
+          offer = await pc.createOffer()
+        } else {
+          throw new Error(`Failed to create offer for ${participantId}: ${offerError.message}`)
+        }
+      }
       
       // CRITICAL: Optimize SDP for ultra-low latency
       if (offer.sdp) {
@@ -2925,5 +3101,139 @@ export class WebRTCService {
     } catch (error) {
       console.error('[WebRTC] ❌ Error during cleanup:', error)
     }
+  }
+
+
+  // Get current local audio mute state
+  getLocalAudioMuteState(): boolean {
+    if (!this.localStream) return true
+
+    const audioTracks = this.localStream.getAudioTracks()
+    if (audioTracks.length === 0) return true
+
+    // If any audio track is enabled, consider it unmuted
+    return !audioTracks.some(track => track.enabled)
+  }
+
+  // Get remote participant mute states (for UI indicators)
+  getRemoteParticipantStates(): Map<string, { isMuted: boolean; isEnabled: boolean }> {
+    const states = new Map<string, { isMuted: boolean; isEnabled: boolean }>()
+
+    this.peerConnections.forEach((peerConn, participantId) => {
+      if (peerConn.remoteStream) {
+        const audioTracks = peerConn.remoteStream.getAudioTracks()
+        if (audioTracks.length > 0) {
+          const track = audioTracks[0] // Use first audio track
+          states.set(participantId, {
+            isMuted: track.muted,
+            isEnabled: track.enabled
+          })
+        } else {
+          // No audio track means effectively muted
+          states.set(participantId, {
+            isMuted: true,
+            isEnabled: false
+          })
+        }
+      }
+    })
+
+    return states
+  }
+
+  // ENHANCED: Network-aware connection recovery
+  private async handleNetworkRecovery(participantId: string): Promise<void> {
+    console.log('[WebRTC] 🔄 Starting network-aware recovery for:', participantId)
+
+    this.networkStatus.consecutiveFailures++
+
+    // Adapt recovery strategy based on network quality and browser
+    if (this.networkStatus.quality === 'poor') {
+      console.log('[WebRTC] Poor network detected, using conservative recovery...')
+
+      // For poor networks, use longer delays and fewer retries
+      await new Promise(resolve => setTimeout(resolve, 3000))
+
+      if (this.browserInfo.isSafari) {
+        // Safari on poor networks needs even more conservative approach
+        await this.attemptConnectionRecovery(participantId)
+      } else {
+        // Try ICE restart first for other browsers
+        await this.attemptConnectionRecovery(participantId)
+      }
+
+    } else if (this.networkStatus.quality === 'fair') {
+      console.log('[WebRTC] Fair network detected, using moderate recovery...')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      await this.attemptConnectionRecovery(participantId)
+
+    } else {
+      console.log('[WebRTC] Good network detected, using aggressive recovery...')
+      // For good networks, try immediate recovery
+      await this.attemptConnectionRecovery(participantId)
+    }
+
+    // Reset failure count on successful recovery
+    if (this.peerConnections.get(participantId)?.connection.connectionState === 'connected') {
+      this.networkStatus.consecutiveFailures = 0
+    }
+  }
+
+  // ENHANCED: Browser-specific mute handling
+  toggleLocalAudio(isMuted: boolean): boolean {
+    console.log('[WebRTC] 🎵 Toggle local audio, setting muted to:', isMuted)
+
+    if (!this.localStream) {
+      console.error('[WebRTC] ❌ No local stream available for audio toggle')
+      return false
+    }
+
+    const audioTracks = this.localStream.getAudioTracks()
+    if (audioTracks.length === 0) {
+      console.error('[WebRTC] ❌ No audio tracks available in local stream')
+      return false
+    }
+
+    let success = true
+    audioTracks.forEach((track, index) => {
+      try {
+        track.enabled = !isMuted
+
+        // ENHANCED: Browser-specific audio handling
+        if (this.browserInfo.isSafari && track.muted) {
+          // Safari sometimes needs additional handling for muted tracks
+          console.log('[WebRTC] Safari: Handling muted track state')
+
+          // Try to recreate audio context if needed
+          if (typeof window !== 'undefined' && window.AudioContext) {
+            try {
+              const audioContext = new AudioContext()
+              if (audioContext.state === 'suspended') {
+                audioContext.resume()
+              }
+            } catch (error) {
+              console.warn('[WebRTC] Safari audio context handling failed:', error)
+            }
+          }
+        }
+
+        console.log(`[WebRTC] 🎵 Audio track ${index} enabled set to:`, track.enabled)
+      } catch (error) {
+        console.error(`[WebRTC] ❌ Failed to toggle audio track ${index}:`, error)
+        success = false
+      }
+    })
+
+    // Broadcast the mute state to other participants via socket
+    if (success && this.socket && this.callId) {
+      this.socket.emit('participant-mute-changed', {
+        callId: this.callId,
+        participantId: this.currentUserId,
+        isMuted: isMuted
+      })
+      console.log('[WebRTC] 📡 Broadcasted mute state change to other participants:', isMuted)
+    }
+
+    return success
   }
 }

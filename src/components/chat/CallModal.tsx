@@ -2120,13 +2120,36 @@ export function CallModal({
           }
         }
         
-        // PHASE 1 FIX: Use server's connectedParticipants if available, fallback to participantCount
-        const serverConnectedCount = data.connectedParticipants ?? data.participantCount
+        // ENHANCED FIX: Improved participant count accuracy logic
+        let serverConnectedCount: number
+
+        if (typeof data.connectedParticipants === 'number') {
+          // Use explicit connected participants count when available
+          serverConnectedCount = data.connectedParticipants
+          console.log('[CallModal] 📊 Using server connectedParticipants:', serverConnectedCount)
+        } else if (typeof data.participantCount === 'number') {
+          // Fallback to total participant count
+          serverConnectedCount = data.participantCount
+          console.log('[CallModal] 📊 Using server participantCount as fallback:', serverConnectedCount)
+        } else {
+          // Final fallback: maintain current count
+          serverConnectedCount = prev.connectedParticipants
+          console.log('[CallModal] 📊 No server count provided, maintaining current:', serverConnectedCount)
+        }
+
+        // Additional validation: ensure count is reasonable for group calls
+        if (isGroupCall && serverConnectedCount > 6) {
+          console.warn('[CallModal] ⚠️ Server count exceeds group call limit, capping at 6:', serverConnectedCount)
+          serverConnectedCount = 6
+        } else if (!isGroupCall && serverConnectedCount > 2) {
+          console.warn('[CallModal] ⚠️ Server count exceeds 1-on-1 limit, capping at 2:', serverConnectedCount)
+          serverConnectedCount = 2
+        }
 
         const newState = {
           ...prev,
           status: userSpecificStatus,
-          connectedParticipants: serverConnectedCount
+          connectedParticipants: Math.max(0, serverConnectedCount) // Ensure non-negative
         }
         
         debouncedLoggers.stateUpdate(prev.status, newState.status, {
@@ -2471,7 +2494,7 @@ export function CallModal({
       // Update participant connection state to show stuck status
       setParticipantConnectionStates(prev => {
         const newStates = new Map(prev)
-        newStates.set(data.participantId, 'stuck-connecting')
+        newStates.set(data.participantId, 'connecting')
         return newStates
       })
 
@@ -3097,6 +3120,19 @@ export function CallModal({
 
         // Initialize WebRTC service
         webrtcServiceRef.current = new WebRTCService(socket, session.user.id)
+
+        // ENHANCED: Set up audio state synchronization callback
+        webrtcServiceRef.current.onRemoteAudioStateChanged = (participantId: string, isMuted: boolean, isEnabled: boolean) => {
+          console.log('[CallModal] 🔄 Remote audio state changed:', { participantId, isMuted, isEnabled })
+
+          // Update participant mute states for UI indicators
+          setParticipantMuteStates(prev => {
+            const newStates = new Map(prev)
+            // Use muted state from WebRTC track for more accurate indication
+            newStates.set(participantId, isMuted || !isEnabled)
+            return newStates
+          })
+        }
         
         // Initialize WebRTC and get local media stream with retry logic
         let stream: MediaStream
@@ -3352,6 +3388,15 @@ export function CallModal({
           if (!webrtcServiceRef.current) {
             console.log('[CallModal] 🚨 Creating emergency WebRTC service for call:', callId)
             webrtcServiceRef.current = new WebRTCService(socket, session.user.id)
+
+            // Set up audio state synchronization callback
+            webrtcServiceRef.current.onRemoteAudioStateChanged = (participantId: string, isMuted: boolean, isEnabled: boolean) => {
+              setParticipantMuteStates(prev => {
+                const newStates = new Map(prev)
+                newStates.set(participantId, isMuted || !isEnabled)
+                return newStates
+              })
+            }
             
             const stream = await webrtcServiceRef.current.initializeCall(callId, callType === 'video')
             localStreamRef.current = stream
@@ -3660,26 +3705,38 @@ export function CallModal({
 
   const toggleMute = () => {
     const newMuted = !callState.isMuted
-    setCallState(prev => ({ ...prev, isMuted: newMuted }))
-    
-    // Mute/unmute audio tracks
-    if (localStreamRef.current) {
-      const audioTracks = localStreamRef.current.getAudioTracks()
-      audioTracks.forEach(track => {
-        track.enabled = !newMuted
-      })
-      
-      console.log('[CallModal] Toggled mute:', newMuted, 'Audio tracks:', audioTracks.length)
-    }
-    
-    // CRITICAL: Notify other participants about mute state change
-    if (socket && callId && session?.user?.id) {
-      console.log('[CallModal] Broadcasting mute state change to other participants')
-      socket.emit('participant_mute_change', {
-        callId,
-        participantId: session.user.id,
-        isMuted: newMuted
-      })
+
+    // ENHANCED: Use WebRTC service for proper mute handling
+    if (webrtcServiceRef.current) {
+      const success = webrtcServiceRef.current.toggleLocalAudio(newMuted)
+      if (success) {
+        setCallState(prev => ({ ...prev, isMuted: newMuted }))
+        console.log('[CallModal] ✅ Successfully toggled mute via WebRTC service:', newMuted)
+      } else {
+        console.error('[CallModal] ❌ Failed to toggle mute via WebRTC service')
+        return // Don't update UI state if WebRTC toggle failed
+      }
+    } else {
+      // Fallback: Direct track manipulation (legacy behavior)
+      console.warn('[CallModal] ⚠️ WebRTC service not available, using fallback mute toggle')
+      setCallState(prev => ({ ...prev, isMuted: newMuted }))
+
+      if (localStreamRef.current) {
+        const audioTracks = localStreamRef.current.getAudioTracks()
+        audioTracks.forEach(track => {
+          track.enabled = !newMuted
+        })
+        console.log('[CallModal] Fallback mute toggle:', newMuted, 'Audio tracks:', audioTracks.length)
+      }
+
+      // Manual broadcast for fallback mode
+      if (socket && callId && session?.user?.id) {
+        socket.emit('participant_mute_change', {
+          callId,
+          participantId: session.user.id,
+          isMuted: newMuted
+        })
+      }
     }
   }
 
@@ -3914,8 +3971,17 @@ export function CallModal({
       try {
         if (!webrtcServiceRef.current && callId) {
           console.log(`[CallModal] Initializing WebRTC for accepted ${callType} call`)
-          
+
           webrtcServiceRef.current = new WebRTCService(socket, session.user.id)
+
+          // Set up audio state synchronization callback
+          webrtcServiceRef.current.onRemoteAudioStateChanged = (participantId: string, isMuted: boolean, isEnabled: boolean) => {
+            setParticipantMuteStates(prev => {
+              const newStates = new Map(prev)
+              newStates.set(participantId, isMuted || !isEnabled)
+              return newStates
+            })
+          }
           
           // ENHANCED: Try video first, gracefully fall back to audio-only
           let stream: MediaStream | null = null

@@ -13,7 +13,7 @@ export const CALL_CONFIG = {
       MAX_CALL_DURATION_MINUTES: 120
     },
     PREMIUM: {
-      MAX_PARTICIPANTS: 8,
+      MAX_PARTICIPANTS: 6, // Reduced from 8 to 6 for better stability
       ALLOW_GROUP_CALLS: true,
       MAX_CALL_DURATION_MINUTES: 240
     }

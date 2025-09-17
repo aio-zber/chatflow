@@ -1,7 +1,7 @@
 export class CallLimitsManager {
   private static readonly MAX_PARTICIPANTS_BASIC = 2;  // 1-on-1 only initially
   private static readonly MAX_PARTICIPANTS_BETA = 4;   // Future beta testing
-  private static readonly MAX_PARTICIPANTS_PREMIUM = 8; // Future premium feature
+  private static readonly MAX_PARTICIPANTS_PREMIUM = 6; // Reduced for stability
 
   static validateCallParticipants(
     participants: string[], 
@@ -47,10 +47,10 @@ export class CallLimitsManager {
   static getUpgradeMessage(participantCount: number): string {
     if (participantCount <= 4) {
       return 'Upgrade to Beta to enable group calls with up to 4 participants.';
-    } else if (participantCount <= 8) {
-      return 'Upgrade to Premium to enable group calls with up to 8 participants.';
+    } else if (participantCount <= 6) {
+      return 'Upgrade to Premium to enable group calls with up to 6 participants.';
     } else {
-      return 'Contact sales for enterprise group call solutions supporting unlimited participants.';
+      return 'Group calls are optimized for up to 6 participants. Consider splitting into multiple calls for the best experience.';
     }
   }
 }

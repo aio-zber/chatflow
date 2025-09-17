@@ -57,6 +57,20 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
     setIsMobile(isMobileDevice())
   }, [])
 
+  // ENHANCED: Initialize selected options based on current user votes
+  useEffect(() => {
+    const currentlyVotedOptions = poll.options
+      .filter(option => option.hasVoted)
+      .map(option => option.id)
+
+    if (currentlyVotedOptions.length > 0) {
+      setSelectedOptions(new Set(currentlyVotedOptions))
+      console.log('[Poll] Initialized with existing votes:', currentlyVotedOptions)
+    } else {
+      setSelectedOptions(new Set()) // Clear if no votes
+    }
+  }, [poll.options, poll.id]) // Re-run when poll options or poll ID changes
+
   // Calculate time remaining
   useEffect(() => {
     if (!poll.expiresAt) return
@@ -122,16 +136,22 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
     }
 
     setIsVoting(true)
+    const votingOptions = Array.from(selectedOptions)
+
     try {
-      await onVote(poll.id, Array.from(selectedOptions))
-      setSelectedOptions(new Set())
-      
+      await onVote(poll.id, votingOptions)
+
+      // ENHANCED: Don't clear selection immediately - let the poll update handle it
+      // The useEffect above will update selectedOptions when the poll data changes
+      console.log('[Poll] Voted for options:', votingOptions)
+
       // Success haptic feedback
       if (isMobile) {
         setTimeout(() => triggerHapticFeedback('light'), 100)
       }
     } catch (error) {
-      console.error('Error voting:', error)
+      console.error('[Poll] Error voting:', error)
+      // On error, revert to previous state if needed
     } finally {
       setIsVoting(false)
     }
@@ -407,7 +427,12 @@ export function Poll({ poll, onVote, className = '' }: PollProps) {
             disabled={isVoting}
             className="w-full bg-[#7360F2] text-white py-2.5 px-4 rounded-lg font-medium hover:bg-[#6350E9] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-[14px] mb-3 shadow-sm"
           >
-            {isVoting ? 'Voting...' : `Vote${poll.allowMultiple && selectedOptions.size > 1 ? ` (${selectedOptions.size})` : ''}`}
+            {isVoting
+              ? 'Voting...'
+              : hasVoted
+                ? `Update Vote${poll.allowMultiple && selectedOptions.size > 1 ? ` (${selectedOptions.size})` : ''}`
+                : `Vote${poll.allowMultiple && selectedOptions.size > 1 ? ` (${selectedOptions.size})` : ''}`
+            }
           </button>
         )}
 
