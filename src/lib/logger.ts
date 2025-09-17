@@ -15,6 +15,33 @@ class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development'
   private logBuffer: LogEntry[] = []
   private maxBufferSize = 1000
+  
+  // Performance optimizations: reduce logging in production and allow runtime control
+  private minLogLevel: LogLevel = (process.env.LOG_LEVEL as LogLevel) || (this.isDevelopment ? 'debug' : 'warn')
+  private enabledModules: string[] = this.getEnabledModules()
+  
+  private readonly logLevels: Record<LogLevel, number> = {
+    debug: 0,
+    info: 1, 
+    warn: 2,
+    error: 3
+  }
+
+  private getEnabledModules(): string[] {
+    const modules: string[] = ['ERROR'] // Always allow errors
+    
+    // Check environment variables for module-specific controls
+    if (process.env.ENABLE_SOCKET_LOGGING === 'true') modules.push('SOCKET')
+    if (process.env.ENABLE_CALL_LOGGING === 'true') modules.push('CALL') 
+    if (process.env.ENABLE_WEBRTC_LOGGING === 'true') modules.push('WebRTC')
+    
+    // Default fallback for development
+    if (modules.length === 1 && this.isDevelopment) {
+      return ['CALL', 'SOCKET', 'WebRTC', 'ERROR']
+    }
+    
+    return modules
+  }
 
   private createLogEntry(
     level: LogLevel,
@@ -51,6 +78,25 @@ class Logger {
     return sanitized
   }
 
+  private shouldLog(level: LogLevel, module?: string): boolean {
+    // Check log level
+    if (this.logLevels[level] < this.logLevels[this.minLogLevel]) {
+      return false
+    }
+    
+    // Check module filtering
+    if (module && this.enabledModules.length > 0 && !this.enabledModules.includes(module)) {
+      return false
+    }
+    
+    return true
+  }
+
+  // Public method for external use
+  public canLog(level: LogLevel, module?: string): boolean {
+    return this.shouldLog(level, module)
+  }
+
   private addToBuffer(entry: LogEntry) {
     this.logBuffer.push(entry)
     if (this.logBuffer.length > this.maxBufferSize) {
@@ -81,24 +127,28 @@ class Logger {
   }
 
   debug(message: string, data?: any, context?: any) {
+    if (!this.shouldLog('debug')) return
     const entry = this.createLogEntry('debug', message, data, context)
     this.addToBuffer(entry)
     this.consoleLog(entry)
   }
 
   info(message: string, data?: any, context?: any) {
+    if (!this.shouldLog('info')) return
     const entry = this.createLogEntry('info', message, data, context)
     this.addToBuffer(entry)
     this.consoleLog(entry)
   }
 
   warn(message: string, data?: any, context?: any) {
+    if (!this.shouldLog('warn')) return
     const entry = this.createLogEntry('warn', message, data, context)
     this.addToBuffer(entry)
     this.consoleLog(entry)
   }
 
   error(message: string, error?: Error | any, context?: any) {
+    if (!this.shouldLog('error')) return
     const data = error instanceof Error 
       ? { message: error.message, stack: error.stack, name: error.name }
       : error
@@ -181,4 +231,62 @@ export const handleApiError = (error: any, context?: string) => {
     status: 500,
     error: 'Internal server error',
   }
+}
+
+// Module-specific loggers with performance optimizations
+export const callLogger = {
+  debug: (message: string, data?: any) => {
+    if (!logger.canLog('debug', 'CALL')) return
+    logger.debug(`[CALL] ${message}`, data)
+  },
+  info: (message: string, data?: any) => {
+    if (!logger.canLog('info', 'CALL')) return  
+    logger.info(`[CALL] ${message}`, data)
+  },
+  warn: (message: string, data?: any) => {
+    if (!logger.canLog('warn', 'CALL')) return
+    logger.warn(`[CALL] ${message}`, data)
+  },
+  error: (message: string, error?: any) => {
+    if (!logger.canLog('error', 'CALL')) return
+    logger.error(`[CALL] ${message}`, error)
+  },
+}
+
+export const socketLogger = {
+  debug: (message: string, data?: any) => {
+    if (!logger.canLog('debug', 'SOCKET')) return
+    logger.debug(`[SOCKET] ${message}`, data)
+  },
+  info: (message: string, data?: any) => {
+    if (!logger.canLog('info', 'SOCKET')) return
+    logger.info(`[SOCKET] ${message}`, data)
+  },
+  warn: (message: string, data?: any) => {
+    if (!logger.canLog('warn', 'SOCKET')) return
+    logger.warn(`[SOCKET] ${message}`, data)
+  },
+  error: (message: string, error?: any) => {
+    if (!logger.canLog('error', 'SOCKET')) return
+    logger.error(`[SOCKET] ${message}`, error)
+  },
+}
+
+export const webrtcLogger = {
+  debug: (message: string, data?: any) => {
+    if (!logger.canLog('debug', 'WebRTC')) return
+    logger.debug(`[WebRTC] ${message}`, data)
+  },
+  info: (message: string, data?: any) => {
+    if (!logger.canLog('info', 'WebRTC')) return
+    logger.info(`[WebRTC] ${message}`, data)
+  },
+  warn: (message: string, data?: any) => {
+    if (!logger.canLog('warn', 'WebRTC')) return
+    logger.warn(`[WebRTC] ${message}`, data)
+  },
+  error: (message: string, error?: any) => {
+    if (!logger.canLog('error', 'WebRTC')) return
+    logger.error(`[WebRTC] ${message}`, error)
+  },
 }

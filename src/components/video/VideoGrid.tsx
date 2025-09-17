@@ -244,11 +244,31 @@ function RemoteParticipantVideo({
   onVideoRef?: (participantId: string, element: HTMLVideoElement | null) => void
   aspectRatio: string
 }) {
-  // Voice activity detection for remote participant
-  const { isSpeaking } = useVoiceActivity({ 
-    stream: stream || null,
+  // CRITICAL FIX: Add proper cleanup for video elements
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  
+  // ENHANCED: Voice activity detection for remote participant with better stream handling
+  const { isSpeaking } = useVoiceActivity({
+    stream: stream && stream.active ? stream : null,
     threshold: -40 // More sensitive threshold for better detection
   })
+
+  // DEBUGGING: Log stream changes for voice activity
+  React.useEffect(() => {
+    if (Math.random() < 0.1) { // Throttled logging
+      console.log(`[VoiceParticipant] ${participant.name} voice activity debug:`, {
+        participantId: participant.id,
+        hasOriginalStream: !!stream,
+        hasLatestStream: !!(stream && stream.active),
+        streamActive: stream?.active,
+        audioTracksCount: stream?.getAudioTracks().length || 0,
+        audioTracksEnabled: stream?.getAudioTracks().filter(t => t.enabled).length || 0,
+        audioTracksLive: stream?.getAudioTracks().filter(t => t.readyState === 'live').length || 0,
+        isSpeaking,
+        participantMuted: participant.isMuted
+      })
+    }
+  }, [stream, participant.id, participant.name, participant.isMuted, isSpeaking])
 
   // Detect if remote participant is actually muted based on stream
   const isActuallyMuted = React.useMemo(() => {
@@ -256,6 +276,54 @@ function RemoteParticipantVideo({
     const audioTracks = stream.getAudioTracks()
     return audioTracks.length === 0 || audioTracks.every(track => !track.enabled)
   }, [stream])
+  
+  // CRITICAL FIX: Cleanup function to prevent memory leaks
+  const cleanupVideoElement = React.useCallback((videoElement: HTMLVideoElement) => {
+    console.log('[VideoGrid] 🧹 Cleaning up video element for participant:', participant.id)
+    
+    try {
+      // Pause and clear src
+      if (videoElement.srcObject) {
+        videoElement.pause()
+        videoElement.srcObject = null
+        videoElement.load() // Force reload to clear internal state
+      }
+      
+      // Remove all event listeners
+      const events = ['loadstart', 'loadeddata', 'loadedmetadata', 'canplay', 'play', 'pause', 'ended', 'error', 'abort', 'emptied', 'stalled', 'waiting']
+      events.forEach(event => {
+        try {
+          videoElement.removeEventListener(event, () => {})
+        } catch (e) {
+          // Ignore errors removing listeners
+        }
+      })
+      
+      console.log('[VideoGrid] ✅ Video element cleanup completed for:', participant.id)
+    } catch (error) {
+      console.error('[VideoGrid] ❌ Error during video cleanup:', error)
+    }
+  }, [participant.id])
+  
+  // CRITICAL FIX: Cleanup on component unmount or stream change
+  React.useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        cleanupVideoElement(videoRef.current)
+      }
+    }
+  }, [cleanupVideoElement])
+  
+  // CRITICAL FIX: Cleanup on stream change
+  React.useEffect(() => {
+    return () => {
+      // When stream changes, cleanup the previous stream from video element
+      if (videoRef.current && videoRef.current.srcObject) {
+        console.log('[VideoGrid] 🔄 Stream changed, cleaning up previous stream for:', participant.id)
+        cleanupVideoElement(videoRef.current)
+      }
+    }
+  }, [stream, cleanupVideoElement])
 
   return (
     <div className={`relative bg-gray-800 rounded-lg overflow-hidden ${aspectRatio} ${
@@ -328,14 +396,15 @@ function RemoteParticipantVideo({
             ) : (
               <video 
                 ref={(el) => {
+                  // CRITICAL FIX: Update both refs for proper cleanup
+                  videoRef.current = el
                   onVideoRef?.(participant.id, el)
+                  
                   if (el && stream) {
                     // VIDEO CALL FIX: Always clear previous srcObject to prevent stuck video
                     if (el.srcObject && el.srcObject !== stream) {
                       console.log(`[VideoGrid] Clearing previous video stream for ${participant.name}`)
-                      el.pause()
-                      el.srcObject = null
-                      el.load()
+                      cleanupVideoElement(el)
                     }
                     
                     // Set the new stream
@@ -351,6 +420,10 @@ function RemoteParticipantVideo({
                     el.play().catch(error => {
                       console.error('[VideoGrid] Failed to play remote video:', error)
                     })
+                  } else if (el && !stream) {
+                    // CRITICAL FIX: Cleanup video element when no stream
+                    console.log(`[VideoGrid] No stream for ${participant.name}, cleaning up video element`)
+                    cleanupVideoElement(el)
                   }
                 }}
                 className="w-full h-full object-cover"

@@ -1,0 +1,1832 @@
+10:33:42.181  [VoiceActivity] No stream provided, cleaning up
+10:33:42.181  [VoiceActivity] Effect triggered: Object
+10:33:42.181  [VoiceActivity] No stream provided, cleaning up
+10:33:42.182  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:42.182  🔄 ChatWindow: Conversation participants count: 3
+10:33:42.182  🔄 ChatWindow: Participants: Array(3)
+10:33:42.182  [VoiceActivity] Effect triggered: Object
+10:33:42.182  [VoiceActivity] No stream provided, cleaning up
+10:33:42.182  [VoiceActivity] Effect triggered: Object
+10:33:42.182  [VoiceActivity] No stream provided, cleaning up
+10:33:42.182  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:42.183  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:42.185  [CallModal] Rendered - voice call opened
+10:33:42.185  [CallModal] Rendered - voice call opened
+10:33:42.186  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:42.186  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:42.186  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:42.186  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:42.188  [VoiceActivity] Effect triggered: Object
+10:33:42.188  [VoiceActivity] No stream provided, cleaning up
+10:33:42.188  [VoiceActivity] Effect triggered: Object
+10:33:42.188  [VoiceActivity] No stream provided, cleaning up
+10:33:42.188  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:42.189  [VoiceActivity] Effect triggered: Object
+10:33:42.189  [VoiceActivity] No stream provided, cleaning up
+10:33:42.189  [VoiceActivity] Effect triggered: Object
+10:33:42.189  [VoiceActivity] No stream provided, cleaning up
+10:33:42.189  [CallModal] Rendered - voice call opened
+10:33:42.189  [CallModal] Rendered - voice call opened
+10:33:42.189  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:42.189  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:42.190  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:42.190  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:42.191  [VoiceActivity] Effect triggered: Object
+10:33:42.191  [VoiceActivity] No stream provided, cleaning up
+10:33:42.191  [VoiceActivity] Effect triggered: Object
+10:33:42.191  [VoiceActivity] No stream provided, cleaning up
+10:33:42.191  [VoiceActivity] Effect triggered: Object
+10:33:42.191  [VoiceActivity] No stream provided, cleaning up
+10:33:42.191  [VoiceActivity] Effect triggered: Object
+10:33:42.191  [VoiceActivity] No stream provided, cleaning up
+10:33:42.274  [CallModal] Rendered - voice call opened
+10:33:42.274  [CallModal] Rendered - voice call opened
+10:33:43.087  SocketContext: Additional heartbeat sent after becoming visible
+10:33:43.596  [CallModal] ⏰ Connecting timeout reached, checking if we should force connection
+10:33:43.599  [CallModal] Updated peer connections for performance monitoring: 2
+10:33:43.599  [CallModal] Peer connection participants: Array(2)
+10:33:43.599  [CallModal] Rendered - voice call opened
+10:33:43.599  [CallModal] Rendered - voice call opened
+10:33:43.599  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.599  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.600  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.600  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.601  [VoiceActivity] Effect triggered: Object
+10:33:43.601  [VoiceActivity] No stream provided, cleaning up
+10:33:43.601  [VoiceActivity] Effect triggered: Object
+10:33:43.601  [VoiceActivity] No stream provided, cleaning up
+10:33:43.601  [useCallPerformance] Connection states: Array(2)
+10:33:43.601  [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:43.601  [VoiceActivity] Effect triggered: Object
+10:33:43.601  [VoiceActivity] No stream provided, cleaning up
+10:33:43.601  [VoiceActivity] Effect triggered: Object
+10:33:43.601  [VoiceActivity] No stream provided, cleaning up
+10:33:43.610  [useCallPerformance] Network metrics: Object
+10:33:43.611  [CallModal] Rendered - voice call opened
+10:33:43.611  [CallModal] Rendered - voice call opened
+10:33:43.612  [useCallPerformance] Network metrics: Object
+10:33:43.612  [CallModal] Rendered - voice call opened
+10:33:43.613  [CallModal] Rendered - voice call opened
+10:33:43.613  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.613  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.613  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.613  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.614  [VoiceActivity] Effect triggered: Object
+10:33:43.614  [VoiceActivity] No stream provided, cleaning up
+10:33:43.614  [VoiceActivity] Effect triggered: Object
+10:33:43.614  [VoiceActivity] No stream provided, cleaning up
+10:33:43.614  [VoiceActivity] Effect triggered: Object
+10:33:43.614  [VoiceActivity] No stream provided, cleaning up
+10:33:43.614  [VoiceActivity] Effect triggered: Object
+10:33:43.614  [VoiceActivity] No stream provided, cleaning up
+10:33:43.615  NotificationContext: Window blurred
+10:33:43.616  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:43.616  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:43.619  [CallModal] Rendered - voice call opened
+10:33:43.619  [CallModal] Rendered - voice call opened
+10:33:43.620  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.620  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.621  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.621  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.624  🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+10:33:43.624  🌐 GlobalNotificationListener: useEffect triggered Object
+10:33:43.624  🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+10:33:43.625  🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+10:33:43.625  ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+10:33:43.625  [VoiceActivity] Effect triggered: Object
+10:33:43.625  [VoiceActivity] No stream provided, cleaning up
+10:33:43.625  [VoiceActivity] Effect triggered: Object
+10:33:43.625  [VoiceActivity] No stream provided, cleaning up
+10:33:43.625  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:43.625  [VoiceActivity] Effect triggered: Object
+10:33:43.625  [VoiceActivity] No stream provided, cleaning up
+10:33:43.625  [VoiceActivity] Effect triggered: Object
+10:33:43.625  [VoiceActivity] No stream provided, cleaning up
+10:33:43.625  SocketContext: Window blurred, sending pre-blur heartbeat
+10:33:43.626  [CallModal] Rendered - voice call opened
+10:33:43.626  [CallModal] Rendered - voice call opened
+10:33:43.626  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.626  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:43.627  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.627  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:43.628  [VoiceActivity] Effect triggered: Object
+10:33:43.628  [VoiceActivity] No stream provided, cleaning up
+10:33:43.628  [VoiceActivity] Effect triggered: Object
+10:33:43.628  [VoiceActivity] No stream provided, cleaning up
+10:33:43.628  [VoiceActivity] Effect triggered: Object
+10:33:43.628  [VoiceActivity] No stream provided, cleaning up
+10:33:43.628  [VoiceActivity] Effect triggered: Object
+10:33:43.628  [VoiceActivity] No stream provided, cleaning up
+10:33:43.644  [CallModal] Rendered - voice call opened
+10:33:43.644  [CallModal] Rendered - voice call opened
+10:33:44.105  [CallModal] ⏰ Connecting timeout reached, checking if we should force connection
+10:33:44.368  [WebRTC] Excellent network detected - restoring quality
+10:33:44.368  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:33:44.409  NotificationContext: Page visibility changed to: false
+10:33:44.409  SocketContext: Tab became hidden, maintaining aggressive background connection
+10:33:44.411  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.412  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.414  [CallModal] Rendered - voice call opened
+10:33:44.414  [CallModal] Rendered - voice call opened
+10:33:44.414  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.414  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.415  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.415  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.418  🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+10:33:44.418  🌐 GlobalNotificationListener: useEffect triggered Object
+10:33:44.418  🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+10:33:44.418  🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+10:33:44.418  ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+10:33:44.418  [VoiceActivity] Effect triggered: Object
+10:33:44.418  [VoiceActivity] No stream provided, cleaning up
+10:33:44.418  [VoiceActivity] Effect triggered: Object
+10:33:44.418  [VoiceActivity] No stream provided, cleaning up
+10:33:44.418  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:44.418  [VoiceActivity] Effect triggered: Object
+10:33:44.418  [VoiceActivity] No stream provided, cleaning up
+10:33:44.418  [VoiceActivity] Effect triggered: Object
+10:33:44.418  [VoiceActivity] No stream provided, cleaning up
+10:33:44.418  [CallModal] Rendered - voice call opened
+10:33:44.418  [CallModal] Rendered - voice call opened
+10:33:44.419  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.419  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.419  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.419  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.419  [VoiceActivity] Effect triggered: Object
+10:33:44.419  [VoiceActivity] No stream provided, cleaning up
+10:33:44.419  [VoiceActivity] Effect triggered: Object
+10:33:44.419  [VoiceActivity] No stream provided, cleaning up
+10:33:44.419  [VoiceActivity] Effect triggered: Object
+10:33:44.419  [VoiceActivity] No stream provided, cleaning up
+10:33:44.419  [VoiceActivity] Effect triggered: Object
+10:33:44.419  [VoiceActivity] No stream provided, cleaning up
+10:33:44.495  User status update received: Object
+10:33:44.500  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.501  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.508  [CallModal] Rendered - voice call opened
+10:33:44.509  [CallModal] Rendered - voice call opened
+10:33:44.509  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.509  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.510  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.510  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.515  ChatSidebar: Conversations updated, count: 5
+10:33:44.515  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:44.515  [VoiceActivity] Effect triggered: Object
+10:33:44.515  [VoiceActivity] No stream provided, cleaning up
+10:33:44.515  [VoiceActivity] Effect triggered: Object
+10:33:44.515  [VoiceActivity] No stream provided, cleaning up
+10:33:44.515  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:44.515  🔄 ChatWindow: Conversation participants count: 3
+10:33:44.515  🔄 ChatWindow: Participants: Array(3)
+10:33:44.515  [VoiceActivity] Effect triggered: Object
+10:33:44.515  [VoiceActivity] No stream provided, cleaning up
+10:33:44.515  [VoiceActivity] Effect triggered: Object
+10:33:44.515  [VoiceActivity] No stream provided, cleaning up
+10:33:44.516  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.516  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.524  [CallModal] Rendered - voice call opened
+10:33:44.524  [CallModal] Rendered - voice call opened
+10:33:44.525  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.525  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.525  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.525  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.528  [VoiceActivity] Effect triggered: Object
+10:33:44.528  [VoiceActivity] No stream provided, cleaning up
+10:33:44.528  [VoiceActivity] Effect triggered: Object
+10:33:44.528  [VoiceActivity] No stream provided, cleaning up
+10:33:44.529  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:44.529  [VoiceActivity] Effect triggered: Object
+10:33:44.529  [VoiceActivity] No stream provided, cleaning up
+10:33:44.529  [VoiceActivity] Effect triggered: Object
+10:33:44.529  [VoiceActivity] No stream provided, cleaning up
+10:33:44.529  [CallModal] Rendered - voice call opened
+10:33:44.529  [CallModal] Rendered - voice call opened
+10:33:44.530  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.530  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.530  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.530  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.531  [VoiceActivity] Effect triggered: Object
+10:33:44.531  [VoiceActivity] No stream provided, cleaning up
+10:33:44.531  [VoiceActivity] Effect triggered: Object
+10:33:44.531  [VoiceActivity] No stream provided, cleaning up
+10:33:44.531  [VoiceActivity] Effect triggered: Object
+10:33:44.531  [VoiceActivity] No stream provided, cleaning up
+10:33:44.531  [VoiceActivity] Effect triggered: Object
+10:33:44.531  [VoiceActivity] No stream provided, cleaning up
+10:33:44.565  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmeifnahq003ekungumhkl6ux
+10:33:44.567  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.567  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmew64hqq0008kud8i3zywuwd
+10:33:44.567  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.570  [CallModal] Rendered - voice call opened
+10:33:44.571  [CallModal] Rendered - voice call opened
+10:33:44.571  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.571  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.571  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.571  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.575  ChatSidebar: Conversations updated, count: 5
+10:33:44.575  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:44.575  [VoiceActivity] Effect triggered: Object
+10:33:44.575  [VoiceActivity] No stream provided, cleaning up
+10:33:44.575  [VoiceActivity] Effect triggered: Object
+10:33:44.575  [VoiceActivity] No stream provided, cleaning up
+10:33:44.575  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:44.575  🔄 ChatWindow: Conversation participants count: 3
+10:33:44.575  🔄 ChatWindow: Participants: Array(3)
+10:33:44.575  [VoiceActivity] Effect triggered: Object
+10:33:44.575  [VoiceActivity] No stream provided, cleaning up
+10:33:44.575  [VoiceActivity] Effect triggered: Object
+10:33:44.575  [VoiceActivity] No stream provided, cleaning up
+10:33:44.575  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.576  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:44.578  [CallModal] Rendered - voice call opened
+10:33:44.578  [CallModal] Rendered - voice call opened
+10:33:44.578  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.578  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.578  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.578  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.579  [VoiceActivity] Effect triggered: Object
+10:33:44.579  [VoiceActivity] No stream provided, cleaning up
+10:33:44.579  [VoiceActivity] Effect triggered: Object
+10:33:44.579  [VoiceActivity] No stream provided, cleaning up
+10:33:44.580  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:44.580  [VoiceActivity] Effect triggered: Object
+10:33:44.580  [VoiceActivity] No stream provided, cleaning up
+10:33:44.580  [VoiceActivity] Effect triggered: Object
+10:33:44.580  [VoiceActivity] No stream provided, cleaning up
+10:33:44.580  [CallModal] Rendered - voice call opened
+10:33:44.580  [CallModal] Rendered - voice call opened
+10:33:44.580  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.580  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:44.581  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.581  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:44.581  [VoiceActivity] Effect triggered: Object
+10:33:44.581  [VoiceActivity] No stream provided, cleaning up
+10:33:44.581  [VoiceActivity] Effect triggered: Object
+10:33:44.581  [VoiceActivity] No stream provided, cleaning up
+10:33:44.581  [VoiceActivity] Effect triggered: Object
+10:33:44.581  [VoiceActivity] No stream provided, cleaning up
+10:33:44.581  [VoiceActivity] Effect triggered: Object
+10:33:44.581  [VoiceActivity] No stream provided, cleaning up
+10:33:45.142  [WebRTC] Excellent network detected - restoring quality
+10:33:45.142  [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:33:45.197  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmfbwdnf60000kuzg41ovkra2
+10:33:45.198  ChatSidebar: Filtering conversations Object
+10:33:45.198  ChatSidebar: Group conversation cmew64hqq0008kud8i3zywuwd (Test) - members: 3
+10:33:45.201  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmew64hqq0008kud8i3zywuwd
+10:33:45.201  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.201  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmew64hqq0008kud8i3zywuwd
+10:33:45.201  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.203  [CallModal] Rendered - voice call opened
+10:33:45.203  [CallModal] Rendered - voice call opened
+10:33:45.203  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.203  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.203  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.203  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.206  ChatSidebar: Conversations updated, count: 5
+10:33:45.206  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:45.206  [VoiceActivity] Effect triggered: Object
+10:33:45.206  [VoiceActivity] No stream provided, cleaning up
+10:33:45.206  [VoiceActivity] Effect triggered: Object
+10:33:45.206  [VoiceActivity] No stream provided, cleaning up
+10:33:45.206  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.206  🔄 ChatWindow: Conversation participants count: 3
+10:33:45.206  🔄 ChatWindow: Participants: Array(3)
+10:33:45.206  [VoiceActivity] Effect triggered: Object
+10:33:45.206  [VoiceActivity] No stream provided, cleaning up
+10:33:45.206  [VoiceActivity] Effect triggered: Object
+10:33:45.206  [VoiceActivity] No stream provided, cleaning up
+10:33:45.206  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.206  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.208  [CallModal] Rendered - voice call opened
+10:33:45.208  [CallModal] Rendered - voice call opened
+10:33:45.209  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.209  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.209  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.209  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.210  [VoiceActivity] Effect triggered: Object
+10:33:45.210  [VoiceActivity] No stream provided, cleaning up
+10:33:45.210  [VoiceActivity] Effect triggered: Object
+10:33:45.210  [VoiceActivity] No stream provided, cleaning up
+10:33:45.210  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.210  [VoiceActivity] Effect triggered: Object
+10:33:45.210  [VoiceActivity] No stream provided, cleaning up
+10:33:45.210  [VoiceActivity] Effect triggered: Object
+10:33:45.210  [VoiceActivity] No stream provided, cleaning up
+10:33:45.210  [CallModal] Rendered - voice call opened
+10:33:45.210  [CallModal] Rendered - voice call opened
+10:33:45.210  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.210  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.211  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.211  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.211  [VoiceActivity] Effect triggered: Object
+10:33:45.211  [VoiceActivity] No stream provided, cleaning up
+10:33:45.211  [VoiceActivity] Effect triggered: Object
+10:33:45.211  [VoiceActivity] No stream provided, cleaning up
+10:33:45.211  [VoiceActivity] Effect triggered: Object
+10:33:45.211  [VoiceActivity] No stream provided, cleaning up
+10:33:45.211  [VoiceActivity] Effect triggered: Object
+10:33:45.211  [VoiceActivity] No stream provided, cleaning up
+10:33:45.517  User status update received: Object
+10:33:45.518  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmeifnahq003ekungumhkl6ux
+10:33:45.519  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmfbwdnf60000kuzg41ovkra2
+10:33:45.519  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.520  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.521  [CallModal] Rendered - voice call opened
+10:33:45.521  [CallModal] Rendered - voice call opened
+10:33:45.521  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.521  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.522  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.522  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.525  ChatSidebar: Conversations updated, count: 5
+10:33:45.525  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:45.525  [VoiceActivity] Effect triggered: Object
+10:33:45.525  [VoiceActivity] No stream provided, cleaning up
+10:33:45.525  [VoiceActivity] Effect triggered: Object
+10:33:45.525  [VoiceActivity] No stream provided, cleaning up
+10:33:45.525  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.525  🔄 ChatWindow: Conversation participants count: 3
+10:33:45.525  🔄 ChatWindow: Participants: Array(3)
+10:33:45.526  [VoiceActivity] Effect triggered: Object
+10:33:45.526  [VoiceActivity] No stream provided, cleaning up
+10:33:45.526  [VoiceActivity] Effect triggered: Object
+10:33:45.526  [VoiceActivity] No stream provided, cleaning up
+10:33:45.526  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.526  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.530  [CallModal] Rendered - voice call opened
+10:33:45.530  [CallModal] Rendered - voice call opened
+10:33:45.530  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.530  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.531  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.531  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.533  [VoiceActivity] Effect triggered: Object
+10:33:45.533  [VoiceActivity] No stream provided, cleaning up
+10:33:45.533  [VoiceActivity] Effect triggered: Object
+10:33:45.533  [VoiceActivity] No stream provided, cleaning up
+10:33:45.533  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.533  [VoiceActivity] Effect triggered: Object
+10:33:45.533  [VoiceActivity] No stream provided, cleaning up
+10:33:45.533  [VoiceActivity] Effect triggered: Object
+10:33:45.533  [VoiceActivity] No stream provided, cleaning up
+10:33:45.534  [CallModal] Rendered - voice call opened
+10:33:45.534  [CallModal] Rendered - voice call opened
+10:33:45.534  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.534  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.534  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.534  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.535  [VoiceActivity] Effect triggered: Object
+10:33:45.535  [VoiceActivity] No stream provided, cleaning up
+10:33:45.535  [VoiceActivity] Effect triggered: Object
+10:33:45.535  [VoiceActivity] No stream provided, cleaning up
+10:33:45.535  [VoiceActivity] Effect triggered: Object
+10:33:45.535  [VoiceActivity] No stream provided, cleaning up
+10:33:45.535  [VoiceActivity] Effect triggered: Object
+10:33:45.535  [VoiceActivity] No stream provided, cleaning up
+10:33:45.599  [CallModal] Updated peer connections for performance monitoring: 2
+10:33:45.599  [CallModal] Peer connection participants: Array(2)
+10:33:45.600  [CallModal] Rendered - voice call opened
+10:33:45.600  [CallModal] Rendered - voice call opened
+10:33:45.601  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.601  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.602  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.602  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.603  [VoiceActivity] Effect triggered: Object
+10:33:45.603  [VoiceActivity] No stream provided, cleaning up
+10:33:45.603  [VoiceActivity] Effect triggered: Object
+10:33:45.603  [VoiceActivity] No stream provided, cleaning up
+10:33:45.603  [useCallPerformance] Connection states: Array(2)
+10:33:45.603  [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:45.604  [VoiceActivity] Effect triggered: Object
+10:33:45.604  [VoiceActivity] No stream provided, cleaning up
+10:33:45.604  [VoiceActivity] Effect triggered: Object
+10:33:45.604  [VoiceActivity] No stream provided, cleaning up
+10:33:45.604  [useCallPerformance] Network metrics: Object
+10:33:45.605  [useCallPerformance] Network metrics: Object
+10:33:45.606  [CallModal] Rendered - voice call opened
+10:33:45.606  [CallModal] Rendered - voice call opened
+10:33:45.606  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.606  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.606  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.606  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.609  [VoiceActivity] Effect triggered: Object
+10:33:45.609  [VoiceActivity] No stream provided, cleaning up
+10:33:45.609  [VoiceActivity] Effect triggered: Object
+10:33:45.609  [VoiceActivity] No stream provided, cleaning up
+10:33:45.609  [VoiceActivity] Effect triggered: Object
+10:33:45.609  [VoiceActivity] No stream provided, cleaning up
+10:33:45.609  [VoiceActivity] Effect triggered: Object
+10:33:45.609  [VoiceActivity] No stream provided, cleaning up
+10:33:45.694  ChatSidebar: Filtered 5 -> 5 conversations
+10:33:45.694  ChatSidebar: Final conversation list: Array(5)
+10:33:45.695  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.695  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.699  [CallModal] Rendered - voice call opened
+10:33:45.699  [CallModal] Rendered - voice call opened
+10:33:45.699  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.699  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.699  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.699  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.703  ChatSidebar: Conversations updated, count: 5
+10:33:45.703  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:45.703  [VoiceActivity] Effect triggered: Object
+10:33:45.703  [VoiceActivity] No stream provided, cleaning up
+10:33:45.703  [VoiceActivity] Effect triggered: Object
+10:33:45.703  [VoiceActivity] No stream provided, cleaning up
+10:33:45.703  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.703  🔄 ChatWindow: Conversation participants count: 3
+10:33:45.703  🔄 ChatWindow: Participants: Array(3)
+10:33:45.703  [VoiceActivity] Effect triggered: Object
+10:33:45.703  [VoiceActivity] No stream provided, cleaning up
+10:33:45.703  [VoiceActivity] Effect triggered: Object
+10:33:45.703  [VoiceActivity] No stream provided, cleaning up
+10:33:45.703  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.704  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.706  [CallModal] Rendered - voice call opened
+10:33:45.706  [CallModal] Rendered - voice call opened
+10:33:45.706  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.706  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.707  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.707  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.711  [VoiceActivity] Effect triggered: Object
+10:33:45.711  [VoiceActivity] No stream provided, cleaning up
+10:33:45.711  [VoiceActivity] Effect triggered: Object
+10:33:45.711  [VoiceActivity] No stream provided, cleaning up
+10:33:45.711  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.711  [CallModal] 🆘 EMERGENCY WebRTC RECOVERY - Call is connected but WebRTC needs help!
+10:33:45.711  [CallModal] 🔧 Emergency details: Object
+10:33:45.711  [VoiceActivity] Effect triggered: Object
+10:33:45.711  [VoiceActivity] No stream provided, cleaning up
+10:33:45.711  [VoiceActivity] Effect triggered: Object
+10:33:45.711  [VoiceActivity] No stream provided, cleaning up
+10:33:45.712  ChatSidebar: Filtered 5 -> 5 conversations
+10:33:45.712  ChatSidebar: Final conversation list: Array(5)
+10:33:45.713  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.713  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.719  [CallModal] Rendered - voice call opened
+10:33:45.719  [CallModal] Rendered - voice call opened
+10:33:45.720  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.720  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.721  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.721  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.723  ChatSidebar: Conversations updated, count: 5
+10:33:45.724  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:45.724  [VoiceActivity] Effect triggered: Object
+10:33:45.724  [VoiceActivity] No stream provided, cleaning up
+10:33:45.724  [VoiceActivity] Effect triggered: Object
+10:33:45.724  [VoiceActivity] No stream provided, cleaning up
+10:33:45.724  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.724  🔄 ChatWindow: Conversation participants count: 3
+10:33:45.724  🔄 ChatWindow: Participants: Array(3)
+10:33:45.724  [VoiceActivity] Effect triggered: Object
+10:33:45.724  [VoiceActivity] No stream provided, cleaning up
+10:33:45.724  [VoiceActivity] Effect triggered: Object
+10:33:45.724  [VoiceActivity] No stream provided, cleaning up
+10:33:45.724  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.724  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.728  [CallModal] Rendered - voice call opened
+10:33:45.728  [CallModal] Rendered - voice call opened
+10:33:45.728  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.728  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.729  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.729  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.734  [VoiceActivity] Effect triggered: Object
+10:33:45.734  [VoiceActivity] No stream provided, cleaning up
+10:33:45.734  [VoiceActivity] Effect triggered: Object
+10:33:45.734  [VoiceActivity] No stream provided, cleaning up
+10:33:45.734  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.734  [VoiceActivity] Effect triggered: Object
+10:33:45.734  [VoiceActivity] No stream provided, cleaning up
+10:33:45.734  [VoiceActivity] Effect triggered: Object
+10:33:45.734  [VoiceActivity] No stream provided, cleaning up
+10:33:45.735  ChatSidebar: Filtered 5 -> 5 conversations
+10:33:45.735  ChatSidebar: Final conversation list: Array(5)
+10:33:45.737  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.737  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.741  [CallModal] Rendered - voice call opened
+10:33:45.743  [CallModal] Rendered - voice call opened
+10:33:45.744  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.744 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.745 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.745 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.745 useConversations.ts:592 Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmew64hqq0008kud8i3zywuwd
+10:33:45.749 SocketContext.tsx:449 SocketContext: Heartbeat sent successfully
+10:33:45.749 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:45.750 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:45.750 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.750 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.750 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.750 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.750 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.750 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:45.750 ChatWindow.tsx:191 🔄 ChatWindow: Participants: Array(3)
+10:33:45.750 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.750 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.750 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.750 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.751 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.751 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.756 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.756 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.756 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.756 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.757 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.757 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.758 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.758 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.758 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.758 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.758 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.758 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.758 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.758 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.759 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.759 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.759 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.759 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.759 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.759 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.759 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.760 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.760 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.760 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.760 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.760 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.760 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.760 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.760 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.859 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.859 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.862 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.862 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.862 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.862 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.863 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.863 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.865 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:45.865 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:45.865 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.865 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.865 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.865 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.865 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.865 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:45.865 ChatWindow.tsx:191 🔄 ChatWindow: Participants: Array(3)
+10:33:45.865 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.865 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.865 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.865 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.865 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.866 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:45.868 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.868 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.869 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.869 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.869 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.869 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.870 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.870 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.870 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.870 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.870 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:45.870 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.870 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.870 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.870 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.870 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.871 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:45.871 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.871 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:45.871 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.871 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:45.872 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.872 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.872 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.872 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.872 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.872 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:45.872 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:45.872 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:46.545 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations Object
+10:33:46.546 useConversations.ts:592 Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmfbwdnf60000kuzg41ovkra2
+10:33:46.547 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.547 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.551 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:46.551 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:46.551 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.551 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.552 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.552 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.554 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:46.554 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:46.554 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:46.554 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:46.554 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:46.554 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:46.554 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:46.555 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:46.555 ChatWindow.tsx:191 🔄 ChatWindow: Participants: Array(3)
+10:33:46.555 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:46.555 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:46.555 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:46.555 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:46.555 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.555 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.558 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:46.558 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:46.558 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.558 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.558 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.558 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.559 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:46.559  [VoiceActivity] No stream provided, cleaning up
+10:33:46.559  [VoiceActivity] Effect triggered: Object
+10:33:46.559  [VoiceActivity] No stream provided, cleaning up
+10:33:46.559  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:46.559  [VoiceActivity] Effect triggered: Object
+10:33:46.559  [VoiceActivity] No stream provided, cleaning up
+10:33:46.559  [VoiceActivity] Effect triggered: Object
+10:33:46.559  [VoiceActivity] No stream provided, cleaning up
+10:33:46.560  [CallModal] Rendered - voice call opened
+10:33:46.560  [CallModal] Rendered - voice call opened
+10:33:46.560  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.560  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.561  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.561  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.561  [VoiceActivity] Effect triggered: Object
+10:33:46.561  [VoiceActivity] No stream provided, cleaning up
+10:33:46.561  [VoiceActivity] Effect triggered: Object
+10:33:46.561  [VoiceActivity] No stream provided, cleaning up
+10:33:46.561  [VoiceActivity] Effect triggered: Object
+10:33:46.561  [VoiceActivity] No stream provided, cleaning up
+10:33:46.561  [VoiceActivity] Effect triggered: Object
+10:33:46.561  [VoiceActivity] No stream provided, cleaning up
+10:33:46.861  User status update received: Object
+10:33:46.864  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.864  Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmfbwdnf60000kuzg41ovkra2
+10:33:46.864  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.865  [CallModal] Rendered - voice call opened
+10:33:46.866  [CallModal] Rendered - voice call opened
+10:33:46.866  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.866  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.866  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.866  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.867  Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmew64hqq0008kud8i3zywuwd
+10:33:46.871  ChatSidebar: Conversations updated, count: 5
+10:33:46.871  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:46.871  [VoiceActivity] Effect triggered: Object
+10:33:46.871  [VoiceActivity] No stream provided, cleaning up
+10:33:46.871  [VoiceActivity] Effect triggered: Object
+10:33:46.871  [VoiceActivity] No stream provided, cleaning up
+10:33:46.871  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:46.871  🔄 ChatWindow: Conversation participants count: 3
+10:33:46.871  🔄 ChatWindow: Participants: Array(3)
+10:33:46.871  [VoiceActivity] Effect triggered: Object
+10:33:46.871  [VoiceActivity] No stream provided, cleaning up
+10:33:46.871  [VoiceActivity] Effect triggered: Object
+10:33:46.871  [VoiceActivity] No stream provided, cleaning up
+10:33:46.871  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.871  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:46.873  [CallModal] Rendered - voice call opened
+10:33:46.873  [CallModal] Rendered - voice call opened
+10:33:46.873  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.873  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.873  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.873  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.875  [VoiceActivity] Effect triggered: Object
+10:33:46.875  [VoiceActivity] No stream provided, cleaning up
+10:33:46.875  [VoiceActivity] Effect triggered: Object
+10:33:46.875  [VoiceActivity] No stream provided, cleaning up
+10:33:46.875  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:46.875  [VoiceActivity] Effect triggered: Object
+10:33:46.875  [VoiceActivity] No stream provided, cleaning up
+10:33:46.875  [VoiceActivity] Effect triggered: Object
+10:33:46.875  [VoiceActivity] No stream provided, cleaning up
+10:33:46.875  [CallModal] Rendered - voice call opened
+10:33:46.875  [CallModal] Rendered - voice call opened
+10:33:46.876  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.876  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:46.876  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.876  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:46.877  [VoiceActivity] Effect triggered: Object
+10:33:46.877  [VoiceActivity] No stream provided, cleaning up
+10:33:46.877  [VoiceActivity] Effect triggered: Object
+10:33:46.877  [VoiceActivity] No stream provided, cleaning up
+10:33:46.877  [VoiceActivity] Effect triggered: Object
+10:33:46.877  [VoiceActivity] No stream provided, cleaning up
+10:33:46.877  [VoiceActivity] Effect triggered: Object
+10:33:46.877  [VoiceActivity] No stream provided, cleaning up
+10:33:47.368  [WebRTC] Excellent network detected - restoring quality
+10:33:47.369  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:33:47.599  [CallModal] Updated peer connections for performance monitoring: 2
+10:33:47.599  [CallModal] Peer connection participants: Array(2)
+10:33:47.599  [CallModal] Rendered - voice call opened
+10:33:47.599  [CallModal] Rendered - voice call opened
+10:33:47.600  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.600  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.600  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.600  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.601  [VoiceActivity] Effect triggered: Object
+10:33:47.601  [VoiceActivity] No stream provided, cleaning up
+10:33:47.601  [VoiceActivity] Effect triggered: Object
+10:33:47.601  [VoiceActivity] No stream provided, cleaning up
+10:33:47.601  [useCallPerformance] Connection states: Array(2)
+10:33:47.601  [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:47.601  [VoiceActivity] Effect triggered: Object
+10:33:47.601  [VoiceActivity] No stream provided, cleaning up
+10:33:47.601  [VoiceActivity] Effect triggered: Object
+10:33:47.601  [VoiceActivity] No stream provided, cleaning up
+10:33:47.602  [useCallPerformance] Network metrics: Object
+10:33:47.603  [useCallPerformance] No valid network data yet, assuming good quality
+10:33:47.603  [CallModal] Rendered - voice call opened
+10:33:47.604  [CallModal] Rendered - voice call opened
+10:33:47.604  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.604  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.604  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.604  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.605  [VoiceActivity] Effect triggered: Object
+10:33:47.605  [VoiceActivity] No stream provided, cleaning up
+10:33:47.605  [VoiceActivity] Effect triggered: Object
+10:33:47.605  [VoiceActivity] No stream provided, cleaning up
+10:33:47.605  [VoiceActivity] Effect triggered: Object
+10:33:47.605  [VoiceActivity] No stream provided, cleaning up
+10:33:47.605  [VoiceActivity] Effect triggered: Object
+10:33:47.605  [VoiceActivity] No stream provided, cleaning up
+10:33:47.809  NotificationContext: Window focused
+10:33:47.811  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.811  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.813  [CallModal] Rendered - voice call opened
+10:33:47.813  [CallModal] Rendered - voice call opened
+10:33:47.814  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.814  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.815  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.815  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.819  🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+10:33:47.820  🌐 GlobalNotificationListener: useEffect triggered Object
+10:33:47.820  🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+10:33:47.820  🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+10:33:47.820  ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+10:33:47.820  [VoiceActivity] Effect triggered: Object
+10:33:47.820  [VoiceActivity] No stream provided, cleaning up
+10:33:47.820  [VoiceActivity] Effect triggered: Object
+10:33:47.820  [VoiceActivity] No stream provided, cleaning up
+10:33:47.820  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:47.820  [VoiceActivity] Effect triggered: Object
+10:33:47.820  [VoiceActivity] No stream provided, cleaning up
+10:33:47.820  [VoiceActivity] Effect triggered: Object
+10:33:47.820  [VoiceActivity] No stream provided, cleaning up
+10:33:47.820  SocketContext: Window focused, refreshing connection
+10:33:47.822  [CallModal] Rendered - voice call opened
+10:33:47.822  [CallModal] Rendered - voice call opened
+10:33:47.822  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.822  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.823  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.823  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.823  [VoiceActivity] Effect triggered: Object
+10:33:47.823  [VoiceActivity] No stream provided, cleaning up
+10:33:47.823  [VoiceActivity] Effect triggered: Object
+10:33:47.823  [VoiceActivity] No stream provided, cleaning up
+10:33:47.823  [VoiceActivity] Effect triggered: Object
+10:33:47.823  [VoiceActivity] No stream provided, cleaning up
+10:33:47.823  [VoiceActivity] Effect triggered: Object
+10:33:47.823  [VoiceActivity] No stream provided, cleaning up
+10:33:47.849  NotificationContext: Page visibility changed to: true
+10:33:47.850  SocketContext: Tab became visible, re-establishing connection
+10:33:47.853  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.854  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.860  [CallModal] Rendered - voice call opened
+10:33:47.861  [CallModal] Rendered - voice call opened
+10:33:47.862  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.862  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.862  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.863  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.869  🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+10:33:47.869  🌐 GlobalNotificationListener: useEffect triggered Object
+10:33:47.869  🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+10:33:47.869  🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+10:33:47.869  ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+10:33:47.869  [VoiceActivity] Effect triggered: Object
+10:33:47.869  [VoiceActivity] No stream provided, cleaning up
+10:33:47.869  [VoiceActivity] Effect triggered: Object
+10:33:47.870  [VoiceActivity] No stream provided, cleaning up
+10:33:47.870  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:47.870  [VoiceActivity] Effect triggered: Object
+10:33:47.870  [VoiceActivity] No stream provided, cleaning up
+10:33:47.870  [VoiceActivity] Effect triggered: Object
+10:33:47.870  [VoiceActivity] No stream provided, cleaning up
+10:33:47.875  [CallModal] Rendered - voice call opened
+10:33:47.875  [CallModal] Rendered - voice call opened
+10:33:47.876  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.876  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.876  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.876  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.878  [VoiceActivity] Effect triggered: Object
+10:33:47.879  [VoiceActivity] No stream provided, cleaning up
+10:33:47.879  [VoiceActivity] Effect triggered: Object
+10:33:47.879  [VoiceActivity] No stream provided, cleaning up
+10:33:47.879  [VoiceActivity] Effect triggered: Object
+10:33:47.879  [VoiceActivity] No stream provided, cleaning up
+10:33:47.879  [VoiceActivity] Effect triggered: Object
+10:33:47.879  [VoiceActivity] No stream provided, cleaning up
+10:33:47.881  [CallModal] Rendered - voice call opened
+10:33:47.882  [CallModal] Rendered - voice call opened
+10:33:47.921  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.921  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.923  [CallModal] Rendered - voice call opened
+10:33:47.923  [CallModal] Rendered - voice call opened
+10:33:47.923  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.923  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.925  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.925  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.927  🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+10:33:47.928  🌐 GlobalNotificationListener: useEffect triggered Object
+10:33:47.928  🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+10:33:47.928  🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+10:33:47.928  ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+10:33:47.928  [VoiceActivity] Effect triggered: Object
+10:33:47.928  [VoiceActivity] No stream provided, cleaning up
+10:33:47.928  [VoiceActivity] Effect triggered: Object
+10:33:47.928  [VoiceActivity] No stream provided, cleaning up
+10:33:47.928  [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:47.928  [VoiceActivity] Effect triggered: Object
+10:33:47.928  [VoiceActivity] No stream provided, cleaning up
+10:33:47.928  [VoiceActivity] Effect triggered: Object
+10:33:47.928  [VoiceActivity] No stream provided, cleaning up
+10:33:47.928  [CallModal] Rendered - voice call opened
+10:33:47.929  [CallModal] Rendered - voice call opened
+10:33:47.929  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.929  [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.929  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.929  [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.930  [VoiceActivity] Effect triggered: Object
+10:33:47.930  [VoiceActivity] No stream provided, cleaning up
+10:33:47.930  [VoiceActivity] Effect triggered: Object
+10:33:47.930  [VoiceActivity] No stream provided, cleaning up
+10:33:47.930  [VoiceActivity] Effect triggered: Object
+10:33:47.930  [VoiceActivity] No stream provided, cleaning up
+10:33:47.930  [VoiceActivity] Effect triggered: Object
+10:33:47.930  [VoiceActivity] No stream provided, cleaning up
+10:33:47.955  Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmew64hqq0008kud8i3zywuwd
+10:33:47.958 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.958 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.962 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:47.963 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:47.963 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.963 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.964 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.964 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.971 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:47.972 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:47.972 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.972 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.972 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.972 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.972 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:47.972 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:47.972 ChatWindow.tsx:191 🔄 ChatWindow: Participants: Array(3)
+10:33:47.972 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.972 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.972 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.972 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.972 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.972 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:47.974 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:47.974 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:47.974 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.975 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.975 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.975 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.976 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.976 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.976 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.976 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.977 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:47.977 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.977 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.977 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.977 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.977 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:47.977 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:47.978 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.978 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:47.978 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.978 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:47.979 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.979 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.979 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.979 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.979 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.979 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:47.979 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:47.979 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:48.052 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:48.053 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:48.140 webrtc.ts:1816 [WebRTC] Excellent network detected - restoring quality
+10:33:48.140 webrtc.ts:1890 [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:33:48.532 useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: Object
+10:33:48.853 SocketContext.tsx:371 SocketContext: Additional heartbeat sent after becoming visible
+10:33:49.000 useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: Object
+10:33:49.428 NotificationContext.tsx:213 NotificationContext: Window blurred
+10:33:49.430 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:49.430 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:49.432 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.432 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.432 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.432 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.432 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.432 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.434 GlobalNotificationListener.tsx:173 🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+10:33:49.434 GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered Object
+10:33:49.434 GlobalNotificationListener.tsx:43 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifml0h001okung0i95m8s6
+10:33:49.434 GlobalNotificationListener.tsx:48 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+10:33:49.434 GlobalNotificationListener.tsx:170 ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+10:33:49.434 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.434 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.434 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.434 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.434 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(2)
+10:33:49.434 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.434 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.434 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.434 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.434 SocketContext.tsx:399 SocketContext: Window blurred, sending pre-blur heartbeat
+10:33:49.434 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.434 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.435 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.435 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.435 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.435 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.435 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.435 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.435 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.435 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.435 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.435 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.435 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.435 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.460 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.460 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.599 CallModal.tsx:226 [CallModal] Updated peer connections for performance monitoring: 2
+10:33:49.599 CallModal.tsx:227 [CallModal] Peer connection participants: Array(2)
+10:33:49.600 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.600 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.600 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.600 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.601 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.601 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.601 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.601 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.601 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.601 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.601 useCallPerformance.ts:242 [useCallPerformance] Connection states: Array(2)
+10:33:49.601 useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:49.601 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.601 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.601 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.602 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.603 useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+10:33:49.603 useCallPerformance.ts:41 [useCallPerformance] Network metrics: Object
+10:33:49.604 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.604 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:49.604 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.604 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: Object
+10:33:49.604 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.604 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: Object
+10:33:49.605 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.605 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.605 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.605 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.605 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.605 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:49.605 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+10:33:49.605 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.685  [CallModal] Rendered - voice call opened
+10:33:50.686  [CallModal] Rendered - voice call opened
+10:33:50.690  [Fast Refresh] rebuilding
+10:33:50.695  [WebRTC] Excellent network detected - restoring quality
+10:33:50.695  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:33:50.777  User status update received: {userId: 'cmeumah180000kuygq63oa1qx', isOnline: true, lastSeen: '2025-09-10T02:33:50.748Z'}
+10:33:50.778  Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmew64hqq0008kud8i3zywuwd
+10:33:50.779  ChatSidebar: Filtering conversations {totalConversations: 5, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 28, …}
+10:33:50.780  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.780  Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmf4reytq000tkuuuioykvp98
+10:33:50.780 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.782 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.783 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.784 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.784 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.785 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.785 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.789 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:50.790 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:50.791 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.792 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.792 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.793 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.793 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:50.793 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:50.794 ChatWindow.tsx:191 🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:33:50.794 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.794 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.794 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.794 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.794 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.795 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.797 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.797 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.798 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.798 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.799 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.799 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.801 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.802 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.802 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.803 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.804 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:50.804 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.805 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.805 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.805 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.812 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.812 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.813 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.813 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.813 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.814 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.815 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.815 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.816 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.816 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.816 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.817 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.817 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.817 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.821 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.821 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.950 ChatSidebar.tsx:340 ChatSidebar: Group conversation cmfbwdnf60000kuzg41ovkra2 (New Group) - members: 3
+10:33:50.951 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.952 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.953 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.953 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.954 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.954 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.954 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.954 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.958 hot-reloader-client.js:44 [Fast Refresh] done in 268ms
+10:33:50.959 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:50.959 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:50.960 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.960 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.961 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.961 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.961 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:50.962 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:50.962 ChatWindow.tsx:191 🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:33:50.963 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.963 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.963 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.963 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.964 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.964 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:50.967 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.968 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.968 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.968 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.969 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.969 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.974 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.975 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.975 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.976 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.976 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:50.976 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.977 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.977 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.977 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.977 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.977 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.979 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.980 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.981 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.981 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:50.983 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.984 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.984 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.985 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.986 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.986 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.986 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:50.986 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:50.991 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:50.992 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.112 useConversations.ts:553 User status update received: {userId: 'cmeifn5qp002dkunge64m0xss', isOnline: true, lastSeen: '2025-09-10T02:33:51.101Z'}
+10:33:51.114 ChatSidebar.tsx:323 ChatSidebar: Filtering conversations {totalConversations: 5, blockedUserIds: Array(0), blockerUserIds: Array(0), effectiveSearchQuery: '', forceRefresh: 28, …}
+10:33:51.117 useConversations.ts:592 Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmew64hqq0008kud8i3zywuwd
+10:33:51.117 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:51.118 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:51.120 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.120 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.121 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.121 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.122 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.122 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.125 ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 5
+10:33:51.125 ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:51.126 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.126 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.127 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.128 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.128 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:51.129 ChatWindow.tsx:190 🔄 ChatWindow: Conversation participants count: 3
+10:33:51.129 ChatWindow.tsx:191 🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:33:51.130 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.130 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.130 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.130 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.133 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:51.133 ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:51.137 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.137 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.138 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.138 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.139 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.139 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.142 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.143 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.143 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.144 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.144 CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:51.145 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.145 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.145 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.145 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.150 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.151 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.151 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.151 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.152 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.152 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.153 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.153 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.153 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.154 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.154 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.154 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.154 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.154 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.154 webrtc.ts:1816 [WebRTC] Excellent network detected - restoring quality
+10:33:51.155 webrtc.ts:1890 [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:33:51.171 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.171 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.232 useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: {average: '4.4', volume: '-35.3', threshold: -50, speaking: false, streamActive: true, …}
+10:33:51.601 CallModal.tsx:226 [CallModal] Updated peer connections for performance monitoring: 2
+10:33:51.601 CallModal.tsx:227 [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:51.602 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.602 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.602 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.603 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.603 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.603 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.605 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.605 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.605 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.606 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.606 useCallPerformance.ts:242 [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:33:51.607 useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:51.608 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.608 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.608 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.608 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.609 useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+10:33:51.613 useCallPerformance.ts:41 [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:33:51.613 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.613 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.614 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.614 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.615 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.615 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:51.616 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.616 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.617 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.617 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.618 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.618 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.618 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:51.618 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:51.633 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:51.634 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.039 useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: {average: '4.6', volume: '-34.9', threshold: -50, speaking: false, streamActive: true, …}
+10:33:53.366 webrtc.ts:1816 [WebRTC] Excellent network detected - restoring quality
+10:33:53.366 webrtc.ts:1890 [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:33:53.598 CallModal.tsx:226 [CallModal] Updated peer connections for performance monitoring: 2
+10:33:53.598 CallModal.tsx:227 [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:53.598 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.599 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.599 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.599 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.599 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.600 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.601 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.601 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:53.601 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.602 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:53.602 useCallPerformance.ts:242 [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:33:53.602 useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:53.603 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.603 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:53.603 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.603 useVoiceActivity.ts:30 [VoiceActivity] No stream provided, cleaning up
+10:33:53.613 useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+10:33:53.616 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.616 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.616 useCallPerformance.ts:41 [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:33:53.617 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.617 CallModal.tsx:62 [CallModal] Rendered - voice call opened
+10:33:53.618 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.618 CallModal.tsx:2573 [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.618 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.618 CallModal.tsx:2573 [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:53.620 useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.620  [VoiceActivity] No stream provided, cleaning up
+10:33:53.621  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.621  [VoiceActivity] No stream provided, cleaning up
+10:33:53.622  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.622  [VoiceActivity] No stream provided, cleaning up
+10:33:53.622  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:53.622  [VoiceActivity] No stream provided, cleaning up
+10:33:53.633  [CallModal] Rendered - voice call opened
+10:33:53.633  [CallModal] Rendered - voice call opened
+10:33:54.140  [WebRTC] Excellent network detected - restoring quality
+10:33:54.141  [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:33:55.598  [CallModal] Updated peer connections for performance monitoring: 2
+10:33:55.598  [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:55.598  [CallModal] Rendered - voice call opened
+10:33:55.599  [CallModal] Rendered - voice call opened
+10:33:55.599  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.599  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.599  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.599  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.600  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.601  [VoiceActivity] No stream provided, cleaning up
+10:33:55.601  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.602  [VoiceActivity] No stream provided, cleaning up
+10:33:55.602  [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:33:55.602  [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:55.603  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.603  [VoiceActivity] No stream provided, cleaning up
+10:33:55.603  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.603  [VoiceActivity] No stream provided, cleaning up
+10:33:55.604  [useCallPerformance] No valid network data yet, assuming good quality
+10:33:55.605  [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:33:55.605  [CallModal] Rendered - voice call opened
+10:33:55.605  [CallModal] Rendered - voice call opened
+10:33:55.606  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.606  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.607  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.607  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.608  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.608  [VoiceActivity] No stream provided, cleaning up
+10:33:55.609  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.609  [VoiceActivity] No stream provided, cleaning up
+10:33:55.610  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.610  [VoiceActivity] No stream provided, cleaning up
+10:33:55.610  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.610  [VoiceActivity] No stream provided, cleaning up
+10:33:55.614  [CallModal] Rendered - voice call opened
+10:33:55.615  [CallModal] Rendered - voice call opened
+10:33:55.653  ChatSidebar: Filtered 5 -> 5 conversations
+10:33:55.654  ChatSidebar: Final conversation list: (5) [{…}, {…}, {…}, {…}, {…}]
+10:33:55.656  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.657  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.661  [CallModal] Rendered - voice call opened
+10:33:55.661  [CallModal] Rendered - voice call opened
+10:33:55.662  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.662  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.662  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.663  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.670  ChatSidebar: Conversations updated, count: 5
+10:33:55.671  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:55.672  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.673  [VoiceActivity] No stream provided, cleaning up
+10:33:55.673  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.674  [VoiceActivity] No stream provided, cleaning up
+10:33:55.674  [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:55.674  🔄 ChatWindow: Conversation participants count: 3
+10:33:55.675  🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:33:55.675  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.675  [VoiceActivity] No stream provided, cleaning up
+10:33:55.675  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.675  [VoiceActivity] No stream provided, cleaning up
+10:33:55.676  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.677  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.681  [CallModal] Rendered - voice call opened
+10:33:55.681  [CallModal] Rendered - voice call opened
+10:33:55.682  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.682  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.683  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.683  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.686  [VoiceActivity] Volume analysis: {average: '4.8', volume: '-34.5', threshold: -50, speaking: false, streamActive: true, …}
+10:33:55.689  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.690  [VoiceActivity] No stream provided, cleaning up
+10:33:55.690  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.691  [VoiceActivity] No stream provided, cleaning up
+10:33:55.691  [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:55.691  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.692  [VoiceActivity] No stream provided, cleaning up
+10:33:55.692  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.692  [VoiceActivity] No stream provided, cleaning up
+10:33:55.692  [CallModal] Rendered - voice call opened
+10:33:55.692  [CallModal] Rendered - voice call opened
+10:33:55.693  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.693  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.693  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.693  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.696  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.697  [VoiceActivity] No stream provided, cleaning up
+10:33:55.697  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.698  [VoiceActivity] No stream provided, cleaning up
+10:33:55.698  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.698  [VoiceActivity] No stream provided, cleaning up
+10:33:55.698  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.698  [VoiceActivity] No stream provided, cleaning up
+10:33:55.702  Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmfbwdnf60000kuzg41ovkra2
+10:33:55.702  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.702  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.704  [CallModal] Rendered - voice call opened
+10:33:55.704  [CallModal] Rendered - voice call opened
+10:33:55.705  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.705  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.705  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.706  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.711  ChatSidebar: Conversations updated, count: 5
+10:33:55.712  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:33:55.713  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.713  [VoiceActivity] No stream provided, cleaning up
+10:33:55.714  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.714  [VoiceActivity] No stream provided, cleaning up
+10:33:55.714  [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:55.715  🔄 ChatWindow: Conversation participants count: 3
+10:33:55.715  🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:33:55.715  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.715  [VoiceActivity] No stream provided, cleaning up
+10:33:55.715  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.715  [VoiceActivity] No stream provided, cleaning up
+10:33:55.716  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.716  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:33:55.718  [CallModal] Rendered - voice call opened
+10:33:55.718  [CallModal] Rendered - voice call opened
+10:33:55.719  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.719  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.720  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.720  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.728  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.729  [VoiceActivity] No stream provided, cleaning up
+10:33:55.729  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.730  [VoiceActivity] No stream provided, cleaning up
+10:33:55.730  [CallModal] Initialized active participants (excluding self): (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:55.731  [CallModal] 🆘 EMERGENCY WebRTC RECOVERY - Call is connected but WebRTC needs help!
+10:33:55.731  [CallModal] 🔧 Emergency details: {needsInit: false, needsConnectionRecovery: true, callState: 'connecting', isIncoming: false, participants: Array(2), …}
+10:33:55.731  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.731  [VoiceActivity] No stream provided, cleaning up
+10:33:55.732  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.732  [VoiceActivity] No stream provided, cleaning up
+10:33:55.732  [CallModal] Rendered - voice call opened
+10:33:55.732  [CallModal] Rendered - voice call opened
+10:33:55.732  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.732  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.733  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.733  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:55.734  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.735  [VoiceActivity] No stream provided, cleaning up
+10:33:55.735  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.736  [VoiceActivity] No stream provided, cleaning up
+10:33:55.736  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.736  [VoiceActivity] No stream provided, cleaning up
+10:33:55.736  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:55.736  [VoiceActivity] No stream provided, cleaning up
+10:33:55.746  [CallModal] Rendered - voice call opened
+10:33:55.746  [CallModal] Rendered - voice call opened
+10:33:56.366  [WebRTC] Excellent network detected - restoring quality
+10:33:56.367  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:33:56.463  [WebRTC] 📞 RECEIVED OFFER from: cmeifn5qp002dkunge64m0xss
+10:33:56.463  [WebRTC] Call ID check: {received: 'call-1757471609561-k75ig2g6f', ours: 'call-1757471609561-k75ig2g6f'}
+10:33:56.463  [WebRTC] ✅ Processing offer from: cmeifn5qp002dkunge64m0xss
+10:33:56.463  [WebRTC] Creating peer connection for: cmeifn5qp002dkunge64m0xss
+10:33:56.463  [WebRTC] ⚠️ Peer connection already exists for: cmeifn5qp002dkunge64m0xss {connectionState: 'connected', iceConnectionState: 'connected', signalingState: 'stable'}
+10:33:56.463  [WebRTC] ✅ Reusing healthy existing connection for: cmeifn5qp002dkunge64m0xss
+10:33:56.463  [WebRTC] Local stream ready with tracks: 1
+10:33:56.463  [WebRTC] 🔍 Peer connection senders before answer: 2
+10:33:56.464  [WebRTC]   Sender 0: {hasTrack: true, trackKind: 'audio', trackEnabled: true, trackReadyState: 'live'}
+10:33:56.464  [WebRTC]   Sender 1: {hasTrack: false, trackKind: undefined, trackEnabled: undefined, trackReadyState: undefined}
+10:33:56.464  [WebRTC] Setting remote description from offer...
+10:33:56.468  [WebRTC] Remote description set, applying any buffered ICE candidates
+10:33:56.468  [WebRTC] Creating answer with ultra-low-latency options...
+10:33:56.473  [WebRTC] 🚀 Optimizing SDP for ultra-low latency...
+10:33:56.473  [WebRTC] ✅ SDP optimized for ultra-low latency
+10:33:56.473  [WebRTC] Answer created and SDP optimized, analyzing...
+10:33:56.473  [WebRTC] 🔍 Answer SDP analysis: {hasAudio: true, hasVideo: true}
+10:33:56.473  [WebRTC] Setting local description with answer...
+10:33:56.478  [WebRTC] 📡 Sending answer to: cmeifn5qp002dkunge64m0xss
+10:33:56.479  [WebRTC] ✅ Answer successfully sent to: cmeifn5qp002dkunge64m0xss
+10:33:57.140  [WebRTC] Excellent network detected - restoring quality
+10:33:57.141  [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:33:57.482  [WebRTC] Post-answer states for cmeifn5qp002dkunge64m0xss
+10:33:57.482  [WebRTC]   Connection state: connected
+10:33:57.482  [WebRTC]   Signaling state: stable
+10:33:57.598  [CallModal] Updated peer connections for performance monitoring: 2
+10:33:57.598  [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:57.598  [CallModal] Rendered - voice call opened
+10:33:57.598  [CallModal] Rendered - voice call opened
+10:33:57.599  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.599  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.599  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.599  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.600  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.601  [VoiceActivity] No stream provided, cleaning up
+10:33:57.601  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.601  [VoiceActivity] No stream provided, cleaning up
+10:33:57.602  [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:33:57.602  [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:57.602  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.603  [VoiceActivity] No stream provided, cleaning up
+10:33:57.603  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.603  [VoiceActivity] No stream provided, cleaning up
+10:33:57.603  [useCallPerformance] No valid network data yet, assuming good quality
+10:33:57.604  [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:33:57.604  [CallModal] Rendered - voice call opened
+10:33:57.604  [CallModal] Rendered - voice call opened
+10:33:57.605  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.606  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.606  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.607  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:57.612  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.613  [VoiceActivity] No stream provided, cleaning up
+10:33:57.613  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.613  [VoiceActivity] No stream provided, cleaning up
+10:33:57.614  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.614  [VoiceActivity] No stream provided, cleaning up
+10:33:57.614  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:57.614  [VoiceActivity] No stream provided, cleaning up
+10:33:57.614  [CallModal] Rendered - voice call opened
+10:33:57.614  [CallModal] Rendered - voice call opened
+10:33:58.188  [VoiceActivity] Volume analysis: {average: '4.9', volume: '-34.3', threshold: -50, speaking: false, streamActive: true, …}
+10:33:58.442  [VoiceActivity] Volume analysis: {average: '6.3', volume: '-32.2', threshold: -50, speaking: false, streamActive: true, …}
+10:33:59.056  [VoiceActivity] Volume analysis: {average: '6.5', volume: '-31.9', threshold: -50, speaking: false, streamActive: true, …}
+10:33:59.367  [WebRTC] Excellent network detected - restoring quality
+10:33:59.367  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:33:59.599  [CallModal] Updated peer connections for performance monitoring: 2
+10:33:59.599  [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:33:59.600  [CallModal] Rendered - voice call opened
+10:33:59.601  [CallModal] Rendered - voice call opened
+10:33:59.601  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.601  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.602  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.602  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.603  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.604  [VoiceActivity] No stream provided, cleaning up
+10:33:59.604  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.604  [VoiceActivity] No stream provided, cleaning up
+10:33:59.605  [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:33:59.605  [useCallPerformance] Starting monitoring for 2 valid connections
+10:33:59.606  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.606  [VoiceActivity] No stream provided, cleaning up
+10:33:59.607  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.607  [VoiceActivity] No stream provided, cleaning up
+10:33:59.607  [useCallPerformance] No valid network data yet, assuming good quality
+10:33:59.608  [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:33:59.608  [CallModal] Rendered - voice call opened
+10:33:59.608  [CallModal] Rendered - voice call opened
+10:33:59.608  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.609  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.609  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.609  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:33:59.610  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.610  [VoiceActivity] No stream provided, cleaning up
+10:33:59.611  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.611  [VoiceActivity] No stream provided, cleaning up
+10:33:59.612  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.612  [VoiceActivity] No stream provided, cleaning up
+10:33:59.612  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:33:59.612  [VoiceActivity] No stream provided, cleaning up
+10:33:59.620  [CallModal] Rendered - voice call opened
+10:33:59.621  [CallModal] Rendered - voice call opened
+10:34:00.135  [CallModal] Rendered - voice call opened
+10:34:00.136  [CallModal] Rendered - voice call opened
+10:34:00.136  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.136  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.137  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.137  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.138  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.138  [VoiceActivity] No stream provided, cleaning up
+10:34:00.139  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.139  [VoiceActivity] No stream provided, cleaning up
+10:34:00.139  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.140  [VoiceActivity] No stream provided, cleaning up
+10:34:00.140  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.140  [VoiceActivity] No stream provided, cleaning up
+10:34:00.141  [WebRTC] Excellent network detected - restoring quality
+10:34:00.142  [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:34:00.156  [CallModal] Rendered - voice call opened
+10:34:00.157  [CallModal] Rendered - voice call opened
+10:34:00.541  [CallModal] Rendered - voice call opened
+10:34:00.541  [CallModal] Rendered - voice call opened
+10:34:00.542  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.542  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.542  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.542  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.543  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.544  [VoiceActivity] No stream provided, cleaning up
+10:34:00.544  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.544  [VoiceActivity] No stream provided, cleaning up
+10:34:00.545  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.545  [VoiceActivity] No stream provided, cleaning up
+10:34:00.545  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.545  [VoiceActivity] No stream provided, cleaning up
+10:34:00.560  [CallModal] Rendered - voice call opened
+10:34:00.560  [CallModal] Rendered - voice call opened
+10:34:00.958  [CallModal] Rendered - voice call opened
+10:34:00.958  [CallModal] Rendered - voice call opened
+10:34:00.959  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.959  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.960  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.960  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:00.961  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.962  [VoiceActivity] No stream provided, cleaning up
+10:34:00.962  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.963  [VoiceActivity] No stream provided, cleaning up
+10:34:00.963  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.963  [VoiceActivity] No stream provided, cleaning up
+10:34:00.963  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:00.963  [VoiceActivity] No stream provided, cleaning up
+10:34:00.977  [CallModal] Rendered - voice call opened
+10:34:00.977  [CallModal] Rendered - voice call opened
+10:34:01.269  [CallModal] Rendered - voice call opened
+10:34:01.270  [CallModal] Rendered - voice call opened
+10:34:01.270  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.270  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.271  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.271  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.272  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.272  [VoiceActivity] No stream provided, cleaning up
+10:34:01.273  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.273  [VoiceActivity] No stream provided, cleaning up
+10:34:01.273  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.273  [VoiceActivity] No stream provided, cleaning up
+10:34:01.273  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.273  [VoiceActivity] No stream provided, cleaning up
+10:34:01.289  [CallModal] Rendered - voice call opened
+10:34:01.289  [CallModal] Rendered - voice call opened
+10:34:01.598  [CallModal] Updated peer connections for performance monitoring: 2
+10:34:01.598  [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:34:01.599  [CallModal] Rendered - voice call opened
+10:34:01.600  [CallModal] Rendered - voice call opened
+10:34:01.600  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.601  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.601  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.602  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.604  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.605  [VoiceActivity] No stream provided, cleaning up
+10:34:01.605  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.606  [VoiceActivity] No stream provided, cleaning up
+10:34:01.607  [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:34:01.608  [useCallPerformance] Starting monitoring for 2 valid connections
+10:34:01.610  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.610  [VoiceActivity] No stream provided, cleaning up
+10:34:01.610  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.610  [VoiceActivity] No stream provided, cleaning up
+10:34:01.611  [useCallPerformance] No valid network data yet, assuming good quality
+10:34:01.613  [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:34:01.614  [CallModal] Rendered - voice call opened
+10:34:01.614  [CallModal] Rendered - voice call opened
+10:34:01.615  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.615  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.616  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.616  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:01.619  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.620  [VoiceActivity] No stream provided, cleaning up
+10:34:01.621  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.621  [VoiceActivity] No stream provided, cleaning up
+10:34:01.622  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.622  [VoiceActivity] No stream provided, cleaning up
+10:34:01.622  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:01.622  [VoiceActivity] No stream provided, cleaning up
+10:34:01.627  [CallModal] Rendered - voice call opened
+10:34:01.628  [CallModal] Rendered - voice call opened
+10:34:02.117  [VoiceActivity] Volume analysis: {average: '5.4', volume: '-33.5', threshold: -50, speaking: false, streamActive: true, …}
+10:34:02.367  [WebRTC] Excellent network detected - restoring quality
+10:34:02.367  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:34:03.140  [WebRTC] Excellent network detected - restoring quality
+10:34:03.140  [WebRTC] Improved audio quality for: cmeumah180000kuygq63oa1qx
+10:34:03.598  [CallModal] Updated peer connections for performance monitoring: 2
+10:34:03.598  [CallModal] Peer connection participants: (2) ['cmeifn5qp002dkunge64m0xss', 'cmeumah180000kuygq63oa1qx']
+10:34:03.598  [CallModal] Rendered - voice call opened
+10:34:03.599  [CallModal] Rendered - voice call opened
+10:34:03.599  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.599  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.600  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.600  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.601  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.602  [VoiceActivity] No stream provided, cleaning up
+10:34:03.602  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.603  [VoiceActivity] No stream provided, cleaning up
+10:34:03.603  [useCallPerformance] Connection states: (2) [{…}, {…}]
+10:34:03.603  [useCallPerformance] Starting monitoring for 2 valid connections
+10:34:03.604  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.604  [VoiceActivity] No stream provided, cleaning up
+10:34:03.604  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.604  [VoiceActivity] No stream provided, cleaning up
+10:34:03.605  [useCallPerformance] No valid network data yet, assuming good quality
+10:34:03.607  [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+10:34:03.607  [CallModal] Rendered - voice call opened
+10:34:03.608  [CallModal] Rendered - voice call opened
+10:34:03.608  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.609  [VoiceParticipant] Tester2 voice activity debug: {participantId: 'cmeifn5qp002dkunge64m0xss', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.609  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.610  [VoiceParticipant] Zber Samolde voice activity debug: {participantId: 'cmeumah180000kuygq63oa1qx', hasOriginalStream: false, hasLatestStream: false, streamActive: undefined, audioTracksCount: 0, …}
+10:34:03.611  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.612  [VoiceActivity] No stream provided, cleaning up
+10:34:03.612  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.612  [VoiceActivity] No stream provided, cleaning up
+10:34:03.613  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.613  [VoiceActivity] No stream provided, cleaning up
+10:34:03.613  [VoiceActivity] Effect triggered: {hasStream: false, streamId: undefined, audioTracks: 0, threshold: -40}
+10:34:03.613  [VoiceActivity] No stream provided, cleaning up
+10:34:03.615  [CallModal] Rendered - voice call opened
+10:34:03.615  [CallModal] Rendered - voice call opened
+10:34:03.644  [VoiceActivity] Volume analysis: {average: '5.3', volume: '-33.7', threshold: -50, speaking: false, streamActive: true, …}
+10:34:04.114  [VoiceActivity] Volume analysis: {average: '5.0', volume: '-34.1', threshold: -50, speaking: false, streamActive: true, …}
+10:34:05.152  [VoiceActivity] Volume analysis: {average: '5.2', volume: '-33.8', threshold: -50, speaking: false, streamActive: true, …}
+10:34:05.366  [WebRTC] Excellent network detected - restoring quality
+10:34:05.367  [WebRTC] Improved audio quality for: cmeifn5qp002dkunge64m0xss
+10:34:05.595  [GlobalCallManager] Call ended event received: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.596  [GlobalCallManager] Processing call_ended for current call
+10:34:05.596  [GlobalCallManager] 🔇 FORCE STOP ringing sound - current interval: false
+10:34:05.597  [ChatWindow] call_ended event received: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.597  [ChatWindow] Our conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.597  [ChatWindow] Event conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.597  [ChatWindow] Match: true
+10:34:05.597  [ChatWindow] Current callId: null
+10:34:05.597  [ChatWindow] Event callId: call-1757471609561-k75ig2g6f
+10:34:05.597  [ChatWindow] Current showCall: false
+10:34:05.597  [ChatWindow] ✅ Processing call_ended for our conversation cmfbwdnf60000kuzg41ovkra2, reason: connection_timeout
+10:34:05.598  [ChatWindow] ✅ Call state cleared - showCall: false, callId: null
+10:34:05.598  
+🚫 [CallModal] CALL_ENDED EVENT RECEIVED: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.598  [CallModal] Our call ID: call-1757471609561-k75ig2g6f
+10:34:05.598  [CallModal] Event call ID: call-1757471609561-k75ig2g6f
+10:34:05.598  [CallModal] Session user ID: cmeifml0h001okung0i95m8s6
+10:34:05.599  [CallModal] ✅ Processing call_ended for our call
+10:34:05.599  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.599  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.600  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.600  
+🧽 [CallModal] CLEANUP STARTING - force: true
+10:34:05.600  [CallModal] Current call state: dialing
+10:34:05.600  [CallModal] Call ID: call-1757471609561-k75ig2g6f
+10:34:05.600  [CallModal] Session User ID: cmeifml0h001okung0i95m8s6
+10:34:05.601  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.601  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.601  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.601  [CallModal] ✅ Stopped ringing sounds
+10:34:05.601  [CallModal] 🧹 Performing controlled cleanup - preserving WebRTC service for subsequent calls
+10:34:05.601  [CallModal] 🔄 Cleaning peer connections but preserving WebRTC service
+10:34:05.601  [WebRTC] 🧹 Clearing peer connections for subsequent calls
+10:34:05.601  [WebRTC] Closing peer connection for: cmeifn5qp002dkunge64m0xss
+10:34:05.611  [WebRTC] Closing peer connection for: cmeumah180000kuygq63oa1qx
+10:34:05.615  [WebRTC] ✅ Cleared peer connections - service preserved
+10:34:05.615  [CallModal] ✅ WebRTC service preserved for subsequent calls
+10:34:05.615  [CallModal] 🎬 Stopping local stream tracks (forced cleanup)
+10:34:05.616  [CallModal] Stopping track: audio live
+10:34:05.617  [CallModal] ✅ Stopped track: audio ended
+10:34:05.617  [CallModal] ✅ Simple cleanup completed
+10:34:05.617  [CallModal] ✅ Cleaned up screen share manager (forced)
+10:34:05.618  [CallModal] ✅ CLEANUP COMPLETED
+10:34:05.618  [CallModal] ✅ Resources cleaned up after call_ended
+10:34:05.618  [CallModal] ✅ State set to disconnected
+10:34:05.620  [GlobalCallManager] Call ended event received: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.620  [GlobalCallManager] Processing call_ended for current call
+10:34:05.620  [GlobalCallManager] 🔇 FORCE STOP ringing sound - current interval: false
+10:34:05.621  [ChatWindow] call_ended event received: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.621  [ChatWindow] Our conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.621  [ChatWindow] Event conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.621  [ChatWindow] Match: true
+10:34:05.621  [ChatWindow] Current callId: null
+10:34:05.621  [ChatWindow] Event callId: call-1757471609561-k75ig2g6f
+10:34:05.621  [ChatWindow] Current showCall: false
+10:34:05.621  [ChatWindow] ✅ Processing call_ended for our conversation cmfbwdnf60000kuzg41ovkra2, reason: connection_timeout
+10:34:05.621  [ChatWindow] ✅ Call state cleared - showCall: false, callId: null
+10:34:05.621  
+🚫 [CallModal] CALL_ENDED EVENT RECEIVED: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.622  [CallModal] Our call ID: call-1757471609561-k75ig2g6f
+10:34:05.622  [CallModal] Event call ID: call-1757471609561-k75ig2g6f
+10:34:05.622  [CallModal] Session user ID: cmeifml0h001okung0i95m8s6
+10:34:05.622  [CallModal] ✅ Processing call_ended for our call
+10:34:05.622  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.623  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.624  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.624  
+🧽 [CallModal] CLEANUP STARTING - force: true
+10:34:05.624  [CallModal] Current call state: dialing
+10:34:05.624  [CallModal] Call ID: call-1757471609561-k75ig2g6f
+10:34:05.625  [CallModal] Session User ID: cmeifml0h001okung0i95m8s6
+10:34:05.625  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.625  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.625  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.625  [CallModal] ✅ Stopped ringing sounds
+10:34:05.625  [CallModal] 🧹 Performing controlled cleanup - preserving WebRTC service for subsequent calls
+10:34:05.625  [CallModal] 🔄 Cleaning peer connections but preserving WebRTC service
+10:34:05.625  [WebRTC] 🧹 Clearing peer connections for subsequent calls
+10:34:05.625  [WebRTC] ✅ Cleared peer connections - service preserved
+10:34:05.626  [CallModal] ✅ WebRTC service preserved for subsequent calls
+10:34:05.626  [CallModal] ✅ Simple cleanup completed
+10:34:05.626  [CallModal] ✅ CLEANUP COMPLETED
+10:34:05.626  [CallModal] ✅ Resources cleaned up after call_ended
+10:34:05.626  [CallModal] ✅ State set to disconnected
+10:34:05.627  [GlobalCallManager] Call ended event received: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.627  [GlobalCallManager] Processing call_ended for current call
+10:34:05.627  [GlobalCallManager] 🔇 FORCE STOP ringing sound - current interval: false
+10:34:05.628  [ChatWindow] call_ended event received: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.628  [ChatWindow] Our conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.628  [ChatWindow] Event conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.628  [ChatWindow] Match: true
+10:34:05.628  [ChatWindow] Current callId: null
+10:34:05.628  [ChatWindow] Event callId: call-1757471609561-k75ig2g6f
+10:34:05.628  [ChatWindow] Current showCall: false
+10:34:05.628  [ChatWindow] ✅ Processing call_ended for our conversation cmfbwdnf60000kuzg41ovkra2, reason: connection_timeout
+10:34:05.628  [ChatWindow] ✅ Call state cleared - showCall: false, callId: null
+10:34:05.628  
+🚫 [CallModal] CALL_ENDED EVENT RECEIVED: {conversationId: 'cmfbwdnf60000kuzg41ovkra2', callId: 'call-1757471609561-k75ig2g6f', reason: 'connection_timeout'}
+10:34:05.628  [CallModal] Our call ID: call-1757471609561-k75ig2g6f
+10:34:05.628  [CallModal] Event call ID: call-1757471609561-k75ig2g6f
+10:34:05.628  [CallModal] Session user ID: cmeifml0h001okung0i95m8s6
+10:34:05.628  [CallModal] ✅ Processing call_ended for our call
+10:34:05.628  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.628  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.628  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.628  
+🧽 [CallModal] CLEANUP STARTING - force: true
+10:34:05.628  [CallModal] Current call state: dialing
+10:34:05.628  [CallModal] Call ID: call-1757471609561-k75ig2g6f
+10:34:05.629  [CallModal] Session User ID: cmeifml0h001okung0i95m8s6
+10:34:05.629  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.629  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.629  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.629  [CallModal] ✅ Stopped ringing sounds
+10:34:05.629  [CallModal] 🧹 Performing controlled cleanup - preserving WebRTC service for subsequent calls
+10:34:05.629  [CallModal] 🔄 Cleaning peer connections but preserving WebRTC service
+10:34:05.629  [WebRTC] 🧹 Clearing peer connections for subsequent calls
+10:34:05.629  [WebRTC] ✅ Cleared peer connections - service preserved
+10:34:05.629  [CallModal] ✅ WebRTC service preserved for subsequent calls
+10:34:05.629  [CallModal] ✅ Simple cleanup completed
+10:34:05.629  [CallModal] ✅ CLEANUP COMPLETED
+10:34:05.629  [CallModal] ✅ Resources cleaned up after call_ended
+10:34:05.629  [CallModal] ✅ State set to disconnected
+10:34:05.629  [WebRTC] ⚠️ Remote track ended: audio for: cmeifn5qp002dkunge64m0xss
+10:34:05.630  [WebRTC] ⚠️ Remote track ended: audio for: cmeumah180000kuygq63oa1qx
+10:34:05.630  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.631  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.636  [CallModal] Updated peer connections for performance monitoring: 0
+10:34:05.637  [CallModal] Peer connection participants: []
+10:34:05.638  [CallModal] 🧹 Component unmounting - performing thorough cleanup
+10:34:05.639  [CallModal] 🧹 Emergency WebRTC cleanup on unmount
+10:34:05.641  [WebRTC] 🚨 FULL CLEANUP - Destroying WebRTC service
+10:34:05.641  [WebRTC] Force stopping 1 local tracks
+10:34:05.643  [WebRTC] ✅ Local stream reference cleared
+10:34:05.643  [WebRTC] Removing socket listeners for user: cmeifml0h001okung0i95m8s6
+10:34:05.644  [WebRTC] Cleared ICE candidate buffer
+10:34:05.646  [WebRTC] Cleanup completed - all media streams should be released and browser indicators should clear
+10:34:05.648  [CallModal] 🔇 Component unmounting, stopping all ringing sounds
+10:34:05.649  [CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound
+10:34:05.649  [CallModal] Pausing ringing audio (keeping for consistency)...
+10:34:05.650  [CallModal] ✅ Ringing audio paused (reference preserved for consistency)
+10:34:05.732  SocketContext: Heartbeat sent successfully
+10:34:05.747  [WebRTC] ✅ Post-cleanup verification complete - service ready for reuse
+10:34:05.801  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.802  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.812  User status update received: {userId: 'cmeifn5qp002dkunge64m0xss', isOnline: true, lastSeen: '2025-09-10T02:34:05.797Z'}
+10:34:05.813  ChatSidebar: Conversations updated, count: 5
+10:34:05.814  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:34:05.815  🔄 ChatWindow: Conversation participants count: 3
+10:34:05.815  🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:34:05.819  Updated online status for user cmeifn5qp002dkunge64m0xss in conversation cmeifnahq003ekungumhkl6ux
+10:34:05.819  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.819  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.825  ChatSidebar: Conversations updated, count: 5
+10:34:05.825  ChatSidebar: Latest conversation: cmfbwdnf60000kuzg41ovkra2 last message: cmfc8zta3000bkulfrpl6vutn
+10:34:05.826  🔄 ChatWindow: Conversation participants count: 3
+10:34:05.826  🔄 ChatWindow: Participants: (3) [{…}, {…}, {…}]
+10:34:05.828  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.829  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:05.947  [WebRTC] 🔍 Performing final browser-level media verification...
+10:34:05.947  [WebRTC] ✅ Cleared 0 video and 0 audio elements
+10:34:05.947  [WebRTC] 🎥 Starting enhanced media permission release...
+10:34:05.947  [WebRTC] 🎯 FINAL CLEANUP COMPLETED - All media resources should be fully released
+10:34:05.954  [WebRTC] 📹 Enumerated 9 devices for permission cleanup
+10:34:05.954  [WebRTC] 🧹 Media cleanup completed with device enumeration
+10:34:05.962  [WebRTC] ✅ Enumerated devices for permission cleanup: 9
+10:34:06.619  [ChatWindow] CallModal onClose called
+10:34:06.619  [CallModal] ✅ Modal closed
+10:34:06.620  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:06.621  🏠 ChatWindow mounted/re-rendered with conversationId: cmfbwdnf60000kuzg41ovkra2
+10:34:06.628  [ChatWindow] CallModal onClose called
+10:34:06.628  [CallModal] ✅ Modal closed
+10:34:06.630  [ChatWindow] CallModal onClose called
+10:34:06.630  [CallModal] ✅ Modal closed

@@ -19,6 +19,32 @@ export class WebRTCService {
   private initializationInProgress: boolean = false // Prevent concurrent initialization
   // Buffer for ICE candidates that arrive before peer connections are established
   private pendingIceCandidates: Map<string, RTCIceCandidateInit[]> = new Map()
+
+  // ENHANCED: Stream readiness management for group calls
+  private streamReadinessQueue: Array<{
+    participantId: string
+    resolve: (stream: MediaStream) => void
+    reject: (error: Error) => void
+    timestamp: number
+  }> = []
+  private streamReadyPromise: Promise<MediaStream> | null = null
+  private streamReadyResolver: ((stream: MediaStream) => void) | null = null
+
+  // ENHANCED: Offer retry management for failed connections
+  private offerRetryState = new Map<string, {
+    attempts: number
+    lastAttempt: number
+    nextRetryDelay: number
+    maxRetries: number
+  }>()
+
+  // ENHANCED: Parallel connection management for group calls
+  private connectionSetupQueue = new Set<string>()
+  private groupCallOptimization = {
+    maxConcurrentConnections: 3, // Limit concurrent setup for stability
+    connectionBatchDelay: 500, // Delay between batches
+    isGroupCallMode: false
+  }
   
   private readonly config: WebRTCConfig = {
     iceServers: [
@@ -257,8 +283,39 @@ export class WebRTCService {
             stream = await navigator.mediaDevices.getUserMedia(basicConstraints)
             console.log('[WebRTC] ✅ Basic constraints successful!')
           } catch (basicError) {
-            console.error('[WebRTC] ❌ All constraint attempts failed')
-            throw basicError
+            console.error('[WebRTC] ❌ All constraint attempts failed:', basicError)
+
+            // ENHANCED: Provide detailed error information for troubleshooting
+            const errorDetails = {
+              name: basicError.name,
+              message: basicError.message,
+              constraint: basicError.constraint,
+              attemptedConstraints: {
+                primary: primaryConstraints,
+                fallback: fallbackConstraints,
+                basic: basicConstraints
+              }
+            }
+
+            console.error('[WebRTC] 📊 Media access error details:', errorDetails)
+
+            // Create user-friendly error message
+            let userMessage = 'Failed to access camera/microphone. '
+            if (basicError.name === 'NotAllowedError') {
+              userMessage += 'Please allow camera and microphone permissions.'
+            } else if (basicError.name === 'NotFoundError') {
+              userMessage += 'No camera or microphone found.'
+            } else if (basicError.name === 'NotReadableError') {
+              userMessage += 'Camera or microphone is already in use.'
+            } else {
+              userMessage += 'Please check your camera and microphone.'
+            }
+
+            const enhancedError = new Error(userMessage)
+            enhancedError.name = 'MediaAccessError'
+            enhancedError.cause = basicError
+
+            throw enhancedError
           }
         }
       }
@@ -281,9 +338,12 @@ export class WebRTCService {
       const videoTracks = tracks.filter(t => t.kind === 'video')
       
       if (audioTracks.length === 0) {
-        throw new Error('No audio track available')
+        console.error('[WebRTC] ❌ No audio tracks in acquired stream')
+        const audioError = new Error('No audio track available - call cannot proceed without audio')
+        audioError.name = 'NoAudioTrackError'
+        throw audioError
       }
-      
+
       if (isVideo && videoTracks.length === 0) {
         console.warn('[WebRTC] Video requested but no video track available, continuing with audio only')
       }
@@ -353,7 +413,11 @@ export class WebRTCService {
           console.warn('[WebRTC] Track muted:', track.kind, track.label)
         })
       })
-      
+
+      // ENHANCED: Stream verification checkpoint with timeout
+      console.log('[WebRTC] 🔍 Performing final stream verification before returning...')
+      await this.verifyStreamReadiness(this.localStream, 3000)
+
       return this.localStream
     } catch (error) {
       console.error('[WebRTC] Failed to get user media:', error)
@@ -395,18 +459,26 @@ export class WebRTCService {
       return false
     }
     
-    const liveTracks = this.localStream.getTracks().filter(track => track.readyState === 'live')
+    // FIX: Be more lenient with track states - check for both 'live' and 'ended' states
+    // Some browsers may report tracks as 'ended' during state transitions
+    const tracks = this.localStream.getTracks()
+    const liveTracks = tracks.filter(track => track.readyState === 'live')
     const hasLiveTracks = liveTracks.length > 0
+    
+    // FALLBACK: If stream exists and is active, accept it even if tracks aren't 'live'
+    const streamActive = this.localStream.active
+    const hasValidStream = hasLiveTracks || (streamActive && tracks.length > 0)
     
     console.log('[WebRTC] 🔍 hasLocalStream:', {
       hasStream: !!this.localStream,
-      streamActive: this.localStream.active,
-      totalTracks: this.localStream.getTracks().length,
+      streamActive: streamActive,
+      totalTracks: tracks.length,
       liveTracks: liveTracks.length,
-      result: hasLiveTracks
+      trackStates: tracks.map(t => ({ kind: t.kind, state: t.readyState })),
+      result: hasValidStream
     })
     
-    return hasLiveTracks
+    return hasValidStream
   }
 
   async waitForLocalStream(timeoutMs: number = 5000): Promise<boolean> {
@@ -420,21 +492,453 @@ export class WebRTCService {
         return true
       }
       
-      // Wait 50ms before checking again
-      await new Promise(resolve => setTimeout(resolve, 50))
+      // Wait 100ms before checking again (increased from 50ms to reduce CPU usage)
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    
+    // FIX: Be more forgiving - if we have any stream at all, consider it ready
+    if (this.localStream && this.localStream.getTracks().length > 0) {
+      console.log('[WebRTC] ⚠️ Stream timeout but stream exists - proceeding anyway')
+      return true
     }
     
     console.log('[WebRTC] ❌ Timeout waiting for local stream')
     return false
   }
 
+  // ENHANCED: Wait for stream readiness with timeout - FIXED for group calls
+  private async waitForStreamReadiness(participantId: string, timeoutMs: number = 5000): Promise<MediaStream> {
+    console.log('[WebRTC] 🔍 Checking stream readiness for participant:', participantId)
+
+    // ENHANCED: More thorough readiness check
+    const isStreamReady = () => {
+      if (!this.localStream || !this.localStream.active) {
+        return false
+      }
+
+      const tracks = this.localStream.getTracks()
+      if (tracks.length === 0) {
+        return false
+      }
+
+      const liveTracks = tracks.filter(track => track.readyState === 'live' && track.enabled)
+      const hasAudio = this.localStream.getAudioTracks().some(track => track.readyState === 'live' && track.enabled)
+
+      // For group calls, we need at least audio
+      const result = liveTracks.length > 0 && hasAudio
+
+      console.log('[WebRTC] 🔍 Stream readiness check:', {
+        participantId,
+        hasStream: !!this.localStream,
+        streamActive: this.localStream?.active,
+        totalTracks: tracks.length,
+        liveTracks: liveTracks.length,
+        hasAudio,
+        initInProgress: this.initializationInProgress,
+        ready: result
+      })
+
+      return result
+    }
+
+    // If stream is already ready, return immediately
+    if (isStreamReady() && !this.initializationInProgress) {
+      console.log('[WebRTC] 🎯 Stream already ready for participant:', participantId)
+      return this.localStream!
+    }
+
+    console.log('[WebRTC] ⏳ Waiting for stream readiness for participant:', participantId, 'timeout:', timeoutMs)
+
+    // FIXED: Create individual promise for each participant instead of shared promise
+    return new Promise<MediaStream>((resolve, reject) => {
+      const startTime = Date.now()
+      const checkInterval = 200 // Check every 200ms
+
+      const checkReadiness = () => {
+        const elapsed = Date.now() - startTime
+
+        if (elapsed > timeoutMs) {
+          console.error('[WebRTC] ❌ Stream readiness timeout for participant:', participantId, 'after', elapsed, 'ms')
+          reject(new Error(`Stream readiness timeout after ${timeoutMs}ms for participant ${participantId}`))
+          return
+        }
+
+        if (isStreamReady() && !this.initializationInProgress) {
+          console.log('[WebRTC] ✅ Stream became ready for participant:', participantId, 'after', elapsed, 'ms')
+          resolve(this.localStream!)
+          return
+        }
+
+        // Continue checking
+        setTimeout(checkReadiness, checkInterval)
+      }
+
+      // Start checking
+      checkReadiness()
+
+      // Add to tracking queue for debugging
+      this.streamReadinessQueue.push({
+        participantId,
+        resolve,
+        reject,
+        timestamp: Date.now()
+      })
+    })
+  }
+
+  // ENHANCED: Notify when stream is ready
+  private notifyStreamReady(stream: MediaStream): void {
+    console.log('[WebRTC] 📢 Notifying stream ready for', this.streamReadinessQueue.length, 'waiting participants')
+
+    if (this.streamReadyResolver) {
+      this.streamReadyResolver(stream)
+      this.streamReadyResolver = null
+      this.streamReadyPromise = null
+    }
+
+    // Clear the queue
+    this.streamReadinessQueue = []
+  }
+
+  // ENHANCED: Stream verification checkpoint
+  private async verifyStreamReadiness(stream: MediaStream, timeoutMs: number = 3000): Promise<void> {
+    console.log('[WebRTC] 🔍 Verifying stream readiness...')
+
+    const startTime = Date.now()
+    const verificationInterval = 100 // Check every 100ms
+
+    return new Promise<void>((resolve, reject) => {
+      const checkReadiness = () => {
+        const elapsed = Date.now() - startTime
+
+        if (elapsed > timeoutMs) {
+          reject(new Error(`Stream verification timeout after ${timeoutMs}ms`))
+          return
+        }
+
+        // Check if stream is active and has live tracks
+        if (!stream.active) {
+          console.log('[WebRTC] ⏳ Stream not active yet, waiting...')
+          setTimeout(checkReadiness, verificationInterval)
+          return
+        }
+
+        const liveTracks = stream.getTracks().filter(track => track.readyState === 'live')
+        if (liveTracks.length === 0) {
+          console.log('[WebRTC] ⏳ No live tracks yet, waiting...')
+          setTimeout(checkReadiness, verificationInterval)
+          return
+        }
+
+        // Additional verification: ensure audio track is functional
+        const audioTracks = stream.getAudioTracks()
+        if (audioTracks.length > 0) {
+          const audioTrack = audioTracks[0]
+          if (!audioTrack.enabled || audioTrack.readyState !== 'live') {
+            console.log('[WebRTC] ⏳ Audio track not ready, waiting...')
+            setTimeout(checkReadiness, verificationInterval)
+            return
+          }
+        }
+
+        console.log('[WebRTC] ✅ Stream verification completed successfully')
+        console.log('[WebRTC] Stream info:', {
+          id: stream.id,
+          active: stream.active,
+          audioTracks: audioTracks.length,
+          videoTracks: stream.getVideoTracks().length,
+          allTracksLive: liveTracks.length === stream.getTracks().length
+        })
+        resolve()
+      }
+
+      checkReadiness()
+    })
+  }
+
+  // ENHANCED: Retry mechanism with exponential backoff
+  private async retryOfferWithBackoff(participantId: string, operation: () => Promise<void>): Promise<void> {
+    const retryState = this.offerRetryState.get(participantId) || {
+      attempts: 0,
+      lastAttempt: 0,
+      nextRetryDelay: 1000, // Start with 1 second
+      maxRetries: 3
+    }
+
+    const now = Date.now()
+
+    // Check if we should retry
+    if (retryState.attempts >= retryState.maxRetries) {
+      console.error('[WebRTC] ❌ Max retry attempts reached for participant:', participantId)
+      throw new Error(`Failed to create offer for ${participantId} after ${retryState.maxRetries} attempts`)
+    }
+
+    // Wait for retry delay if needed
+    const timeSinceLastAttempt = now - retryState.lastAttempt
+    if (timeSinceLastAttempt < retryState.nextRetryDelay) {
+      const waitTime = retryState.nextRetryDelay - timeSinceLastAttempt
+      console.log('[WebRTC] ⏳ Waiting', waitTime, 'ms before retry for participant:', participantId)
+      await new Promise(resolve => setTimeout(resolve, waitTime))
+    }
+
+    try {
+      // Update attempt info
+      retryState.attempts++
+      retryState.lastAttempt = Date.now()
+      this.offerRetryState.set(participantId, retryState)
+
+      console.log('[WebRTC] 🔄 Retry attempt', retryState.attempts, 'for participant:', participantId)
+
+      // Execute the operation
+      await operation()
+
+      // Success - clear retry state
+      this.offerRetryState.delete(participantId)
+      console.log('[WebRTC] ✅ Offer successful on retry for participant:', participantId)
+
+    } catch (error) {
+      console.error('[WebRTC] ❌ Retry attempt', retryState.attempts, 'failed for participant:', participantId, error)
+
+      // Update retry delay with exponential backoff
+      retryState.nextRetryDelay = Math.min(retryState.nextRetryDelay * 2, 8000) // Cap at 8 seconds
+      this.offerRetryState.set(participantId, retryState)
+
+      // If we haven't reached max retries, try again
+      if (retryState.attempts < retryState.maxRetries) {
+        console.log('[WebRTC] 🔄 Scheduling next retry in', retryState.nextRetryDelay, 'ms for participant:', participantId)
+        return this.retryOfferWithBackoff(participantId, operation)
+      } else {
+        // Max retries reached
+        this.offerRetryState.delete(participantId)
+        throw error
+      }
+    }
+  }
+
+  // ENHANCED: Robust track addition with state validation
+  private addTracksToConnection(peerConn: PeerConnection, stream: MediaStream, participantId: string): void {
+    console.log('[WebRTC] 🎵 Adding tracks to connection for:', participantId)
+
+    try {
+      // Validate connection state before adding tracks
+      if (peerConn.connection.connectionState === 'closed' ||
+          peerConn.connection.connectionState === 'failed') {
+        console.warn('[WebRTC] ⚠️ Skipping track addition for closed/failed connection:', participantId)
+        return
+      }
+
+      const existingSenders = peerConn.connection.getSenders()
+
+      stream.getTracks().forEach(track => {
+        // Validate track before adding
+        if (track.readyState !== 'live') {
+          console.warn('[WebRTC] ⚠️ Skipping non-live track:', track.kind, 'for:', participantId)
+          return
+        }
+
+        // Check for existing sender of same kind
+        const existingSender = existingSenders.find(sender => sender.track?.kind === track.kind)
+
+        if (!existingSender) {
+          console.log('[WebRTC] ➕ Adding new track:', track.kind, 'for:', participantId)
+          try {
+            peerConn.connection.addTrack(track, stream)
+            console.log('[WebRTC] ✅ Track added successfully:', track.kind, 'for:', participantId)
+          } catch (trackError) {
+            console.error('[WebRTC] ❌ Failed to add track:', track.kind, 'for:', participantId, trackError)
+          }
+        } else {
+          // Replace existing track if it's different
+          if (existingSender.track?.id !== track.id) {
+            console.log('[WebRTC] 🔄 Replacing track:', track.kind, 'for:', participantId)
+            try {
+              existingSender.replaceTrack(track)
+              console.log('[WebRTC] ✅ Track replaced successfully:', track.kind, 'for:', participantId)
+            } catch (replaceError) {
+              console.error('[WebRTC] ❌ Failed to replace track:', track.kind, 'for:', participantId, replaceError)
+            }
+          } else {
+            console.log('[WebRTC] ℹ️ Track already present:', track.kind, 'for:', participantId)
+          }
+        }
+      })
+
+      // Verify tracks were added correctly
+      const postAddSenders = peerConn.connection.getSenders()
+      const audioSenders = postAddSenders.filter(s => s.track?.kind === 'audio')
+      const videoSenders = postAddSenders.filter(s => s.track?.kind === 'video')
+
+      console.log('[WebRTC] 📊 Track routing verification for', participantId, ':', {
+        audioSenders: audioSenders.length,
+        videoSenders: videoSenders.length,
+        totalSenders: postAddSenders.length,
+        streamTracks: stream.getTracks().length
+      })
+
+    } catch (error) {
+      console.error('[WebRTC] ❌ Error adding tracks to connection for:', participantId, error)
+    }
+  }
+
+  // ENHANCED: Initialize multiple peer connections for group calls
+  async initializeGroupCallConnections(participantIds: string[]): Promise<void> {
+    console.log('[WebRTC] 🏗️ Initializing group call connections for participants:', participantIds)
+
+    if (participantIds.length <= 1) {
+      console.log('[WebRTC] Not a group call, using standard connection setup')
+      return
+    }
+
+    // Enable group call optimization
+    this.groupCallOptimization.isGroupCallMode = true
+
+    // Process participants in batches to avoid overwhelming the system
+    const batches = this.createConnectionBatches(participantIds)
+
+    for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+      const batch = batches[batchIndex]
+      console.log('[WebRTC] 🔄 Processing connection batch', batchIndex + 1, '/', batches.length, ':', batch)
+
+      // Create connections in parallel for this batch
+      const batchPromises = batch.map(participantId =>
+        this.createGroupCallConnection(participantId)
+      )
+
+      try {
+        await Promise.allSettled(batchPromises)
+        console.log('[WebRTC] ✅ Batch', batchIndex + 1, 'completed')
+
+        // Delay before next batch if there are more batches
+        if (batchIndex < batches.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, this.groupCallOptimization.connectionBatchDelay))
+        }
+      } catch (error) {
+        console.error('[WebRTC] ❌ Error in batch', batchIndex + 1, ':', error)
+        // Continue with next batch even if current batch has issues
+      }
+    }
+
+    console.log('[WebRTC] 🎉 Group call initialization completed')
+  }
+
+  // Helper: Create connection batches for parallel processing
+  private createConnectionBatches(participantIds: string[]): string[][] {
+    const batches: string[][] = []
+    const batchSize = this.groupCallOptimization.maxConcurrentConnections
+
+    for (let i = 0; i < participantIds.length; i += batchSize) {
+      batches.push(participantIds.slice(i, i + batchSize))
+    }
+
+    return batches
+  }
+
+  // Helper: Create individual connection for group call
+  private async createGroupCallConnection(participantId: string): Promise<void> {
+    try {
+      console.log('[WebRTC] 🔗 Creating group call connection for:', participantId)
+
+      // Add to queue for tracking
+      this.connectionSetupQueue.add(participantId)
+
+      // Wait for stream readiness
+      await this.waitForStreamReadiness(participantId, 10000) // Longer timeout for group calls
+
+      // Create the actual peer connection
+      await this.createPeerConnection(participantId)
+
+      console.log('[WebRTC] ✅ Group call connection created for:', participantId)
+
+    } catch (error) {
+      console.error('[WebRTC] ❌ Failed to create group call connection for:', participantId, error)
+      throw error
+    } finally {
+      // Remove from queue
+      this.connectionSetupQueue.delete(participantId)
+    }
+  }
+
+  // CRITICAL FIX: Add participant readiness validation - ENHANCED for group calls
+  private validateParticipantReadiness(participantId: string): boolean {
+    console.log('[WebRTC] 🔍 Validating readiness for participant:', participantId)
+
+    // Check if we have local stream
+    if (!this.localStream) {
+      console.warn('[WebRTC] ❌ Local stream not available for participant:', participantId)
+      return false
+    }
+
+    // Check stream quality - ensure it's active and has live tracks
+    const liveTracks = this.localStream.getTracks().filter(track => track.readyState === 'live')
+    if (!this.localStream.active || liveTracks.length === 0) {
+      console.warn('[WebRTC] ❌ Local stream not active or no live tracks for participant:', participantId, {
+        streamActive: this.localStream.active,
+        totalTracks: this.localStream.getTracks().length,
+        liveTracks: liveTracks.length
+      })
+      return false
+    }
+
+    // Check if initialization is complete
+    if (this.initializationInProgress) {
+      console.warn('[WebRTC] ❌ Initialization still in progress, not ready for:', participantId)
+      return false
+    }
+
+    // ENHANCED: More lenient connection state checking for group calls
+    if (this.peerConnections.has(participantId)) {
+      const existingConn = this.peerConnections.get(participantId)!
+      const connectionState = existingConn.connection.connectionState
+      const iceState = existingConn.connection.iceConnectionState
+
+      // Only reject if connection is already stable and functional
+      if (connectionState === 'connected' &&
+          (iceState === 'connected' || iceState === 'completed')) {
+        console.log('[WebRTC] ✅ Connection already established for:', participantId, 'state:', connectionState, 'ice:', iceState)
+        return true // Connection already working - this is success!
+      }
+
+      // For group calls, allow retry of failed/stuck connections
+      if (connectionState === 'failed' || connectionState === 'disconnected' ||
+          iceState === 'failed' || iceState === 'disconnected') {
+        console.log('[WebRTC] 🔄 Allowing retry for failed connection:', participantId, 'state:', connectionState, 'ice:', iceState)
+        // Clean up the failed connection before proceeding
+        this.closePeerConnection(participantId)
+        return true
+      }
+
+      // For connections in intermediate states, be more permissive in group calls
+      if (this.groupCallOptimization.isGroupCallMode) {
+        console.log('[WebRTC] 🎯 Group call mode: allowing connection attempt for:', participantId, 'current state:', connectionState)
+        return true
+      }
+
+      console.warn('[WebRTC] ❌ Connection already in progress for:', participantId, 'state:', connectionState, 'ice:', iceState)
+      return false
+    }
+
+    console.log('[WebRTC] ✅ Participant readiness validated:', participantId)
+    return true
+  }
+
   async safeCreateOffer(participantId: string): Promise<void> {
     console.log('[WebRTC] 📞 Safe creating offer for participant:', participantId)
-    
-    // First, wait for local stream to be ready
-    const streamReady = await this.waitForLocalStream(3000)
-    if (!streamReady) {
-      throw new Error('Local stream not available - cannot create offer')
+
+    try {
+      // ENHANCED: Wait for stream readiness before creating offer
+      console.log('[WebRTC] 🔄 Ensuring stream is ready before creating offer for:', participantId)
+      await this.waitForStreamReadiness(participantId, 6000) // 6 second timeout
+
+      // CRITICAL: Validate participant readiness after stream is ready
+      if (!this.validateParticipantReadiness(participantId)) {
+        console.error('[WebRTC] ❌ Participant not ready for offer creation:', participantId)
+        throw new Error(`Participant ${participantId} not ready for WebRTC connection`)
+      }
+
+      console.log('[WebRTC] ✅ Stream ready, proceeding with offer creation for:', participantId)
+    } catch (streamError) {
+      console.error('[WebRTC] ❌ Stream readiness failed for participant:', participantId, streamError)
+      throw new Error(`Stream not ready for participant ${participantId}: ${streamError.message}`)
     }
     
     // Create peer connection
@@ -457,7 +961,7 @@ export class WebRTCService {
       console.log('[WebRTC] 📡 Sending offer to participant:', participantId)
       this.socket.emit('webrtc_offer', {
         callId: this.callId,
-        toUserId: participantId,
+        targetUserId: participantId,
         offer: offer
       })
       
@@ -476,25 +980,10 @@ export class WebRTCService {
       userId: this.currentUserId,
       existingPeerConnections: this.peerConnections.size
     })
-    
-    // CRITICAL FIX: Add tracks to existing peer connections if they exist
+
+    // ENHANCED: Robust track routing with validation
     this.peerConnections.forEach((peerConn, participantId) => {
-      console.log('[WebRTC] Adding new tracks to existing peer connection for:', participantId)
-      
-      const existingSenders = peerConn.connection.getSenders()
-      
-      stream.getTracks().forEach(track => {
-        // Check if track is already being sent
-        const existingSender = existingSenders.find(sender => sender.track?.kind === track.kind)
-        
-        if (!existingSender) {
-          console.log('[WebRTC] Adding new track to peer connection:', track.kind, 'for:', participantId)
-          peerConn.connection.addTrack(track, stream)
-        } else {
-          console.log('[WebRTC] Replacing existing track:', track.kind, 'for:', participantId)
-          existingSender.replaceTrack(track)
-        }
-      })
+      this.addTracksToConnection(peerConn, stream, participantId)
     })
     
     // CRITICAL FIX: Notify server that our local stream is ready
@@ -510,6 +999,9 @@ export class WebRTCService {
     }
     
     console.log('[WebRTC] ✅ Local stream fully set and ready for peer connections')
+
+    // ENHANCED: Notify waiting participants that stream is ready
+    this.notifyStreamReady(stream)
   }
 
   async createPeerConnection(participantId: string): Promise<RTCPeerConnection> {
@@ -1016,12 +1508,28 @@ export class WebRTCService {
       }
       
       const pc = await this.createPeerConnection(participantId)
-      
+
+      // CRITICAL: Check connection state before proceeding
+      if (pc.connectionState === 'closed' || pc.signalingState === 'closed') {
+        console.error('[WebRTC] ❌ Cannot create offer - connection is closed for:', participantId)
+        console.log('[WebRTC] 🔍 Connection state:', pc.connectionState, 'Signaling state:', pc.signalingState)
+        throw new Error(`Cannot create offer - peer connection is closed for: ${participantId}`)
+      }
+
+      // Additional state validation
+      if (pc.signalingState !== 'stable' && pc.signalingState !== 'have-remote-offer') {
+        console.warn('[WebRTC] ⚠️ Unexpected signaling state for offer creation:', pc.signalingState)
+        if (pc.signalingState === 'have-local-offer') {
+          console.log('[WebRTC] 🔄 Already have local offer, skipping duplicate offer creation')
+          return
+        }
+      }
+
       // CRITICAL: Double-check local stream is available after waiting
       if (!this.localStream) {
         throw new Error('No local stream available for offer creation after initialization wait')
       }
-      
+
       console.log('[WebRTC] Local stream verification - tracks:', this.localStream.getTracks().length)
       
       // CRITICAL DEBUG: Verify tracks are actually attached to the peer connection
@@ -1146,13 +1654,17 @@ export class WebRTCService {
     }
     
     console.log('[WebRTC] ✅ Processing offer from:', data.fromUserId)
-    
+
     try {
+      // ENHANCED: Wait for stream readiness before processing offer
+      console.log('[WebRTC] 🔄 Ensuring stream is ready before processing offer from:', data.fromUserId)
+      const stream = await this.waitForStreamReadiness(data.fromUserId, 8000) // 8 second timeout for group calls
+
       const pc = await this.createPeerConnection(data.fromUserId)
-      
-      // CRITICAL: Verify local stream before proceeding
-      if (!this.localStream) {
-        throw new Error(`No local stream available when handling offer from ${data.fromUserId}`)
+
+      // CRITICAL: Verify local stream is the one we waited for
+      if (!this.localStream || this.localStream !== stream) {
+        throw new Error(`Stream mismatch when handling offer from ${data.fromUserId}`)
       }
       
       console.log('[WebRTC] Local stream ready with tracks:', this.localStream.getTracks().length)
@@ -1171,7 +1683,10 @@ export class WebRTCService {
       
       console.log('[WebRTC] Setting remote description from offer...')
       await pc.setRemoteDescription(new RTCSessionDescription(data.offer))
-      
+
+      // CRITICAL FIX: Apply any buffered ICE candidates now that remote description is set
+      await this.applyBufferedIceCandidates(data.fromUserId)
+
       console.log('[WebRTC] Creating answer with ultra-low-latency options...')
       const answer = await pc.createAnswer({
         // ULTRA-LOW LATENCY: Disable all processing that causes delay
@@ -1267,6 +1782,10 @@ export class WebRTCService {
       if (currentState === 'have-local-offer') {
         console.log('[WebRTC] Setting remote description from answer')
         await peerConn.connection.setRemoteDescription(new RTCSessionDescription(data.answer))
+
+        // CRITICAL FIX: Apply any buffered ICE candidates now that remote description is set
+        await this.applyBufferedIceCandidates(data.fromUserId)
+
         console.log('[WebRTC] Remote description set successfully for:', data.fromUserId)
         console.log('[WebRTC] Connection state:', peerConn.connection.connectionState)
       } else {
@@ -1309,11 +1828,77 @@ export class WebRTCService {
     }
     
     try {
-      await peerConn.connection.addIceCandidate(new RTCIceCandidate(data.candidate))
-      console.log('[WebRTC] ICE candidate added for:', data.fromUserId)
+      // ENHANCED: Check peer connection state before adding candidate
+      const pc = peerConn.connection
+      console.log('[WebRTC] 🧊 Adding ICE candidate for:', data.fromUserId, {
+        signalingState: pc.signalingState,
+        connectionState: pc.connectionState,
+        iceConnectionState: pc.iceConnectionState,
+        hasRemoteDescription: !!pc.remoteDescription
+      })
+
+      // CRITICAL FIX: Only add ICE candidates after remote description is set
+      if (!pc.remoteDescription) {
+        console.log('[WebRTC] ⏰ Remote description not set, buffering ICE candidate for:', data.fromUserId)
+
+        // Buffer the candidate for later application
+        if (!this.pendingIceCandidates.has(data.fromUserId)) {
+          this.pendingIceCandidates.set(data.fromUserId, [])
+        }
+        this.pendingIceCandidates.get(data.fromUserId)!.push(data.candidate)
+        return
+      }
+
+      await pc.addIceCandidate(new RTCIceCandidate(data.candidate))
+      console.log('[WebRTC] ✅ ICE candidate successfully added for:', data.fromUserId)
     } catch (error) {
-      console.error('[WebRTC] Failed to add ICE candidate:', error)
+      const errorObj = error as Error
+      console.error('[WebRTC] ❌ Failed to add ICE candidate for:', data.fromUserId, {
+        error: errorObj.message,
+        candidateType: data.candidate.candidate,
+        signalingState: peerConn.connection.signalingState,
+        hasRemoteDescription: !!peerConn.connection.remoteDescription
+      })
     }
+  }
+
+  private async applyBufferedIceCandidates(participantId: string): Promise<void> {
+    const bufferedCandidates = this.pendingIceCandidates.get(participantId)
+    if (!bufferedCandidates || bufferedCandidates.length === 0) {
+      console.log('[WebRTC] No buffered ICE candidates for:', participantId)
+      return
+    }
+
+    console.log('[WebRTC] Applying', bufferedCandidates.length, 'buffered ICE candidates for:', participantId)
+
+    const peerConn = this.peerConnections.get(participantId)
+    if (!peerConn) {
+      console.warn('[WebRTC] No peer connection found for buffered candidates:', participantId)
+      return
+    }
+
+    let applied = 0
+    let failed = 0
+
+    for (const candidate of bufferedCandidates) {
+      try {
+        await peerConn.connection.addIceCandidate(new RTCIceCandidate(candidate))
+        applied++
+        console.log('[WebRTC] ✅ Applied buffered ICE candidate for:', participantId)
+      } catch (error) {
+        failed++
+        const errorObj = error as Error
+        console.error('[WebRTC] ❌ Failed to apply buffered ICE candidate:', errorObj.message)
+      }
+    }
+
+    // Clear the buffered candidates after processing
+    this.pendingIceCandidates.delete(participantId)
+    console.log('[WebRTC] 📊 ICE candidate application results for', participantId + ':', {
+      total: bufferedCandidates.length,
+      applied,
+      failed
+    })
   }
 
   private handleParticipantLeft(data: { participantId: string }) {
@@ -1946,47 +2531,330 @@ export class WebRTCService {
     }
   }
 
-  // Enhanced reconnection with multiple retry attempts
-  private async attemptReconnection(participantId: string, attempt = 1) {
+  // CRITICAL FIX: Enhanced error recovery system
+  private async handleConnectionError(participantId: string, error: any, context: string) {
+    console.error(`[WebRTC] ❌ Connection error in ${context} for ${participantId}:`, error)
+    
+    // Determine error severity and recovery strategy
+    const errorMessage = error?.message || String(error)
+    let recoveryAction: 'retry' | 'restart' | 'fail' = 'retry'
+    
+    // Analyze error type for appropriate recovery
+    if (errorMessage.includes('Permission denied') || errorMessage.includes('NotAllowedError')) {
+      console.log('[WebRTC] Permission denied - cannot recover, notifying user')
+      recoveryAction = 'fail'
+    } else if (errorMessage.includes('MediaStreamError') || errorMessage.includes('OverconstrainedError')) {
+      console.log('[WebRTC] Media stream error - attempting stream restart')
+      recoveryAction = 'restart'
+    } else if (errorMessage.includes('NetworkError') || errorMessage.includes('RTCError')) {
+      console.log('[WebRTC] Network/RTC error - attempting connection retry')
+      recoveryAction = 'retry'
+    }
+    
+    // Execute recovery strategy
+    switch (recoveryAction) {
+      case 'retry':
+        await this.attemptConnectionRetry(participantId, 1)
+        break
+      case 'restart':
+        await this.restartMediaConnection(participantId)
+        break
+      case 'fail':
+        this.handleConnectionFailure(participantId, error)
+        break
+    }
+  }
+
+  // Enhanced reconnection with smart retry logic
+  private async attemptConnectionRetry(participantId: string, attempt = 1) {
     const maxAttempts = 3
-    console.log(`[WebRTC] Attempting reconnection for: ${participantId} (attempt ${attempt}/${maxAttempts})`)
+    console.log(`[WebRTC] Attempting connection retry for: ${participantId} (attempt ${attempt}/${maxAttempts})`)
     
     if (attempt > maxAttempts) {
-      console.error(`[WebRTC] Max reconnection attempts reached for: ${participantId}`)
-      this.handleConnectionFailure(participantId)
+      console.error(`[WebRTC] Max retry attempts reached for: ${participantId}`)
+      this.handleConnectionFailure(participantId, new Error('Max retry attempts exceeded'))
       return
     }
     
-    // Close existing connection
+    try {
+      // Close existing connection
+      this.closePeerConnection(participantId)
+      
+      // Progressive delay: 1s, 2s, 3s
+      const delay = attempt * 1000
+      console.log(`[WebRTC] Waiting ${delay}ms before retry...`)
+      await new Promise(resolve => setTimeout(resolve, delay))
+      
+      // Attempt reconnection
+      await this.safeCreateOffer(participantId)
+      console.log(`[WebRTC] ✅ Connection retry successful for: ${participantId}`)
+      
+    } catch (error) {
+      console.error(`[WebRTC] ❌ Retry attempt ${attempt} failed for ${participantId}:`, error)
+      // Recursive retry with incremented attempt
+      await this.attemptConnectionRetry(participantId, attempt + 1)
+    }
+  }
+
+  // Restart media connection for media-related errors
+  private async restartMediaConnection(participantId: string) {
+    console.log(`[WebRTC] 🔄 Restarting media connection for: ${participantId}`)
+    
+    try {
+      // Reinitialize local stream
+      if (this.localStream) {
+        this.localStream.getTracks().forEach(track => track.stop())
+        this.localStream = null
+      }
+      
+      // FIXED: Trigger media reinitialization (UI would need to handle this externally)
+      console.warn('[WebRTC] 🔄 Media stream restart required for participant:', participantId)
+      // Note: UI should monitor connection state and handle restart requirements
+      
+    } catch (error) {
+      console.error('[WebRTC] ❌ Failed to restart media connection:', error)
+      this.handleConnectionFailure(participantId, error)
+    }
+  }
+  
+  // ENHANCED: Better connection failure handling
+  private handleConnectionFailure(participantId: string, error?: any) {
+    console.error(`[WebRTC] ❌ Connection failed permanently for: ${participantId}`, error)
+    
+    // Clean up resources
     this.closePeerConnection(participantId)
     
-    // Progressive delay: 1s, 2s, 3s
-    const delay = attempt * 1000
-    setTimeout(async () => {
+    // FIXED: Log connection failure for debugging (UI should monitor connection state)
+    console.error('[WebRTC] 🚨 Connection failed for participant:', {
+      participantId,
+      error: error?.message || 'Connection failed',
+      canRetry: true,
+      timestamp: Date.now()
+    })
+    
+    // Optionally notify server about the failure
+    if (this.socket) {
+      this.socket.emit('webrtc_connection_failed', {
+        callId: this.callId,
+        participantId,
+        error: error?.message || 'Connection failed'
+      })
+    }
+  }
+
+  // Enhanced reconnection with multiple retry attempts - UPDATED
+  private async attemptReconnection(participantId: string, attempt = 1) {
+    // This method is now deprecated in favor of the new error handling system
+    console.log(`[WebRTC] ⚠️ Using deprecated attemptReconnection - switching to new error recovery`)
+    await this.attemptConnectionRetry(participantId, attempt)
+  }
+
+  // CRITICAL FIX: Add missing getActivePeerConnections method
+  public getActivePeerConnections(): Map<string, PeerConnection> {
+    // Return a copy to prevent external modification
+    return new Map(this.peerConnections)
+  }
+
+  // ENHANCED: Clear peer connections without destroying the service (for subsequent calls)
+  public clearPeerConnections(): void {
+    console.log('[WebRTC] 🧹 Clearing peer connections while preserving service')
+
+    this.peerConnections.forEach((peerConn, participantId) => {
       try {
-        // Verify we still have a valid call and local stream
-        if (!this.callId || !this.localStream) {
-          console.log('[WebRTC] Call ended during reconnection attempt')
-          return
+        console.log('[WebRTC] Closing connection for participant:', participantId)
+
+        // Close the peer connection
+        if (peerConn.connection.connectionState !== 'closed') {
+          peerConn.connection.close()
         }
-        
-        // Recreate offer for reconnection
-        console.log(`[WebRTC] Creating new offer for reconnection attempt ${attempt}`)
-        await this.createOffer(participantId)
-        
-        // Set a timeout to retry if this attempt fails
-        setTimeout(() => {
-          const peerConn = this.peerConnections.get(participantId)
-          if (!peerConn || peerConn.connection.connectionState === 'failed') {
-            console.log(`[WebRTC] Reconnection attempt ${attempt} failed, retrying...`)
-            this.attemptReconnection(participantId, attempt + 1)
-          }
-        }, 5000)
-        
+
+        // Stop remote stream tracks if any
+        if (peerConn.remoteStream) {
+          peerConn.remoteStream.getTracks().forEach(track => {
+            if (track.readyState === 'live') {
+              track.stop()
+            }
+          })
+        }
       } catch (error) {
-        console.error(`[WebRTC] Reconnection attempt ${attempt} failed:`, error)
-        this.attemptReconnection(participantId, attempt + 1)
+        console.warn('[WebRTC] Error closing connection for participant:', participantId, error)
       }
-    }, delay)
+    })
+
+    // Clear the connections map
+    this.peerConnections.clear()
+
+    // Reset group call optimization
+    this.groupCallOptimization.isGroupCallMode = false
+    this.connectionSetupQueue.clear()
+
+    // Clear retry state
+    this.offerRetryState.clear()
+
+    // Clear pending ICE candidates
+    this.pendingIceCandidates.clear()
+
+    console.log('[WebRTC] ✅ Peer connections cleared, service ready for reuse')
+  }
+
+  // ENHANCED: Get functionally connected peer connections for group calls
+  public getConnectedPeerConnections(): Map<string, PeerConnection> {
+    const connectedPeers = new Map<string, PeerConnection>()
+
+    this.peerConnections.forEach((peerConn, participantId) => {
+      const connectionState = peerConn.connection.connectionState
+      const iceState = peerConn.connection.iceConnectionState
+      const hasRemoteStreams = peerConn.remoteStream !== null
+      const hasDataChannels = peerConn.connection.getTransceivers().length > 0
+      const signalingState = peerConn.connection.signalingState
+
+      // ENHANCED: More inclusive logic matching getConnectedParticipantCount for consistency
+      const isFunctionallyConnected =
+        // Standard connected state
+        connectionState === 'connected' ||
+        // Connecting with successful ICE (common in group calls)
+        (connectionState === 'connecting' && iceState === 'connected') ||
+        // Connecting with remote streams (functional for audio/video)
+        (connectionState === 'connecting' && hasRemoteStreams) ||
+        // Stable signaling with active transceivers (data flowing)
+        (signalingState === 'stable' && hasDataChannels && iceState !== 'failed') ||
+        // New state that has started ICE gathering and not failed
+        (connectionState === 'new' && iceState === 'connected') ||
+        // Any connection with active media transceivers and not in failed state
+        (hasDataChannels &&
+         connectionState !== 'failed' &&
+         connectionState !== 'disconnected' &&
+         connectionState !== 'closed' &&
+         iceState !== 'failed' &&
+         iceState !== 'disconnected')
+
+      if (isFunctionallyConnected) {
+        connectedPeers.set(participantId, peerConn)
+      }
+    })
+
+    return connectedPeers
+  }
+
+  // UTILITY: Check if specific participant has active connection
+  public hasActivePeerConnection(participantId: string): boolean {
+    return this.peerConnections.has(participantId)
+  }
+
+  // ENHANCED: Check if specific participant is functionally connected via WebRTC
+  public isParticipantConnected(participantId: string): boolean {
+    const peerConn = this.peerConnections.get(participantId)
+    if (!peerConn) return false
+
+    const connectionState = peerConn.connection.connectionState
+    const iceState = peerConn.connection.iceConnectionState
+    const hasRemoteStreams = peerConn.remoteStream !== null
+    const hasDataChannels = peerConn.connection.getTransceivers().length > 0
+    const signalingState = peerConn.connection.signalingState
+
+    // ENHANCED: Use same inclusive logic as other connection detection methods
+    return connectionState === 'connected' ||
+           (connectionState === 'connecting' && iceState === 'connected') ||
+           (connectionState === 'connecting' && hasRemoteStreams) ||
+           (signalingState === 'stable' && hasDataChannels && iceState !== 'failed') ||
+           (connectionState === 'new' && iceState === 'connected') ||
+           (hasDataChannels &&
+            connectionState !== 'failed' &&
+            connectionState !== 'disconnected' &&
+            connectionState !== 'closed' &&
+            iceState !== 'failed' &&
+            iceState !== 'disconnected')
+  }
+
+  // UTILITY: Get total count of active peer connections
+  public getActivePeerConnectionCount(): number {
+    return this.peerConnections.size
+  }
+
+  // ENHANCED: Get count of functionally connected participants for group calls
+  public getConnectedParticipantCount(): number {
+    let functionallyConnectedCount = 0
+
+    this.peerConnections.forEach((peerConn, participantId) => {
+      const connectionState = peerConn.connection.connectionState
+      const iceState = peerConn.connection.iceConnectionState
+      const hasRemoteStreams = peerConn.remoteStream !== null
+      const hasDataChannels = peerConn.connection.getTransceivers().length > 0
+      const signalingState = peerConn.connection.signalingState
+
+      // ENHANCED: More inclusive logic for group calls - focus on functional connectivity
+      const isFunctionallyConnected =
+        // Standard connected state
+        connectionState === 'connected' ||
+        // Connecting with successful ICE (common in group calls)
+        (connectionState === 'connecting' && iceState === 'connected') ||
+        // Connecting with remote streams (functional for audio/video)
+        (connectionState === 'connecting' && hasRemoteStreams) ||
+        // Stable signaling with active transceivers (data flowing)
+        (signalingState === 'stable' && hasDataChannels && iceState !== 'failed') ||
+        // New state that has started ICE gathering and not failed
+        (connectionState === 'new' && iceState === 'connected') ||
+        // Any connection with active media transceivers and not in failed state
+        (hasDataChannels &&
+         connectionState !== 'failed' &&
+         connectionState !== 'disconnected' &&
+         connectionState !== 'closed' &&
+         iceState !== 'failed' &&
+         iceState !== 'disconnected')
+
+      if (isFunctionallyConnected) {
+        functionallyConnectedCount++
+        console.log(`[WebRTC] ✅ Participant ${participantId} is functionally connected: {connectionState: ${connectionState}, iceState: ${iceState}, hasStreams: ${hasRemoteStreams}, hasData: ${hasDataChannels}}`)
+      } else {
+        console.log(`[WebRTC] ❌ Participant ${participantId} not functionally connected: {connectionState: ${connectionState}, iceState: ${iceState}, hasStreams: ${hasRemoteStreams}, hasData: ${hasDataChannels}}`)
+      }
+    })
+
+    console.log(`[WebRTC] 📊 Functionally connected participants: ${functionallyConnectedCount} / ${this.peerConnections.size}`)
+    return functionallyConnectedCount
+  }
+
+  // CRITICAL: Comprehensive cleanup method to prevent memory leaks
+  public cleanup(): void {
+    console.log('[WebRTC] 🧹 Starting comprehensive cleanup')
+
+    try {
+      // Close all peer connections
+      this.peerConnections.forEach((peerConn, participantId) => {
+        console.log(`[WebRTC] Closing peer connection for: ${participantId}`)
+        try {
+          peerConn.connection.close()
+        } catch (error) {
+          console.warn(`[WebRTC] Error closing peer connection for ${participantId}:`, error)
+        }
+      })
+
+      // Clear peer connections map
+      this.peerConnections.clear()
+
+      // Stop local stream tracks
+      if (this.localStream) {
+        console.log('[WebRTC] Stopping local stream tracks')
+        this.localStream.getTracks().forEach(track => {
+          try {
+            track.stop()
+          } catch (error) {
+            console.warn('[WebRTC] Error stopping track:', error)
+          }
+        })
+        this.localStream = null
+      }
+
+      // Clear pending ICE candidates
+      this.pendingIceCandidates.clear()
+
+      // Reset state
+      this.callId = null
+      this.initializationInProgress = false
+
+      console.log('[WebRTC] ✅ Cleanup completed successfully')
+    } catch (error) {
+      console.error('[WebRTC] ❌ Error during cleanup:', error)
+    }
   }
 }

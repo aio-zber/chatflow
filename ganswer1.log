@@ -1,0 +1,1567 @@
+ The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+eval @ webpack-internal:///…ationContext.tsx:67
+ The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+eval @ webpack-internal:///…lCallManager.tsx:77
+ The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+eval @ webpack-internal:///…lCallManager.tsx:77
+ The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+eval @ webpack-internal:///…lCallManager.tsx:77
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ ChatSidebar: Conversations updated, count: 3
+ ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmfbv5it50003ku46zozb4hj2
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Initialized active participants (excluding self): Array(1)
+ [CallModal] Skipping connection verification - no WebRTC or participants
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: Array(2)
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: Array(2)
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Skipping connection verification - no WebRTC or participants
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: Array(2)
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: Array(2)
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: Array(2)
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: Array(2)
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Network metrics: Object
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: Array(2)
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: Array(2)
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Network metrics: Object
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: Array(2)
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: Array(2)
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Network metrics: Object
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: Array(2)
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: Array(2)
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ Updated online status for user cmeumah180000kuygq63oa1qx in conversation cmew64hqq0008kud8i3zywuwd
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ ChatSidebar: Conversations updated, count: 3
+ ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmfbv5it50003ku46zozb4hj2
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Initialized active participants (excluding self): Array(1)
+ [CallModal] Skipping connection verification - no WebRTC or participants
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ ChatSidebar: Group conversation cmew64hqq0008kud8i3zywuwd (Test) - members: 3
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ ChatSidebar: Conversations updated, count: 3
+ ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmfbv5it50003ku46zozb4hj2
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Initialized active participants (excluding self): Array(1)
+ [CallModal] Skipping connection verification - no WebRTC or participants
+ [CallModal] 🆘 EMERGENCY WebRTC RECOVERY - Call is connected but WebRTC needs help!
+ [CallModal] 🔧 Emergency details: Object
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+webrtc.ts:1765 [WebRTC] Excellent network detected - restoring quality
+webrtc.ts:1839 [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+SocketContext.tsx:449 SocketContext: Heartbeat sent successfully
+SocketContext.tsx:486 SocketContext: Background heartbeat sent for hidden tab
+CallModal.tsx:228 [CallModal] Updated peer connections for performance monitoring: 2
+CallModal.tsx:229 [CallModal] Peer connection participants: Array(2)
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useCallPerformance.ts:242 [useCallPerformance] Connection states: Array(2)
+useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:1446 [CallModal] Skipping connection verification - no WebRTC or participants
+CallModal.tsx:1446 [CallModal] Skipping connection verification - no WebRTC or participants
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:228 [CallModal] Updated peer connections for performance monitoring: 2
+CallModal.tsx:229 [CallModal] Peer connection participants: Array(2)
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useCallPerformance.ts:242 [useCallPerformance] Connection states: Array(2)
+useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useCallPerformance.ts:41 [useCallPerformance] Network metrics: Object
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+useConversations.ts:592 Updated online status for user cmeifml0h001okung0i95m8s6 in conversation cmew64hqq0008kud8i3zywuwd
+ChatSidebar.tsx:323 ChatSidebar: Filtering conversations Object
+ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: null
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ ChatSidebar: Conversations updated, count: 3
+ ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmfbv5it50003ku46zozb4hj2
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Initialized active participants (excluding self): Array(1)
+ [CallModal] Skipping connection verification - no WebRTC or participants
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ NotificationContext: Window focused
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+ 🌐 GlobalNotificationListener: useEffect triggered Object
+ 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifn5qp002dkunge64m0xss
+ 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+ ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+ SocketContext: Window focused, refreshing connection
+ NotificationContext: Page visibility changed to: true
+ SocketContext: Tab became visible, re-establishing connection
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+ 🌐 GlobalNotificationListener: useEffect triggered Object
+ 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifn5qp002dkunge64m0xss
+ 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+ ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: Object
+ [VoiceParticipant] Tester voice activity debug: Object
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: Object
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ 🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+ 🌐 GlobalNotificationListener: useEffect triggered Object
+ 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifn5qp002dkunge64m0xss
+ 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+ ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Initialized active participants (excluding self): Array(1)
+ [CallModal] Skipping connection verification - no WebRTC or participants
+ [VoiceActivity] Effect triggered: Object
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ Updated online status for user cmeifml0h001okung0i95m8s6 in conversation cmeifnahq003ekungumhkl6ux
+ 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ Updated online status for user cmeifml0h001okung0i95m8s6 in conversation cmew64hqq0008kud8i3zywuwd
+ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: null
+useConversations.ts:592 Updated online status for user cmeifml0h001okung0i95m8s6 in conversation cmeifnahq003ekungumhkl6ux
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ChatSidebar.tsx:155 ChatSidebar: Conversations updated, count: 3
+ChatSidebar.tsx:157 ChatSidebar: Latest conversation: cmew64hqq0008kud8i3zywuwd last message: cmfbv5it50003ku46zozb4hj2
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:86 [CallModal] Initialized active participants (excluding self): Array(1)
+CallModal.tsx:1446 [CallModal] Skipping connection verification - no WebRTC or participants
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: Object
+SocketContext.tsx:371 SocketContext: Additional heartbeat sent after becoming visible
+useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: Object
+useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: Object
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:228 [CallModal] Updated peer connections for performance monitoring: 2
+CallModal.tsx:229 [CallModal] Peer connection participants: Array(2)
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useCallPerformance.ts:242 [useCallPerformance] Connection states: Array(2)
+useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+useCallPerformance.ts:41 [useCallPerformance] Network metrics: Object
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:1446 [CallModal] Skipping connection verification - no WebRTC or participants
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+NotificationContext.tsx:213 NotificationContext: Window blurred
+ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: null
+ChatWindow.tsx:92 🏠 ChatWindow mounted/re-rendered with conversationId: null
+GlobalNotificationListener.tsx:173 🧹 GlobalNotificationListener: Cleaning up socket listener for new-notification
+GlobalNotificationListener.tsx:26 🌐 GlobalNotificationListener: useEffect triggered Object
+GlobalNotificationListener.tsx:43 🚀 GlobalNotificationListener: Setting up global socket listeners for user: cmeifn5qp002dkunge64m0xss
+GlobalNotificationListener.tsx:48 🔄 GlobalNotificationListener: Re-emitted join-user-room for safety
+GlobalNotificationListener.tsx:170 ✅ GlobalNotificationListener: Socket listener registered for new-notification events
+SocketContext.tsx:399 SocketContext: Window blurred, sending pre-blur heartbeat
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: Object
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: Object
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: Object
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:1446 [CallModal] Skipping connection verification - no WebRTC or participants
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:1446 [CallModal] Skipping connection verification - no WebRTC or participants
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+webrtc.ts:1765 [WebRTC] Excellent network detected - restoring quality
+webrtc.ts:1839 [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: {average: '7.8', volume: '-30.2', threshold: -50, speaking: false, streamActive: true, …}
+useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: {average: '0.0', volume: '-100.0', threshold: -40, speaking: false, streamActive: true, …}
+useVoiceActivity.ts:81 [VoiceActivity] Volume analysis: {average: '0.0', volume: '-100.0', threshold: -40, speaking: false, streamActive: true, …}
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:228 [CallModal] Updated peer connections for performance monitoring: 2
+CallModal.tsx:229 [CallModal] Peer connection participants: (2) ['cmeifml0h001okung0i95m8s6', 'cmeumah180000kuygq63oa1qx']
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useCallPerformance.ts:242 [useCallPerformance] Connection states: (2) [{…}, {…}]
+useCallPerformance.ts:246 [useCallPerformance] Starting monitoring for 2 valid connections
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3018 [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3030 [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2965 [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+useCallPerformance.ts:41 [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+useCallPerformance.ts:37 [useCallPerformance] No valid network data yet, assuming good quality
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2603 [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+CallModal.tsx:2917 [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+CallModal.tsx:2918 [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+CallModal.tsx:2932 [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+CallModal.tsx:2941 [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+useVoiceActivity.ts:22 [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+useVoiceActivity.ts:42 [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:62 [CallModal] Rendered - voice call opened
+CallModal.tsx:3013 [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+CallModal.tsx:3029 [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceActivity] Volume analysis: {average: '0.0', volume: '-100.0', threshold: -40, speaking: false, streamActive: true, …}
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceActivity] Volume analysis: {average: '14.6', volume: '-24.8', threshold: -50, speaking: true, streamActive: true, …}
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: (2) ['cmeifml0h001okung0i95m8s6', 'cmeumah180000kuygq63oa1qx']
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: (2) [{…}, {…}]
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Updated peer connections for performance monitoring: 2
+ [CallModal] Peer connection participants: (2) ['cmeifml0h001okung0i95m8s6', 'cmeumah180000kuygq63oa1qx']
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [useCallPerformance] Connection states: (2) [{…}, {…}]
+ [useCallPerformance] Starting monitoring for 2 valid connections
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Volume analysis: {average: '18.5', volume: '-22.8', threshold: -50, speaking: true, streamActive: true, …}
+ [useCallPerformance] Network metrics: {audioPacketLoss: 0, videoPacketLoss: 0, videoFrameRate: 0, latency: 1, callType: 'voice'}
+ [useCallPerformance] No valid network data yet, assuming good quality
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceActivity] Volume analysis: {average: '0.0', volume: '-100.0', threshold: -40, speaking: false, streamActive: true, …}
+ [VoiceActivity] Volume analysis: {average: '0.0', volume: '-100.0', threshold: -40, speaking: false, streamActive: true, …}
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [VoiceParticipant] Tester voice activity debug: {participantId: 'cmeifml0h001okung0i95m8s6', hasOriginalStream: true, hasLatestStream: true, streamActive: true, audioTracksCount: 1, …}
+ [CallModal] 🔊 Setting up audio element for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Stream details: {id: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', active: true, audioTracks: Array(1)}
+ [CallModal] Previous audio element for cmeifml0h001okung0i95m8s6: false
+ [CallModal] Cleared previous srcObject for cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [VoiceActivity] Effect triggered: {hasStream: true, streamId: 'f8095e58-5acc-46a3-8e45-b5b91b1eda87', audioTracks: 1, threshold: -40}
+ [VoiceActivity] Initializing for stream: f8095e58-5acc-46a3-8e45-b5b91b1eda87 with 1 audio tracks
+ [CallModal] Audio loadeddata event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio can play for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio canplay event for cmeifml0h001okung0i95m8s6
+ [CallModal] Audio is playing for cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] ✅ Audio playing immediately for participant cmeifml0h001okung0i95m8s6
+ [CallModal] Rendered - voice call opened
+ [CallModal] Rendered - voice call opened
+ [WebRTC] Excellent network detected - restoring quality
+ [WebRTC] Improved audio quality for: cmeifml0h001okung0i95m8s6
+ [VoiceActivity] Volume analysis: {average: '15.3', volume: '-24.4', threshold: -50, speaking: true, streamActive: true, …}

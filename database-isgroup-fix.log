@@ -1,0 +1,33 @@
+
+> chatflow@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.31
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · optimizeCss
+    · esmExternals
+    · scrollRestoration
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ✓ Compiled /api/socket/io in 339ms (72 modules)
+🔧 Environment Configuration:
+  - Environment: development
+  - Database URL: ✓ Set
+  - NextAuth Secret: ✓ Set
+  - NextAuth URL: ✓ Set
+  - Cloudinary: ✓ Configured
+✅ Configuration validation passed
+Socket.IO endpoint called: GET from Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb
+Initializing Socket.IO server...
+[CLEANUP] Memory leak prevention manager initialized
+[QUALITY] Call quality monitoring initialized
+Socket.IO server successfully initialized
+Socket.IO server initialized successfully
+ GET /api/socket/io?EIO=4&transport=polling&t=xjuc0l6z 200 in 473ms
+✅ Database connected successfully
+[MEMORY] Active calls: 0, Call traces: 0
+ ✓ Compiled in 144ms (48 modules)
+[MEMORY] Active calls: 0, Call traces: 0

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { PhoneOff, Mic, MicOff, Camera, CameraOff, Monitor, Users, Minimize2 } from 'lucide-react'
 import { useSocketContext } from '@/context/SocketContext'
 import { useSession } from 'next-auth/react'
@@ -9,6 +9,27 @@ import { VideoGrid } from '@/components/video/VideoGrid'
 import { ScreenShareManager, getScreenShareCapabilities } from '@/utils/screenShare'
 import { useCallPerformance } from '@/hooks/useCallPerformance'
 import { useVoiceActivity } from '@/hooks/useVoiceActivity'
+import { getGlobalAudioManager } from '@/lib/audio-manager'
+import type { CallStatus } from '@/types/call'
+
+// DEBOUNCING UTILITIES for performance optimization
+const debounce = <T extends (...args: any[]) => void>(func: T, delay: number): T => {
+  let timeoutId: NodeJS.Timeout
+  return ((...args: any[]) => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => func(...args), delay)
+  }) as T
+}
+
+// Debounced loggers to reduce console spam
+const debouncedLoggers = {
+  participantCount: debounce((info: any) => {
+    console.log(`[CallModal] 📊 Participant State Debug (debounced):`, info)
+  }, 500),
+  stateUpdate: debounce((prev: string, next: string, data: any) => {
+    console.log(`[CallModal] 🔄 State updated (debounced):`, prev, '->', next, 'authCount:', data.connectedParticipants)
+  }, 300)
+}
 
 interface CallParticipant {
   id: string
@@ -34,7 +55,7 @@ interface CallModalProps {
 }
 
 interface CallState {
-  status: 'dialing' | 'ringing' | 'connecting' | 'connected' | 'disconnected'
+  status: CallStatus
   duration: number
   connectedParticipants: number
   isMuted: boolean
@@ -55,11 +76,22 @@ export function CallModal({
 }: CallModalProps) {
   const { socket } = useSocketContext()
   const { data: session } = useSession()
-  // Reduced logging for better performance
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[CallModal] Rendered - ${callType} call ${isOpen ? 'opened' : 'closed'}`)
-  }
-  
+  // Reduced logging for better performance - moved to useEffect to prevent setState during render
+
+  // Initialize refs first to avoid initialization errors
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const localVideoRef = useRef<HTMLVideoElement>(null)
+  const remoteVideoRefs = useRef<Map<string, HTMLVideoElement>>(new Map())
+  const remoteAudioRefs = useRef<Map<string, HTMLAudioElement>>(new Map())
+  const localStreamRef = useRef<MediaStream | null>(null)
+  const webrtcServiceRef = useRef<WebRTCService | null>(null)
+  const screenShareManagerRef = useRef<ScreenShareManager | null>(null)
+  const userInitiatedCloseRef = useRef<boolean>(false)
+  const userHasAcceptedCall = useRef<boolean>(!isIncoming)
+  const lastStateUpdateRef = useRef<string>('')
+  const lastRecoveryAttemptRef = useRef<number>(0)
+  const authoritativeStateRef = useRef<{connectedParticipants: number, sequenceNumber: number} | null>(null)
+
   const [callState, setCallState] = useState<CallState>({
     status: isIncoming ? 'ringing' : 'dialing',
     duration: 0,
@@ -70,61 +102,301 @@ export function CallModal({
   })
   const [outgoingRingingInterval, setOutgoingRingingInterval] = useState<NodeJS.Timeout | null>(null)
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map())
-  const [participantConnectionStates, setParticipantConnectionStates] = useState<Map<string, 'ringing' | 'connecting' | 'connected' | number>>(new Map())
+  const [participantConnectionStates, setParticipantConnectionStates] = useState<Map<string, 'ringing' | 'connecting' | 'connected' | 'declined' | number>>(new Map())
   const [offerCreationAttempts, setOfferCreationAttempts] = useState<Set<string>>(new Set())
   const [isMinimized, setIsMinimized] = useState(false)
   const [activeParticipants, setActiveParticipants] = useState<CallParticipant[]>(participants || [])
   
+  // PERFORMANCE: Track previous participant IDs to prevent unnecessary re-renders
+  const prevParticipantIds = useRef<string>('')
+  
+  // ENHANCED: Event deduplication and processing locks to prevent conflicts
+  const lastProcessedEventRef = useRef<{ type: string; id: string; timestamp: number } | null>(null)
+  const eventProcessingLockRef = useRef<boolean>(false)
+  
+  // ENHANCED: Event deduplication helper
+  const shouldProcessEvent = useCallback((eventType: string, eventId: string) => {
+    // Prevent concurrent event processing
+    if (eventProcessingLockRef.current) {
+      console.log(`[CallModal] 🔒 Event processing locked, skipping ${eventType}:${eventId}`)
+      return false
+    }
+
+    const now = Date.now()
+    const lastEvent = lastProcessedEventRef.current
+
+    // Check for duplicate events within a short time window
+    if (lastEvent && 
+        lastEvent.type === eventType && 
+        lastEvent.id === eventId && 
+        (now - lastEvent.timestamp) < 500) { // 500ms deduplication window
+      console.log(`[CallModal] 🔄 Duplicate event detected, skipping ${eventType}:${eventId}`)
+      return false
+    }
+
+    // Update last processed event
+    lastProcessedEventRef.current = { type: eventType, id: eventId, timestamp: now }
+    return true
+  }, [])
+
+  // ENHANCED: Process event with lock
+  const processEventWithLock = useCallback(async (eventType: string, eventId: string, handler: () => Promise<void> | void) => {
+    if (!shouldProcessEvent(eventType, eventId)) {
+      return
+    }
+
+    eventProcessingLockRef.current = true
+    try {
+      await handler()
+    } finally {
+      eventProcessingLockRef.current = false
+    }
+  }, [shouldProcessEvent])
+  
   // Sync activeParticipants with participants prop changes
   useEffect(() => {
     if (participants && participants.length > 0) {
-      // Filter out ourselves from the participants list to prevent duplicates
-      const filteredParticipants = participants.filter(p => p.id !== session?.user?.id)
-      setActiveParticipants(filteredParticipants)
-      console.log('[CallModal] Initialized active participants (excluding self):', filteredParticipants.map(p => p.id))
+      // PERFORMANCE: Check if participants actually changed before processing
+      const participantIds = participants.map(p => p.id).sort().join(',')
+      
+      if (prevParticipantIds.current === participantIds) {
+        console.log('[CallModal] 🔄 Participants unchanged, skipping re-initialization')
+        return
+      }
+      
+      prevParticipantIds.current = participantIds
+      
+      // FIXED: Use participants list as-is without manual current user addition
+      // This prevents UI duplication issues. Current user display is handled separately
+      let completeParticipants = [...participants]
+      
+      setActiveParticipants(completeParticipants)
+      console.log('[CallModal] Initialized active participants (including all):', completeParticipants.map(p => p.id))
+      console.log('[CallModal] Current user ID:', session?.user?.id)
+      console.log('[CallModal] Participant details:', completeParticipants.map(p => ({id: p.id, name: p.name})))
+      
+      // Initialize participant states for all participants
+      const newParticipantStates = new Map(participantConnectionStates)
+      completeParticipants.forEach(participant => {
+        if (!newParticipantStates.has(participant.id)) {
+          // FIXED: Proper state flow for group calls
+          // Incoming calls: all participants start as 'ringing' 
+          // Outgoing calls: caller starts as 'connecting', recipients start as 'ringing'
+          let initialState: 'ringing' | 'connecting'
+          
+          if (isIncoming) {
+            // For incoming calls, everyone starts as ringing
+            initialState = 'ringing'
+          } else {
+            // For outgoing calls, caller connects immediately, recipients ring
+            initialState = participant.id === session?.user?.id ? 'connecting' : 'ringing'
+          }
+          
+          newParticipantStates.set(participant.id, initialState)
+          console.log(`[CallModal] Set initial state for ${participant.name} (${participant.id}):`, initialState, `(incoming: ${isIncoming})`)
+        }
+      })
+      setParticipantConnectionStates(newParticipantStates)
+    } else {
+      console.log('[CallModal] No participants provided or empty participants array')
     }
-  }, [participants, session?.user?.id])
-  
+  }, [participants, session?.user?.id, isIncoming])
+
+  // ENHANCED: Create safe participant object with improved validation and intelligent fallback
+  const createSafeParticipant = useCallback((participantData: any, fallbackId?: string): CallParticipant => {
+    const id = participantData?.id || fallbackId
+    if (!id) {
+      throw new Error('Cannot create participant without ID')
+    }
+
+    // ENHANCED: Intelligent fallback naming system
+    const generateFallbackName = (userId: string): string => {
+      // Try to create a more user-friendly fallback name
+      const shortId = userId.slice(-8)
+
+      // Check if ID looks like a UUID (contains hyphens)
+      if (userId.includes('-')) {
+        const lastPart = userId.split('-').pop() || shortId
+        return `User-${lastPart.slice(-6).toUpperCase()}`
+      }
+
+      // For shorter IDs, use a different pattern
+      if (userId.length <= 10) {
+        return `User-${userId.slice(-6).toUpperCase()}`
+      }
+
+      // Default pattern with better formatting
+      return `User-${shortId.toUpperCase()}`
+    }
+
+    // ENHANCED: More robust validation and sanitization
+    let safeName: string
+    if (participantData?.name && typeof participantData.name === 'string' && participantData.name.trim()) {
+      safeName = participantData.name.trim()
+
+      // Validate that the name is not just a fallback pattern already
+      if (safeName.match(/^User[\s-][a-z0-9]{6,8}$/i)) {
+        console.log(`[CallModal] 🔄 Received fallback-style name "${safeName}", attempting to improve it`)
+        safeName = generateFallbackName(id)
+      }
+    } else {
+      safeName = generateFallbackName(id)
+      console.log(`[CallModal] 🔤 Generated fallback name: ${safeName} for ID: ${id}`)
+    }
+
+    // ENHANCED: Better username fallback
+    let safeUsername: string
+    if (participantData?.username && typeof participantData.username === 'string' && participantData.username.trim()) {
+      safeUsername = participantData.username.trim()
+    } else {
+      // Create a cleaner username fallback
+      const shortId = id.slice(-6).toLowerCase()
+      safeUsername = `user_${shortId}`
+    }
+
+    // Avatar validation remains the same
+    const safeAvatar = participantData?.avatar && typeof participantData.avatar === 'string'
+      ? participantData.avatar
+      : null
+
+    const participant = {
+      id,
+      name: safeName,
+      username: safeUsername,
+      avatar: safeAvatar,
+      isMuted: false,
+      isCameraOff: callType === 'voice',
+      isConnected: false,
+      participantStatus: 'ringing' as const
+    }
+
+    console.log(`[CallModal] 🎯 Created safe participant:`, {
+      id: participant.id,
+      name: participant.name,
+      username: participant.username,
+      hasData: !!participantData?.name
+    })
+
+    return participant
+  }, [callType])
+
+
   // Memoize participant IDs to prevent unnecessary re-renders
   const memoizedParticipantIds = useMemo(() => {
     return activeParticipants?.map(p => p.id).filter(id => id !== session?.user?.id) || []
   }, [activeParticipants, session?.user?.id])
 
-  // Memoize connected participants for better performance
+  // Memoize connected participants for better performance - ENHANCED to prevent auto-answer UI
   const connectedParticipants = useMemo(() => {
-    return activeParticipants?.map(participant => {
+    return activeParticipants?.filter(participant => {
+      // CRITICAL FIX: Only show participants who have ACCEPTED the call (connecting or connected)
+      // This prevents the false "auto-join" appearance where ringing participants show up as connected
+      const serverParticipantState = participantConnectionStates.get(participant.id)
+      const isCurrentUser = participant.id === session?.user?.id
+
+      // ENHANCED: For current user, add additional validation against auto-answer
+      if (isCurrentUser) {
+        const hasLocallyAccepted = userHasAcceptedCall.current
+        // Current user must have locally accepted to be in connected participants list
+        return hasLocallyAccepted && (serverParticipantState === 'connecting' || serverParticipantState === 'connected')
+      }
+
+      // For other participants, use server state
+      return serverParticipantState === 'connecting' || serverParticipantState === 'connected'
+    }).map(participant => {
       const streamActive = remoteStreams.has(participant.id)
       const stream = remoteStreams.get(participant.id)
       const streamHasLiveTracks = stream && stream.getTracks().some(track => 
         track.readyState === 'live' && !track.muted
       )
       
-      let participantStatus: 'ringing' | 'connecting' | 'connected' = 'connecting'
+      let participantStatus: 'ringing' | 'connecting' | 'connected' = 'ringing'
       
+      // Get server-side participant state first - this is the primary source of truth
       const serverParticipantState = participantConnectionStates.get(participant.id)
-      if (serverParticipantState && ['ringing', 'connecting', 'connected'].includes(serverParticipantState as string)) {
-        participantStatus = serverParticipantState as 'ringing' | 'connecting' | 'connected'
-      }
       
-      if (streamActive && streamHasLiveTracks) {
-        participantStatus = 'connected'
-      } else if (callState.status === 'connected' && callState.connectedParticipants > 1) {
-        const now = Date.now()
-        const participantConnectingTime = participantConnectionStates.get(participant.id + '_time')
+      // CRITICAL FIX: Current user status logic that respects user acceptance
+      if (participant.id === session?.user?.id) {
+        // CRITICAL: For current user, use local state and WebRTC connection, NOT server participant state
+        const hasLocallyAccepted = userHasAcceptedCall.current
+        const hasWebRTCConnection = webrtcServiceRef.current &&
+                                   webrtcServiceRef.current.getActivePeerConnectionCount() > 0
+        const hasLiveStream = streamActive && streamHasLiveTracks
         
-        if (typeof participantConnectingTime === 'number') {
-          const timeSinceConnecting = now - participantConnectingTime
-          if (timeSinceConnecting > 10000) {
-            participantStatus = 'connected'
-          } else {
-            participantStatus = 'connecting'
-          }
+        // Log current user status calculation outside of render
+
+        // ULTRA-STRICT: Non-accepting incoming call users MUST stay ringing regardless of any other state
+        if (isIncoming && !hasLocallyAccepted) {
+          participantStatus = 'ringing'
         } else {
-          participantStatus = 'connecting'
-          // Note: Track time separately to avoid setState in render
+          // ENHANCED: Determine status based PURELY on LOCAL state and WebRTC connections
+          if (hasLiveStream && hasLocallyAccepted) {
+            // User has accepted and has active media stream - fully connected
+            participantStatus = 'connected'
+          } else if (hasWebRTCConnection && hasLocallyAccepted) {
+            // User has accepted and has WebRTC connection - connected
+            participantStatus = 'connected'
+          } else if (hasLocallyAccepted && callState.status === 'connected') {
+            // User has accepted and call is in connected state - connecting
+            participantStatus = 'connecting'
+          } else if (hasLocallyAccepted && (callState.status === 'connecting' || !isIncoming)) {
+            // User has accepted and call is connecting, OR this is outgoing call (caller is always "connecting" when accepted)
+            participantStatus = 'connecting'
+          } else if (!isIncoming && !hasLocallyAccepted) {
+            // Outgoing calls: should auto-accept, but if somehow not accepted, show ringing
+            participantStatus = 'ringing'
+          } else {
+            // Ultimate fallback: respect user acceptance state only
+            participantStatus = hasLocallyAccepted ? 'connecting' : 'ringing'
+          }
+        }
+        
+        // ENHANCED: State validation and suspicious auto-join detection (LOCAL STATE ONLY)
+        const suspiciousConditions = []
+
+        // Check for suspicious auto-join scenarios using only local state
+        if (isIncoming && !hasLocallyAccepted && (participantStatus === 'connecting' || participantStatus === 'connected')) {
+          suspiciousConditions.push('incoming_user_not_accepted_but_connecting')
+        }
+
+        if (!hasWebRTCConnection && !hasLiveStream && participantStatus === 'connected') {
+          suspiciousConditions.push('no_webrtc_or_stream_but_status_connected')
+        }
+
+        if (callState.status === 'connected' && !hasLocallyAccepted && isIncoming) {
+          suspiciousConditions.push('call_connected_but_user_not_accepted')
+        }
+        
+        // Override suspicious states without logging during render
+        if (suspiciousConditions.length > 0) {
+          // For incoming calls, force override to ringing if user hasn't accepted
+          if (isIncoming && !hasLocallyAccepted) {
+            participantStatus = 'ringing'
+          }
         }
       } else {
-        participantStatus = callState.status === 'connecting' ? 'connecting' : 'ringing'
+        // For remote participants, use server state as primary source
+        if (serverParticipantState === 'connected') {
+          participantStatus = 'connected'
+        } else if (serverParticipantState === 'connecting') {
+          participantStatus = 'connecting'
+        } else if (serverParticipantState === 'ringing') {
+          participantStatus = 'ringing'
+        } else {
+          // Fallback: check WebRTC connection state
+          const hasWebRTCConnection = webrtcServiceRef.current &&
+                                     webrtcServiceRef.current.hasActivePeerConnection(participant.id)
+          
+          if (streamActive && streamHasLiveTracks) {
+            participantStatus = 'connected'
+          } else if (hasWebRTCConnection) {
+            participantStatus = 'connected'
+          } else if (callState.status === 'connected') {
+            participantStatus = 'connecting'
+          } else {
+            participantStatus = 'ringing'
+          }
+        }
       }
 
       return {
@@ -133,35 +405,149 @@ export function CallModal({
         stream
       }
     }) || []
-  }, [activeParticipants, remoteStreams, participantConnectionStates, callState.status, callState.connectedParticipants])
+  }, [activeParticipants, remoteStreams, participantConnectionStates, callState.status, callState.connectedParticipants, session?.user?.id, isIncoming])
 
-  // Memoize status text to prevent unnecessary recalculations
+  // SIMPLIFIED: Single source of truth for participant counting
+  const actualConnectedParticipants = useMemo(() => {
+    try {
+      // PRIORITY 1: Use authoritative server count when available and recent
+      if (authoritativeStateRef.current) {
+        const authoritativeCount = authoritativeStateRef.current.connectedParticipants
+        const isRecentAuthoritative = (Date.now() - authoritativeStateRef.current.sequenceNumber) < 10000 // 10 seconds
+
+        if (isRecentAuthoritative) {
+          console.log(`[CallModal] 🎯 Using AUTHORITATIVE count: ${authoritativeCount} (age: ${Date.now() - authoritativeStateRef.current.sequenceNumber}ms)`)
+          return Math.max(0, authoritativeCount)
+        } else {
+          console.log(`[CallModal] ⚠️ Authoritative state too old, falling back to server count`)
+          authoritativeStateRef.current = null // Clear stale authoritative state
+        }
+      }
+
+      // PRIORITY 2: Use server state as primary source
+      let baseCount = callState.connectedParticipants || 0
+
+      // PRIORITY 3: Only augment with current user state for better accuracy
+      const currentUserConnected = userHasAcceptedCall.current && (
+        callState.status === 'connected' ||
+        callState.status === 'connecting' ||
+        // For outgoing calls, caller is connected when call starts
+        (!isIncoming && callState.status !== 'ringing')
+      )
+
+      // For group calls, ensure we don't exceed total participants
+      const finalCount = isGroupCall
+        ? Math.min(baseCount + (currentUserConnected && baseCount === 0 ? 1 : 0), activeParticipants.length)
+        : baseCount + (currentUserConnected && baseCount === 0 ? 1 : 0)
+
+      console.log(`[CallModal] 📊 Simplified count: server=${baseCount}, currentUser=${currentUserConnected}, final=${finalCount}, total=${activeParticipants.length}`)
+
+      return Math.max(0, finalCount)
+    } catch (error) {
+      console.error('[CallModal] Error calculating connected participants:', error)
+      return Math.max(0, (callState.connectedParticipants || 0))
+    }
+  }, [callState.connectedParticipants, callState.status, userHasAcceptedCall.current, isIncoming, isGroupCall, activeParticipants.length, authoritativeStateRef.current])
+
+  // ENHANCED: Comprehensive participant state debugging
+  useEffect(() => {
+    const debugInfo = {
+      actualConnected: actualConnectedParticipants,
+      serverCount: callState.connectedParticipants,
+      activeParticipants: activeParticipants.length,
+      isGroupCall,
+      hasAccepted: userHasAcceptedCall.current,
+      callStatus: callState.status,
+      authoritativeState: authoritativeStateRef.current ? {
+        count: authoritativeStateRef.current.connectedParticipants,
+        age: Date.now() - authoritativeStateRef.current.sequenceNumber
+      } : null,
+      participantStates: Array.from(participantConnectionStates.entries()).map(([id, state]) => ({
+        id: id.slice(-8), // Last 8 chars for privacy
+        state
+      })),
+      webrtcConnections: webrtcServiceRef.current ? webrtcServiceRef.current.getActivePeerConnectionCount() : 0
+    }
+
+    debouncedLoggers.participantCount(debugInfo)
+
+    // Alert on critical mismatches (immediate - not debounced)
+    if (isGroupCall && Math.abs(actualConnectedParticipants - (callState.connectedParticipants || 0)) > 1) {
+      console.warn(`[CallModal] ⚠️ CRITICAL MISMATCH: actualConnected=${actualConnectedParticipants} vs serverCount=${callState.connectedParticipants}`)
+    }
+  }, [actualConnectedParticipants, callState.connectedParticipants, callState.status, activeParticipants.length, isGroupCall, participantConnectionStates, webrtcServiceRef.current])
+
+  // ENHANCED: Smart status text that respects user acceptance state
   const statusText = useMemo(() => {
     const getStatusText = (): string => {
+      const hasAccepted = userHasAcceptedCall.current
+      
+      // CRITICAL FIX: For incoming calls, always show "Incoming call" until user accepts
+      if (isIncoming && !hasAccepted) {
+        return 'Incoming call'
+      }
+      
+      // ENHANCED: Status text that considers user acceptance for other states
       const statusMapping = {
         'dialing': 'Calling...',
         'ringing': isIncoming ? 'Incoming call' : 'Ringing...',
-        'connecting': 'Connecting...',
-        'connected': isGroupCall 
-          ? `Connected \u2022 ${callState.connectedParticipants} joined`
-          : 'Connected',
-        'disconnected': 'Call ended'
+        'connecting': hasAccepted 
+          ? 'Connecting...' 
+          : (isIncoming ? 'Incoming call' : 'Ringing...'),
+        'connected': hasAccepted
+          ? (isGroupCall ? `Connected \u2022 ${actualConnectedParticipants} joined` : 'Connected')
+          : (isIncoming ? 'Incoming call' : 'Connected'),
+        'disconnected': 'Call ended',
+        'declined': 'Call declined',
+        'ended': 'Call ended'
       }
-      return statusMapping[callState.status] || callState.status
+      
+      const finalStatus = statusMapping[callState.status] || callState.status
+      console.log(`[CallModal] 📱 Status text: "${finalStatus}" (hasAccepted: ${hasAccepted}, isIncoming: ${isIncoming}, callState: ${callState.status})`)
+      
+      // FINAL CONSISTENCY CHECK: Verify status text matches user acceptance state
+      if (isIncoming && !hasAccepted && (finalStatus.includes('Connecting') || finalStatus.includes('Connected'))) {
+        console.log(`[CallModal] 🛡️ CONSISTENCY OVERRIDE: Forcing "Incoming call" for non-accepting user despite status: ${finalStatus}`)
+        return 'Incoming call'
+      }
+      
+      return finalStatus
     }
     return getStatusText()
-  }, [callState.status, callState.connectedParticipants, isIncoming, isGroupCall])
+  }, [callState.status, actualConnectedParticipants, isIncoming, isGroupCall, userHasAcceptedCall.current])
 
-  // CRITICAL FIX: Add stability check to prevent immediate unmounting
+  // ENHANCED: Calculate dynamic invited count for group calls
+  const totalInvitedCount = useMemo(() => {
+    if (!isGroupCall) return 0
+
+    // Use the maximum of initial participants or current active participants for invited count
+    // This ensures the count reflects the actual conversation size, not just who was initially passed
+    const conversationSize = Math.max(
+      participants?.length || 0,
+      activeParticipants.length,
+      callState.connectedParticipants || 0
+    )
+
+    return conversationSize
+  }, [isGroupCall, participants?.length, activeParticipants.length, callState.connectedParticipants])
+
+  // CRITICAL FIX: Add stability check to prevent immediate unmounting - ENHANCED for group calls
   const [isInitializing, setIsInitializing] = useState(true)
-  
+
   useEffect(() => {
     // Mark as stable after initial render to prevent premature unmounting
-    // EXTENDED timeout to give WebRTC more time to establish connections
-    const stabilityTimeout = setTimeout(() => {
-      console.log('[CallModal] 🛡️ Initialization stability timeout complete - component now stable')
+    // EXTENDED timeout to give WebRTC more time to establish connections - longer for group calls
+    const isGroupCall = activeParticipants.length > 2
+    const stabilityTimeout = isGroupCall ? 5000 : 3000 // 5s for group calls, 3s for direct calls
+
+    const timeoutId = setTimeout(() => {
+      console.log('[CallModal] 🛡️ Initialization stability timeout complete - component now stable', {
+        isGroupCall,
+        timeoutUsed: stabilityTimeout,
+        participantCount: activeParticipants.length
+      })
       setIsInitializing(false)
-    }, 2000) // Extended from 100ms to 2 seconds for better stability
+    }, stabilityTimeout)
     
     return () => {
       console.log('[CallModal] 🧹 Component unmounting - performing thorough cleanup')
@@ -189,17 +575,6 @@ export function CallModal({
     }
   }, [])
 
-  
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const localVideoRef = useRef<HTMLVideoElement>(null)
-  const remoteVideoRefs = useRef<Map<string, HTMLVideoElement>>(new Map())
-  const remoteAudioRefs = useRef<Map<string, HTMLAudioElement>>(new Map())
-  const localStreamRef = useRef<MediaStream | null>(null)
-  const webrtcServiceRef = useRef<WebRTCService | null>(null)
-  const screenShareManagerRef = useRef<ScreenShareManager | null>(null)
-  const userInitiatedCloseRef = useRef<boolean>(false)
-  const lastStateUpdateRef = useRef<string>('') // Track last processed state update
-  const lastRecoveryAttemptRef = useRef<number>(0) // Track last recovery attempt timestamp
   const [connectionErrors, setConnectionErrors] = useState<Map<string, string>>(new Map())
   // State to track peer connections for performance monitoring
   const [peerConnections, setPeerConnections] = useState<Map<string, RTCPeerConnection>>(new Map())
@@ -222,6 +597,20 @@ export function CallModal({
           console.log('[CallModal] Updated peer connections for performance monitoring:', rtcPeerConnections.size)
           console.log('[CallModal] Peer connection participants:', Array.from(rtcPeerConnections.keys()))
           setPeerConnections(rtcPeerConnections)
+          
+          // IMMEDIATE TRANSITION TRIGGER: If we're in connecting state and have peer connections, transition to connected
+          if (callState.status === 'connecting' && rtcPeerConnections.size > 0) {
+            console.log('[CallModal] 🚀 IMMEDIATE TRANSITION: Peer connections established, moving to connected state')
+            setCallState(prev => ({ ...prev, status: 'connected' }))
+            
+            // Ensure ringing stops
+            stopOutgoingRingingSound()
+            
+            // Notify server of state change
+            if (socket && callId) {
+              socket.emit('force_call_connected', { callId })
+            }
+          }
         } catch (error) {
           console.warn('[CallModal] Error updating peer connections:', error)
         }
@@ -281,121 +670,6 @@ export function CallModal({
   const audioContextRef = useRef<AudioContext | null>(null)
   const ringingAudioRef = useRef<HTMLAudioElement | null>(null)
   
-  // Create a persistent ringing audio element
-  const createRingingAudio = useCallback(() => {
-    if (ringingAudioRef.current) {
-      return ringingAudioRef.current
-    }
-    
-    // Create ringing tone audio element
-    const audio = new Audio()
-    audio.loop = true
-    audio.volume = 0.5
-    
-    // Create ringing tone using Web Audio API for better control
-    try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      const audioContext = new AudioContextClass()
-      
-      // RINGING CONSISTENCY FIX: Create traditional dual-tone phone ringing
-      const createRingingTone = () => {
-        const duration = 6 // 6 seconds for complete ring cycle
-        const sampleRate = audioContext.sampleRate
-        const length = sampleRate * duration
-        const buffer = audioContext.createBuffer(1, length, sampleRate)
-        const data = buffer.getChannelData(0)
-        
-        // Generate traditional dual-tone ringing: 440Hz + 480Hz (North American standard)
-        for (let i = 0; i < length; i++) {
-          const time = i / sampleRate
-          const cycle = time % 6 // 6-second cycle
-          
-          if (cycle < 2) {
-            // First 2 seconds: dual-tone ringing with ring modulation
-            const tone1 = Math.sin(2 * Math.PI * 440 * time) * 0.5 // A4 note
-            const tone2 = Math.sin(2 * Math.PI * 480 * time) * 0.5 // Higher tone
-            const envelope = 0.5 + 0.3 * Math.sin(2 * Math.PI * 2 * time) // Ring modulation
-            data[i] = (tone1 + tone2) * envelope * 0.6
-          } else {
-            // Remaining 4 seconds: silence
-            data[i] = 0
-          }
-        }
-        
-        return buffer
-      }
-      
-      const buffer = createRingingTone()
-      
-      // CONSISTENCY FIX: Store references and create reusable play system
-      let currentSource = null
-      const gainNode = audioContext.createGain()
-      gainNode.gain.value = 0.5
-      gainNode.connect(audioContext.destination)
-      
-      audio.audioContext = audioContext
-      audio.buffer = buffer
-      audio.gainNode = gainNode
-      
-      // CONSISTENCY FIX: Custom play method that creates fresh sources for reusability
-      audio.customPlay = async () => {
-        try {
-          if (audioContext.state === 'suspended') {
-            await audioContext.resume()
-          }
-          
-          // Stop existing source if playing
-          if (currentSource) {
-            try {
-              currentSource.stop()
-              currentSource.disconnect()
-            } catch {
-              // Source might already be stopped
-            }
-          }
-          
-          // Create fresh source for consistent playback
-          currentSource = audioContext.createBufferSource()
-          currentSource.buffer = buffer
-          currentSource.loop = true
-          currentSource.connect(gainNode)
-          currentSource.start()
-          
-          console.log('[CallModal] ✅ Consistent ringing tone started with fresh source')
-        } catch (error) {
-          console.warn('[CallModal] Error in custom play:', error)
-        }
-      }
-      
-      // CONSISTENCY FIX: Custom stop method that preserves the context
-      audio.customStop = () => {
-        try {
-          if (currentSource) {
-            currentSource.stop()
-            currentSource.disconnect()
-            currentSource = null
-          }
-          console.log('[CallModal] ✅ Ringing source stopped (context preserved)')
-        } catch (error) {
-          console.warn('[CallModal] Error stopping custom audio:', error)
-        }
-      }
-      
-    } catch {
-      console.warn('[CallModal] Web Audio API not available, using fallback')
-      
-      // Fallback: Create data URL for ringing tone
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        // This is a placeholder - in a real implementation you'd generate audio data
-        audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+H2v2AaBDKJ2fLNeSsFKHXJ8N+ROQ=='
-      }
-    }
-    
-    ringingAudioRef.current = audio
-    return audio
-  }, [])
   
   // Initialize audio context with user gesture requirement
   const initializeAudioContext = async () => {
@@ -428,78 +702,94 @@ export function CallModal({
   }
 
   // Socket-based call state management
-  // ENHANCED: Outgoing call ringing sound with proper audio handling
-  const playOutgoingRingingSound = async () => {
-    try {
-      console.log('[CallModal] Starting outgoing ringing sound')
-      
-      // Stop any existing ringing first
-      stopOutgoingRingingSound()
-      
-      const audio = createRingingAudio()
-      
-      // Try to play the ringing sound
-      try {
-        if (audio.customPlay) {
-          await audio.customPlay()
-        } else {
-          await audio.play()
-        }
-        console.log('[CallModal] ✅ Ringing sound started successfully')
-      } catch (playError) {
-        console.warn('[CallModal] Failed to play ringing sound:', playError)
-        
-        // Fallback: Try to play after a user interaction
-        const playAfterInteraction = () => {
-          if (audio.customPlay) {
-            audio.customPlay().catch(console.warn)
-          } else {
-            audio.play().catch(console.warn)
-          }
-          document.removeEventListener('click', playAfterInteraction)
-          document.removeEventListener('touchstart', playAfterInteraction)
-        }
-        
-        document.addEventListener('click', playAfterInteraction, { once: true })
-        document.addEventListener('touchstart', playAfterInteraction, { once: true, passive: true })
-        
-        console.log('[CallModal] Waiting for user interaction to play ringing sound')
+
+  // CONSOLIDATED: Delegate ringing stop to GlobalCallManager for consistency
+  const requestStopRinging = useCallback((reason: string = 'callmodal_request') => {
+    console.log('[CallModal] 🔇 Requesting ringing stop from GlobalCallManager:', reason)
+
+    // Send browser event to GlobalCallManager to stop all ringing
+    const stopRingingEvent = new CustomEvent('stopGlobalCallManagerRinging', {
+      detail: {
+        eventCallId: callId,
+        reason,
+        callerId: session?.user?.id,
+        priority: true  // Mark as high priority to override other ringing
       }
-      
-    } catch (error) {
-      console.warn('[CallModal] Error with outgoing ringing sound:', error)
-    }
-  }
+    })
+
+    window.dispatchEvent(stopRingingEvent)
+  }, [callId, session?.user?.id])
 
   const stopOutgoingRingingSound = useCallback(() => {
-    console.log('[CallModal] 🔇 RINGING CONSISTENCY FIX: Pausing (not destroying) ringing sound')
-    
+    console.log('[CallModal] 🔇 STOPPING ringing sound completely')
+
     // Stop current interval if exists
     if (outgoingRingingInterval) {
       clearInterval(outgoingRingingInterval)
       setOutgoingRingingInterval(null)
       console.log('[CallModal] ✅ Cleared outgoing ringing interval')
     }
-    
-    // CONSISTENCY FIX: Pause the ringing audio but keep the reference for reuse
+
+    // ENHANCED: Use audio manager to stop ringing
     try {
-      if (ringingAudioRef.current) {
-        console.log('[CallModal] Pausing ringing audio (keeping for consistency)...')
-        
-        // Use custom stop if available
-        if (ringingAudioRef.current.customStop) {
-          ringingAudioRef.current.customStop()
-        } else {
-          ringingAudioRef.current.pause()
-          ringingAudioRef.current.currentTime = 0
-        }
-        
-        // CRITICAL FIX: Do NOT clear the reference - keep it for consistent tone
-        // ringingAudioRef.current = null  // REMOVED - this was causing inconsistency
-        console.log('[CallModal] ✅ Ringing audio paused (reference preserved for consistency)')
+      const audioManager = getGlobalAudioManager()
+      if (audioManager) {
+        audioManager.stopOutgoingRinging()
+        console.log('[CallModal] ✅ Audio manager ringing stopped')
       }
     } catch (error) {
-      console.warn('[CallModal] Error pausing ringing audio:', error)
+      console.warn('[CallModal] Error stopping audio manager ringing:', error)
+    }
+
+    // LEGACY: Also stop old ringing audio for backward compatibility
+    try {
+      if (ringingAudioRef.current) {
+        console.log('[CallModal] Stopping legacy ringing audio completely...')
+
+        // Pause and reset audio
+        ringingAudioRef.current.pause()
+        ringingAudioRef.current.currentTime = 0
+
+        // CRITICAL: Remove all event listeners to prevent memory leaks
+        ringingAudioRef.current.onended = null
+        ringingAudioRef.current.onerror = null
+        ringingAudioRef.current.onplay = null
+        ringingAudioRef.current.onpause = null
+
+        // Set volume to 0 for immediate silence
+        ringingAudioRef.current.volume = 0
+
+        // Clear src to stop loading
+        ringingAudioRef.current.src = ''
+        ringingAudioRef.current.load()
+
+        console.log('[CallModal] ✅ Legacy ringing audio completely stopped and cleaned up')
+      }
+    } catch (error) {
+      console.warn('[CallModal] Error stopping legacy ringing audio:', error)
+    }
+    
+    // ENHANCED: Coordinate AudioContext suspension with GlobalCallManager
+    try {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        console.log('[CallModal] 🔇 Suspending AudioContext to stop all audio')
+        audioContextRef.current.suspend()
+        
+        // COORDINATION: Also notify GlobalCallManager that audio context should be suspended
+        // This prevents conflicts between multiple audio contexts
+        if (callId && session?.user?.id) {
+          const suspendAudioEvent = new CustomEvent('suspendGlobalAudioContext', {
+            detail: {
+              callId: callId,
+              reason: 'callmodal_audio_stopped',
+              callerId: session.user.id
+            }
+          })
+          window.dispatchEvent(suspendAudioEvent)
+        }
+      }
+    } catch (error) {
+      console.warn('[CallModal] Error suspending audio context:', error)
     }
     
     // CONSISTENCY FIX: Suspend (don't close) AudioContext to preserve it for next call
@@ -517,16 +807,59 @@ export function CallModal({
     } catch (error) {
       console.warn('[CallModal] Error during AudioContext suspend:', error)
     }
-  }, [outgoingRingingInterval])
+    
+    // ENHANCED: Notify GlobalCallManager to stop any global ringing with priority
+    // This ensures coordination between CallModal and GlobalCallManager
+    if (callId && session?.user?.id) {
+      console.log('[CallModal] 📢 Notifying GlobalCallManager to stop ringing via browser event (PRIORITY)')
+      const stopRingingEvent = new CustomEvent('stopGlobalCallManagerRinging', {
+        detail: {
+          callId: callId,
+          reason: 'callmodal_ringing_stopped_priority',
+          callerId: session.user.id,
+          priority: true  // Indicate this is a priority stop from CallModal
+        }
+      })
+      window.dispatchEvent(stopRingingEvent)
+    }
+  }, [outgoingRingingInterval, callId, session?.user?.id])
 
   useEffect(() => {
-    if (!socket || !isOpen || !callId) {
-      console.log('[CallModal] Missing requirements for socket setup:', { 
+    console.log('[CallModal] 🔌 Socket setup useEffect triggered:', {
+      socket: !!socket,
+      isOpen,
+      callId,
+      hasRequirements: !!(socket && callId)
+    })
+    
+    // CRITICAL FIX: Only require socket and callId - allow setup regardless of isOpen
+    if (!socket || !callId) {
+      console.log('[CallModal] ❌ Missing critical requirements for socket setup:', { 
         socket: !!socket, 
         isOpen, 
         callId
       })
       return
+    }
+    
+    console.log('[CallModal] ✅ Setting up socket listeners for call:', callId)
+    
+    // Validate socket connection with retry mechanism
+    if (!socket.connected) {
+      console.warn('[CallModal] ⚠️ Socket not connected, attempting to connect...')
+      socket.connect()
+      
+      // Wait briefly for connection
+      const connectTimeout = setTimeout(() => {
+        if (!socket.connected) {
+          console.error('[CallModal] ❌ Socket connection failed after timeout')
+        }
+      }, 2000)
+      
+      socket.once('connect', () => {
+        clearTimeout(connectTimeout)
+        console.log('[CallModal] ✅ Socket connection established')
+      })
     }
 
     // Listen for call response events
@@ -536,10 +869,213 @@ export function CallModal({
       participantCount: number
       callStatus: string
       callId?: string
+      participantStates?: Record<string, string>
+      allParticipants?: string[]
+      connectedParticipants?: number
+      [key: string]: any // Allow for participant state keys like cmeifn5qp002dkunge64m0xss: 'connecting'
     }) => {
+      // ENHANCED: Use event lock to prevent duplicate processing
+      const eventId = `${data.callId || callId}-${data.participantId}-${data.accepted ? 'accept' : 'decline'}`
+      processEventWithLock('call_response', eventId, () => {
       console.log('[CallModal] Received call_response:', data)
       console.log('[CallModal] Current call state:', callState.status)
       console.log('[CallModal] Is incoming call:', isIncoming)
+      
+      // Validate call_response data
+      if (data.callId && data.callId !== callId) {
+        console.log('[CallModal] ❌ Ignoring call_response for different call:', data.callId, 'vs', callId)
+        return
+      }
+      
+      // RACE CONDITION PREVENTION: Add event sequence validation
+      if (data.eventSequence && data.eventType === 'call_response') {
+        console.log('[CallModal] 📧 Processing call_response event with sequence:', data.eventSequence)
+      }
+      
+      // CRITICAL FIX: Extract and synchronize participant states from enhanced call_response
+      const participantStatesFromServer: Record<string, string> = {}
+      
+      // First, try to get participant states from flattened properties
+      Object.keys(data).forEach(key => {
+        // Check if key looks like a participant ID (not a standard property)
+        if (key !== 'accepted' && key !== 'participantId' && key !== 'participantCount' && 
+            key !== 'callStatus' && key !== 'callId' && key !== 'participantStates' && 
+            key !== 'allParticipants' && key !== 'connectedParticipants' &&
+            typeof data[key] === 'string' && key.startsWith('cme')) {
+          participantStatesFromServer[key] = data[key] as string
+        }
+      })
+      
+      // FALLBACK: Use participantStates object if flattened properties are empty
+      if (Object.keys(participantStatesFromServer).length === 0 && data.participantStates) {
+        Object.assign(participantStatesFromServer, data.participantStates)
+      }
+      
+      console.log('[CallModal] 🔄 Participant states from server:', participantStatesFromServer)
+      
+      // ENHANCED: Comprehensive state validation and synchronization
+      if (Object.keys(participantStatesFromServer).length > 0) {
+        setParticipantConnectionStates(prev => {
+          const updated = new Map(prev)
+          Object.entries(participantStatesFromServer).forEach(([participantId, state]) => {
+            // Validate state value
+            if (['ringing', 'connecting', 'connected', 'declined'].includes(state)) {
+              const previousState = prev.get(participantId)
+              const isCurrentUser = participantId === session?.user?.id
+              const hasUserAccepted = userHasAcceptedCall.current
+              
+              // CRITICAL: Enhanced multi-layer client-side auto-answer prevention
+              if (isCurrentUser && !hasUserAccepted && isIncoming) {
+                // Block ANY state change for current user who hasn't accepted incoming call
+                if (state === 'connecting' || state === 'connected') {
+                  console.log(`[CallModal] 🚫 ENHANCED CLIENT STATE GUARD: Blocking auto-transition to ${state} - user hasn't accepted yet`)
+                  console.log(`[CallModal] 🚫 Current user: ${participantId}, hasAccepted: ${hasUserAccepted}, isIncoming: ${isIncoming}`)
+                  console.log(`[CallModal] 🚫 Previous state: ${previousState}, attempted state: ${state}`)
+                  console.log(`[CallModal] 🛡️ PROTECTION: Forcing current user to remain in 'ringing' state`)
+                  console.log(`[CallModal] 🔍 DEBUG: Server sent state '${state}' but user hasn't accepted - this indicates server-side issue`)
+
+                  // Keep current user in ringing state until they explicitly accept
+                  updated.set(participantId, 'ringing' as any)
+
+                  // Log this as a potential server-side bug
+                  console.warn(`[CallModal] ⚠️ POTENTIAL BUG: Server attempted to set non-accepting user to '${state}' state`)
+                  return
+                }
+
+                // Additional protection: Only allow 'ringing' state for non-accepting users
+                if (state !== 'ringing' && state !== 'declined') {
+                  console.log(`[CallModal] 🚫 ADDITIONAL GUARD: Blocking state '${state}' for non-accepting user, forcing 'ringing'`)
+                  updated.set(participantId, 'ringing' as any)
+                  return
+                }
+              }
+
+              // CRITICAL: Additional protection for outgoing calls
+              if (isCurrentUser && !hasUserAccepted && !isIncoming && state === 'ringing') {
+                // For outgoing calls, caller should not be forced back to ringing after accepting
+                console.log(`[CallModal] 🔍 Outgoing call state check: caller should auto-accept, but got 'ringing' state`)
+                // Allow the ringing state for debugging, but log it
+                console.log(`[CallModal] 📝 Caller state: ${state}, hasAccepted: ${hasUserAccepted}`)
+              }
+
+              // ADDITIONAL: Enhanced protection for incoming group calls
+              if (isCurrentUser && !hasUserAccepted && isIncoming && isGroupCall && state !== 'ringing') {
+                console.log(`[CallModal] 🚫 GROUP CALL PROTECTION: Non-accepting user forced to ringing state`)
+                console.log(`[CallModal] 🚫 Group call context: state=${state}, userAccepted=${hasUserAccepted}`)
+                updated.set(participantId, 'ringing' as any)
+                return
+              }
+
+              // ADDITIONAL: Protect against outgoing call auto-acceptance issues
+              if (isCurrentUser && !hasUserAccepted && !isIncoming && state === 'connected' && previousState !== 'connecting') {
+                console.log(`[CallModal] 🚫 OUTGOING CALL GUARD: Blocking direct transition to 'connected' for outgoing call`)
+                console.log(`[CallModal] 🚫 User should transition through 'connecting' state first`)
+                // Allow connecting but not direct to connected
+                updated.set(participantId, 'connecting' as any)
+                return
+              }
+              
+              // ENHANCED: Validate state transitions to prevent invalid changes
+              if (previousState && previousState !== state) {
+                // Check for invalid state transitions
+                const invalidTransitions = [
+                  { from: 'declined', to: ['ringing', 'connecting', 'connected'], reason: 'Cannot revive declined call' },
+                  { from: 'connected', to: ['ringing'], reason: 'Connected cannot go back to ringing' }
+                ]
+                
+                const invalidTransition = invalidTransitions.find(t => 
+                  t.from === previousState && t.to.includes(state)
+                )
+                
+                if (invalidTransition) {
+                  console.warn(`[CallModal] ⚠️ BLOCKED invalid state transition for ${participantId}: ${previousState} → ${state} (${invalidTransition.reason})`)
+                  return // Skip this update
+                }
+              }
+              
+              updated.set(participantId, state as any)
+              
+              // Log state transitions for debugging
+              if (previousState !== state) {
+                console.log(`[CallModal] 🔄 Participant ${participantId} state: ${previousState} → ${state}`)
+              }
+              
+              // Validate state transition logic
+              if (previousState === 'declined' && state !== 'declined') {
+                console.warn(`[CallModal] ⚠️ Invalid state transition: declined → ${state} for ${participantId}`)
+              }
+              if (previousState === 'connected' && state === 'ringing') {
+                console.warn(`[CallModal] ⚠️ Invalid state transition: connected → ringing for ${participantId}`)
+              }
+            } else {
+              console.warn(`[CallModal] ⚠️ Invalid participant state received: ${state} for ${participantId}`)
+            }
+          })
+          
+          // State consistency validation
+          const allStates = Array.from(updated.values())
+          const connectedCount = allStates.filter(s => s === 'connected').length
+          const connectingCount = allStates.filter(s => s === 'connecting').length
+          const ringingCount = allStates.filter(s => s === 'ringing').length
+          
+          console.log(`[CallModal] 📊 State summary: Connected: ${connectedCount}, Connecting: ${connectingCount}, Ringing: ${ringingCount}`)
+          
+          return updated
+        })
+        
+        // CRITICAL: Ensure all participants in the server response are in our activeParticipants list
+        setActiveParticipants(prev => {
+          const existingIds = new Set(prev.map(p => p.id))
+          
+          // Get participant IDs from both participant states and allParticipants array
+          const stateParticipantIds = Object.keys(participantStatesFromServer)
+          const allParticipantIds = data.allParticipants || []
+          const allServerParticipantIds = Array.from(new Set([...stateParticipantIds, ...allParticipantIds]))
+          
+          const missingParticipants = allServerParticipantIds.filter(id => !existingIds.has(id) && id !== session?.user?.id)
+          
+          if (missingParticipants.length > 0) {
+            console.log('[CallModal] 🚀 Adding missing participants from server:', missingParticipants)
+            
+            // Performance optimization: Limit max participants for mesh networking
+            const MAX_PARTICIPANTS = 8 // Recommend 8 max for good performance
+            const totalParticipants = prev.length + missingParticipants.length
+            
+            if (totalParticipants > MAX_PARTICIPANTS) {
+              console.warn(`[CallModal] ⚠️ Total participants (${totalParticipants}) exceeds recommended limit (${MAX_PARTICIPANTS})`)
+            }
+            
+            // Try to get better participant data from conversation participants first
+            const conversationParticipantMap = new Map(
+              participants?.map(p => [p.id, p]) || []
+            )
+            
+            const newParticipants = missingParticipants.map(id => {
+              const conversationParticipant = conversationParticipantMap.get(id)
+              if (conversationParticipant) {
+                // Use existing conversation participant data
+                return {
+                  ...conversationParticipant,
+                  participantStatus: (participantStatesFromServer[id] || 'ringing') as any,
+                  isConnected: true
+                }
+              } else {
+                // ENHANCED: Use createSafeParticipant for consistent fallback logic
+                const fallbackParticipant = createSafeParticipant(null, id)
+                return {
+                  ...fallbackParticipant,
+                  isConnected: true,
+                  participantStatus: (participantStatesFromServer[id] || 'ringing') as any
+                }
+              }
+            })
+            
+            console.log('[CallModal] 📋 New participants with enhanced data:', newParticipants.map(p => `${p.name} (${p.id})`))
+            return [...prev, ...newParticipants]
+          }
+          return prev
+        })
+      }
       
       // For outgoing calls, check if someone accepted
       if (data.accepted) {
@@ -550,8 +1086,119 @@ export function CallModal({
         // Stop outgoing ringing sound immediately
         stopOutgoingRingingSound()
         
-        // State will be updated via call_state_update event from server
-        console.log('[CallModal] Call accepted, waiting for server state synchronization...')
+        // CRITICAL FIX: Force stop GlobalCallManager ringing for callers when someone accepts
+        if (!isIncoming && session?.user?.id) {
+          console.log('[CallModal] 📢 Forcing GlobalCallManager to stop caller ringing via browser event')
+          // Use browser events to directly communicate with GlobalCallManager
+          const stopRingingEvent = new CustomEvent('stopGlobalCallManagerRinging', {
+            detail: {
+              callId: callId,
+              reason: 'participant_accepted',
+              callerId: session.user.id
+            }
+          })
+          window.dispatchEvent(stopRingingEvent)
+        }
+        
+        // CRITICAL FIX: Only process state transitions for current user when they actually accept
+        const currentUserId = session?.user?.id
+        const currentUserServerState = participantStatesFromServer[currentUserId || '']
+        const hasCurrentUserAccepted = userHasAcceptedCall.current
+
+        // Only transition state if CURRENT USER has accepted or is the caller
+        const shouldTransitionCurrentUser = hasCurrentUserAccepted ||
+                                          (!isIncoming && currentUserId) || // Caller auto-accepts outgoing calls
+                                          (currentUserServerState === 'connecting' || currentUserServerState === 'connected')
+
+        if (shouldTransitionCurrentUser && (callState.status === 'ringing' || callState.status === 'dialing')) {
+          console.log('[CallModal] 🚀 Current user accepted - transitioning from', callState.status, 'to connecting state')
+          console.log('[CallModal] 🔍 Transition context:', {
+            hasAccepted: hasCurrentUserAccepted,
+            isIncoming,
+            serverState: currentUserServerState,
+            userId: currentUserId
+          })
+
+          setCallState(prev => ({
+            ...prev,
+            status: 'connecting',
+            connectedParticipants: Math.max(prev.connectedParticipants, 1)
+          }))
+
+          // Update current user's participant state
+          if (currentUserId) {
+            setParticipantConnectionStates(prev => {
+              const updated = new Map(prev)
+              updated.set(currentUserId, 'connecting')
+              return updated
+            })
+          }
+        } else {
+          console.log('[CallModal] 🚫 Skipping state transition - current user has not accepted:', {
+            hasAccepted: hasCurrentUserAccepted,
+            isIncoming,
+            serverState: currentUserServerState,
+            callState: callState.status
+          })
+        }
+
+        // CRITICAL FIX: Only initialize WebRTC if current user has actually accepted
+        const currentUserAccepted = shouldTransitionCurrentUser
+
+        if (currentUserAccepted && !webrtcServiceRef.current) {
+          console.log('[CallModal] 🚀 WebRTC initialization - current user accepted or is caller')
+
+          // Initialize WebRTC asynchronously
+          const initializeWebRTC = async () => {
+            try {
+              const WebRTCServiceModule = await import('@/lib/webrtc')
+              const WebRTCService = WebRTCServiceModule.WebRTCService
+              const service = new WebRTCService(socket, session?.user?.id || '')
+              webrtcServiceRef.current = service
+
+              console.log('[CallModal] 📱 Initializing WebRTC call...')
+              const stream = await service.initializeCall(callId, callType === 'video')
+              localStreamRef.current = stream
+              service.setLocalStream(stream)
+
+              console.log('[CallModal] ✅ WebRTC service initialized successfully')
+            } catch (error) {
+              console.error('[CallModal] ❌ Failed to initialize WebRTC:', error)
+
+              // ENHANCED: Provide user-friendly error handling
+              const errorObj = error as Error
+              let userMessage = 'Failed to start call. '
+              if (errorObj.name === 'MediaAccessError' || errorObj.name === 'NotAllowedError') {
+                userMessage += 'Please allow camera and microphone permissions and try again.'
+              } else if (errorObj.name === 'NoAudioTrackError') {
+                userMessage += 'No microphone detected. Please check your audio device.'
+              } else if (errorObj.name === 'NotFoundError') {
+                userMessage += 'No camera or microphone found. Please check your devices.'
+              } else if (errorObj.name === 'NotReadableError') {
+                userMessage += 'Camera or microphone is in use by another application.'
+              } else {
+                userMessage += 'Please check your camera and microphone settings.'
+              }
+
+              // Set call state to error and show user-friendly message
+              setCallState(prev => ({ ...prev, status: 'ended' }))
+
+              // TODO: Show user notification or error message
+              console.error('[CallModal] User-friendly error:', userMessage)
+
+              // Automatically close the call modal after showing error
+              setTimeout(() => {
+                console.log('[CallModal] Auto-closing call due to initialization error')
+                onClose()
+              }, 3000)
+            }
+          }
+
+          initializeWebRTC()
+        }
+
+        // State will also be updated via call_state_update event from server
+        console.log('[CallModal] Call accepted, caller transitioned to connecting state')
       } else if (!data.accepted) {
         console.log('[CallModal] Call declined by participant:', data.participantId)
         // CRITICAL: Stop ringing immediately when call is declined
@@ -584,6 +1231,7 @@ export function CallModal({
           }
         }
       }
+      }) // Close processEventWithLock
     }
 
     // Listen for participant joined events
@@ -619,30 +1267,81 @@ export function CallModal({
       }))
 
       // Add new participant to activeParticipants if not already present
-      if (data.participantId !== session?.user?.id) {
-        setActiveParticipants(prev => {
-          // Check if participant already exists to prevent duplicates
-          const exists = prev.some(p => p.id === data.participantId)
-          if (exists) {
-            console.log('[CallModal] Participant already in list, skipping duplicate:', data.participantId)
+      // ENHANCED: Include ALL participants, even if it's ourselves (for complete participant sync)
+      setActiveParticipants(prev => {
+        // Check if participant already exists to prevent duplicates
+        const existingParticipantIndex = prev.findIndex(p => p.id === data.participantId)
+        if (existingParticipantIndex !== -1) {
+          // ENHANCED: More intelligent participant data updating
+          const existingParticipant = prev[existingParticipantIndex]
+
+          // Define criteria for when to update participant data
+          const shouldUpdate = data.participantData && (
+            // Update if current name is a fallback pattern
+            existingParticipant.name.match(/^User[\s-][A-Z0-9]{6,8}$/i) ||
+            // Update if no current name
+            !existingParticipant.name ||
+            // Update if we have a better name (not another fallback)
+            (data.participantData.name &&
+             !data.participantData.name.match(/^User[\s-][a-z0-9]{6,8}$/i) &&
+             data.participantData.name !== existingParticipant.name) ||
+            // Update if we previously had no avatar but now have one
+            (!existingParticipant.avatar && data.participantData.avatar) ||
+            // Update if username is better
+            (existingParticipant.username.startsWith('user') &&
+             data.participantData.username &&
+             !data.participantData.username.startsWith('user'))
+          )
+
+          if (shouldUpdate) {
+            console.log('[CallModal] 🔄 Updating existing participant with enhanced data:', {
+              id: data.participantId,
+              oldName: existingParticipant.name,
+              newName: data.participantData?.name,
+              oldUsername: existingParticipant.username,
+              newUsername: data.participantData?.username,
+              hasNewAvatar: !!data.participantData?.avatar && !existingParticipant.avatar
+            })
+
+            const updatedParticipants = [...prev]
+            // Use createSafeParticipant to ensure consistent validation
+            const updatedParticipant = createSafeParticipant(data.participantData, data.participantId)
+            // Preserve status and connection state
+            updatedParticipant.participantStatus = existingParticipant.participantStatus
+            updatedParticipant.isConnected = existingParticipant.isConnected
+            updatedParticipant.isMuted = existingParticipant.isMuted
+            updatedParticipant.isCameraOff = existingParticipant.isCameraOff
+
+            updatedParticipants[existingParticipantIndex] = updatedParticipant
+            return updatedParticipants
+          } else {
+            console.log('[CallModal] Participant already in list with optimal data, skipping update:', {
+              id: data.participantId,
+              currentName: existingParticipant.name,
+              receivedName: data.participantData?.name
+            })
             return prev
           }
-          
-          console.log('[CallModal] Adding new participant to active list:', data.participantId)
-          // Use enhanced participant data if available, otherwise create basic participant object
-          const newParticipant: CallParticipant = {
-            id: data.participantId,
-            name: data.participantData?.name || `User ${data.participantId.slice(-4)}`,
-            username: data.participantData?.username || `user${data.participantId.slice(-4)}`,
-            avatar: data.participantData?.avatar || null,
-            isMuted: false,
-            isCameraOff: false,
-            isConnected: true,
-            participantStatus: 'connected'
-          }
-          return [...prev, newParticipant]
-        })
-      }
+        }
+        
+        console.log('[CallModal] Adding new participant to active list:', data.participantId)
+
+        // ENHANCED: Use validation and safe participant creation
+        try {
+          const newParticipant = createSafeParticipant(data.participantData, data.participantId)
+          newParticipant.isConnected = true
+          newParticipant.participantStatus = data.participantId === session?.user?.id ? 'connecting' : 'connecting'
+
+          console.log('[CallModal] ✅ Successfully created validated participant:', newParticipant.name)
+
+          const updatedParticipants = [...prev, newParticipant]
+          console.log('[CallModal] Updated participant list:', updatedParticipants.map(p => `${p.name} (${p.id})`))
+          return updatedParticipants
+        } catch (error) {
+          console.error('[CallModal] ❌ Failed to create participant:', error)
+          return prev
+        }
+      })
       
       console.log('[CallModal] Participant joined, waiting for server state updates...')
       
@@ -663,6 +1362,24 @@ export function CallModal({
             try {
               webrtcServiceRef.current.createOffer(data.participantId).catch(error => {
                 console.error('[CallModal] Failed to create offer for group participant:', data.participantId, error)
+
+                // Enhanced error handling: Check if it's a closed connection error
+                if (error.message && error.message.includes('closed')) {
+                  console.log('[CallModal] 🔄 Connection closed error detected, will retry after delay')
+
+                  // Retry after a short delay
+                  setTimeout(async () => {
+                    if (webrtcServiceRef.current?.hasLocalStream?.()) {
+                      try {
+                        console.log('[CallModal] 🔄 Retrying offer creation for group participant:', data.participantId)
+                        await webrtcServiceRef.current.createOffer(data.participantId)
+                        console.log('[CallModal] ✅ Retry successful for:', data.participantId)
+                      } catch (retryError) {
+                        console.error('[CallModal] ❌ Retry also failed for:', data.participantId, retryError)
+                      }
+                    }
+                  }, 1000) // 1 second delay
+                }
               })
             } catch (error) {
               console.error('[CallModal] Error initiating group call connection:', error)
@@ -675,12 +1392,12 @@ export function CallModal({
         
         // Regular 1-on-1 call logic with ID comparison
         console.log('[CallModal] Initiating WebRTC offer to:', data.participantId)
-        console.log('[CallModal] WebRTC service callId:', (webrtcServiceRef.current as WebRTCService & { callId: string | null }).callId)
+        console.log('[CallModal] WebRTC service callId:', (webrtcServiceRef.current as any)?.callId)
         console.log('[CallModal] Our callId:', callId)
         
-        // FIXED: Use proper mesh networking - create offers only to participants with lower IDs
-        // This works for both group calls and 1-on-1 calls to prevent duplicate connections
-        const shouldCreateOffer = session?.user?.id && session.user.id.localeCompare(data.participantId) > 0;
+        // ENHANCED: Use robust mesh networking - create offers based on participant ID comparison
+        // This prevents duplicate connections and ensures proper peer-to-peer mesh
+        const shouldCreateOffer = session?.user?.id && session.user.id > data.participantId;
         
         console.log('[CallModal] Offer creation decision:', {
           ourUserId: session?.user?.id,
@@ -692,7 +1409,7 @@ export function CallModal({
         
         if (shouldCreateOffer && !offerCreationAttempts.has(data.participantId)) {
           // Mark that we're attempting to create offer for this participant
-          setOfferCreationAttempts(prev => new Set([...prev, data.participantId]))
+          setOfferCreationAttempts(prev => new Set([...Array.from(prev), data.participantId]))
           
           // ENHANCED: Wait for WebRTC service to be fully ready before creating offer
           const createOfferWhenReady = async () => {
@@ -745,7 +1462,7 @@ export function CallModal({
           setTimeout(async () => {
             if (webrtcServiceRef.current?.hasLocalStream?.() && callState.status !== 'connected' && !offerCreationAttempts.has(data.participantId)) {
               console.log('[CallModal] 🚨 FAILSAFE: No offer received, creating fallback offer')
-              setOfferCreationAttempts(prev => new Set([...prev, data.participantId]))
+              setOfferCreationAttempts(prev => new Set([...Array.from(prev), data.participantId]))
               try {
                 await webrtcServiceRef.current.createOffer(data.participantId)
               } catch (error) {
@@ -910,7 +1627,7 @@ export function CallModal({
       }, 1500)
     }
 
-    // Listen for WebRTC stream ready events
+    // ENHANCED: Listen for WebRTC stream ready events with strict auto-join prevention
     const handleWebRTCStreamReady = async (data: {
       callId: string
       participantId: string
@@ -935,6 +1652,42 @@ export function CallModal({
         console.log('[CallModal] 🆔 Event participant ID:', data.participantId)
         return
       }
+
+      // 🚨 CRITICAL AUTO-JOIN FIX: Only process stream ready events if current user has explicitly accepted
+      const hasUserAccepted = userHasAcceptedCall.current
+      const currentUserId = session?.user?.id
+      
+      // ENHANCED: Better detection of who is the actual caller in group calls
+      // For group calls, we need to check if this user initiated the call, not just if it's "not incoming"
+      const isActualCaller = participants?.some(p => p.id === currentUserId) && 
+                           callState.status !== 'ringing' && 
+                           !isIncoming
+      
+      // CRITICAL FIX: For incoming calls, ALWAYS require explicit user acceptance
+      // For outgoing calls, only allow if user has accepted OR they are confirmed as the actual caller
+      // ENHANCED: Also check that current user is not in 'ringing' state for group calls
+      const currentUserState = currentUserId ? participantConnectionStates.get(currentUserId) : undefined
+      const isCurrentUserRinging = currentUserState === 'ringing' || callState.status === 'ringing'
+      
+      const shouldAllowStreamProcessing = hasUserAccepted || 
+                                        (isActualCaller && !isCurrentUserRinging)
+
+      if (!shouldAllowStreamProcessing) {
+        console.log('[CallModal] 🚨 AUTO-JOIN PREVENTION: Blocking webrtc_stream_ready processing - user has not accepted call')
+        console.log('[CallModal] 🚨 User acceptance status:', {
+          hasAccepted: hasUserAccepted,
+          isIncoming: isIncoming,
+          isActualCaller: isActualCaller,
+          callState: callState.status,
+          currentUserState: currentUserState,
+          isCurrentUserRinging: isCurrentUserRinging,
+          currentUserId: currentUserId,
+          remoteParticipant: data.participantId,
+          participantsList: participants?.map(p => ({ id: p.id, name: p.name }))
+        })
+        console.log('[CallModal] 🚨 This prevents auto-joining when other participants connect')
+        return
+      }
       
       console.log('[CallModal] ✅ Processing REMOTE stream ready event')
       console.log('[CallModal] 🆔 Our session ID:', session?.user?.id)
@@ -943,8 +1696,8 @@ export function CallModal({
         callId: data.callId,
         participantId: data.participantId,
         streamId: data.streamId,
-        hasAudio: data.hasAudio,
-        hasVideo: data.hasVideo
+        hasAudio: (data as any).hasAudio,
+        hasVideo: (data as any).hasVideo
       })
       
       console.log('[CallModal] 🚀 INITIATING PEER CONNECTION for remote participant:', data.participantId)
@@ -964,25 +1717,46 @@ export function CallModal({
         
         if (!hasConnectionToParticipant) {
           console.log('[CallModal] 🚀 Creating peer connection to', data.participantId)
-          try {
-            // Use the safe offer creation method that waits for local stream
-            await webrtcServiceRef.current.safeCreateOffer(data.participantId)
-            console.log('[CallModal] ✅ Peer connection offer created successfully')
-          } catch (error) {
-            console.error('[CallModal] ❌ Failed to create offer:', error)
-            
-            // If initial offer fails, schedule a retry
-            setTimeout(async () => {
-              if (webrtcServiceRef.current?.hasLocalStream?.()) {
-                try {
-                  console.log('[CallModal] 🔄 Retrying offer creation after delay')
-                  await webrtcServiceRef.current.safeCreateOffer(data.participantId)
-                  console.log('[CallModal] ✅ Delayed offer created successfully')
-                } catch (retryError) {
-                  console.error('[CallModal] ❌ Delayed offer creation also failed:', retryError)
-                }
+
+          // ENHANCED: Check if this is a group call to enable optimization
+          const isGroupCall = activeParticipants.length > 2
+          if (isGroupCall && webrtcServiceRef.current?.setupGroupCallConnections) {
+            console.log('[CallModal] 🎯 Group call detected - using optimized connection setup')
+            try {
+              await webrtcServiceRef.current.setupGroupCallConnections([data.participantId])
+              console.log('[CallModal] ✅ Group call connection created successfully')
+            } catch (error) {
+              console.error('[CallModal] ❌ Group call connection failed, falling back to direct offer:', error)
+
+              // Fallback to direct offer
+              try {
+                await webrtcServiceRef.current.safeCreateOffer(data.participantId)
+                console.log('[CallModal] ✅ Fallback offer created successfully')
+              } catch (fallbackError) {
+                console.error('[CallModal] ❌ Fallback offer also failed:', fallbackError)
               }
-            }, 1000)
+            }
+          } else {
+            try {
+              // Use the safe offer creation method that waits for local stream
+              await webrtcServiceRef.current.safeCreateOffer(data.participantId)
+              console.log('[CallModal] ✅ Peer connection offer created successfully')
+            } catch (error) {
+              console.error('[CallModal] ❌ Failed to create offer:', error)
+
+              // If initial offer fails, schedule a retry
+              setTimeout(async () => {
+                if (webrtcServiceRef.current?.hasLocalStream?.()) {
+                  try {
+                    console.log('[CallModal] 🔄 Retrying offer creation after delay')
+                    await webrtcServiceRef.current.safeCreateOffer(data.participantId)
+                    console.log('[CallModal] ✅ Delayed offer created successfully')
+                  } catch (retryError) {
+                    console.error('[CallModal] ❌ Delayed offer creation also failed:', retryError)
+                  }
+                }
+              }, 1000)
+            }
           }
         }
         const remoteStream = webrtcServiceRef.current.getRemoteStream(data.participantId)
@@ -1001,28 +1775,53 @@ export function CallModal({
           console.log('[CallModal] ✅ Remote stream added to state for VideoGrid')
         } else {
           console.log('[CallModal] ⏰ No remote stream found yet for participant:', data.participantId, '- WebRTC connection may still be establishing')
-          
-          // CRITICAL FIX: Retry stream retrieval after a delay
-          console.log('[CallModal] 🔄 Scheduling retry for remote stream retrieval')
-          setTimeout(() => {
-            if (webrtcServiceRef.current) {
-              const retryRemoteStream = webrtcServiceRef.current.getRemoteStream(data.participantId)
-              console.log('[CallModal] 🔄 Retry - Retrieved remote stream for', data.participantId, ':', !!retryRemoteStream)
-              
-              if (retryRemoteStream && typeof retryRemoteStream.getTracks === 'function') {
-                console.log('[CallModal] 🔄 Retry successful - Remote stream tracks:', retryRemoteStream.getTracks().map(t => ({ kind: t.kind, enabled: t.enabled })))
-                setRemoteStreams(prev => {
-                  const newStreams = new Map(prev)
-                  newStreams.set(data.participantId, retryRemoteStream)
-                  console.log('[CallModal] 🔄 Retry - Updated remote streams map, now has:', Array.from(newStreams.keys()))
-                  return newStreams
-                })
-                console.log('[CallModal] ✅ Retry - Remote stream added to state for VideoGrid')
-              } else {
-                console.warn('[CallModal] ❌ Retry failed - Remote stream still not available for:', data.participantId)
+
+          // ENHANCED: Retry stream retrieval with exponential backoff
+          let retryCount = 0
+          const maxRetries = 5
+
+          const retryStreamRetrieval = () => {
+            retryCount++
+            const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000) // Cap at 5 seconds
+
+            setTimeout(() => {
+              if (webrtcServiceRef.current && retryCount <= maxRetries) {
+                const retryStream = webrtcServiceRef.current.getRemoteStream(data.participantId)
+                console.log(`[CallModal] 🔄 Retry ${retryCount}/${maxRetries} for stream from:`, data.participantId, '- Found:', !!retryStream)
+
+                if (retryStream && typeof retryStream.getTracks === 'function') {
+                  console.log('[CallModal] ✅ Remote stream found on retry:', retryStream.getTracks().map(t => ({ kind: t.kind, enabled: t.enabled, readyState: t.readyState })))
+                  setRemoteStreams(prev => {
+                    const newStreams = new Map(prev)
+                    newStreams.set(data.participantId, retryStream)
+                    console.log('[CallModal] ✅ Added delayed remote stream for:', data.participantId)
+                    return newStreams
+                  })
+                } else if (retryCount < maxRetries) {
+                  console.log('[CallModal] ⏰ Stream still not ready, scheduling retry', retryCount + 1)
+                  retryStreamRetrieval()
+                } else {
+                  console.warn('[CallModal] ❌ Max retries reached for remote stream from:', data.participantId)
+                }
               }
-            }
-          }, 200) // Retry after 200ms
+            }, delay)
+          }
+
+          retryStreamRetrieval()
+        }
+        
+        // CRITICAL FIX: When participant stream is ready, update call state to connected if needed
+        if (callState.status === 'connecting') {
+          console.log('[CallModal] 🚀 Participant stream ready - updating call to connected state')
+          setCallState(prev => ({ ...prev, status: 'connected' }))
+          
+          // Ensure ringing stops immediately
+          stopOutgoingRingingSound()
+          
+          // Notify server of state change
+          if (socket && callId) {
+            socket.emit('force_call_connected', { callId })
+          }
         }
       } else {
         console.warn('[CallModal] ❌ No WebRTC service available for stream ready event')
@@ -1038,6 +1837,11 @@ export function CallModal({
       callId: string
       status: string
       participantCount: number
+      connectedParticipants?: number
+      sequenceNumber?: number
+      authoritative?: boolean
+      serverTimestamp?: number
+      participantStates?: Record<string, string>
     }) => {
       // Create unique key for this update
       const updateKey = `${data.callId}-${data.status}-${data.participantCount}-${Date.now()}`
@@ -1054,10 +1858,107 @@ export function CallModal({
       lastStateUpdateRef.current = updateKey
       
       console.log(`[CallModal] Data:`, data)
-      
+
       if (data.callId !== callId) {
         console.log('[CallModal] ❌ Ignoring state update for different call:', data.callId, 'vs', callId)
         return
+      }
+
+      // SIMPLIFIED AUTHORITATIVE STATE: Only use truly authoritative updates
+      if (data.authoritative && data.sequenceNumber && data.connectedParticipants !== undefined) {
+        console.log(`[CallModal] 📊 AUTHORITATIVE state update received: sequence=${data.sequenceNumber}, connectedParticipants=${data.connectedParticipants}`)
+
+        // Store last authoritative sequence to prevent out-of-order updates
+        const lastSequence = sessionStorage.getItem(`call_${callId}_lastSequence`)
+        if (lastSequence && data.sequenceNumber <= parseInt(lastSequence)) {
+          console.log(`[CallModal] 🚫 Ignoring out-of-order authoritative update: ${data.sequenceNumber} <= ${lastSequence}`)
+          return
+        }
+        sessionStorage.setItem(`call_${callId}_lastSequence`, data.sequenceNumber.toString())
+
+        // Update authoritative state ref with current timestamp for aging
+        authoritativeStateRef.current = {
+          connectedParticipants: data.connectedParticipants,
+          sequenceNumber: Date.now() // Use current timestamp for aging, not server sequence
+        }
+
+        console.log(`[CallModal] ✅ Updated authoritative state: count=${data.connectedParticipants}, timestamp=${Date.now()}`)
+      } else {
+        // Clear authoritative state if we get non-authoritative updates
+        // This prevents stale authoritative data from overriding fresher server state
+        if (authoritativeStateRef.current) {
+          console.log(`[CallModal] 🧹 Clearing stale authoritative state due to non-authoritative update`)
+          authoritativeStateRef.current = null
+        }
+      }
+
+      // RACE CONDITION PREVENTION: Add event sequence validation
+      if ((data as any).eventSequence && (data as any).eventType === 'call_state_update') {
+        console.log('[CallModal] 📧 Processing call_state_update event with sequence:', (data as any).eventSequence)
+      }
+      
+      // ENHANCED CLIENT STATE GUARD: Prevent non-accepting users from transitioning to connecting/connected
+      const hasUserAccepted = userHasAcceptedCall.current
+      const currentUserId = session?.user?.id
+      const blockedStates = ['connecting', 'connected', 'in_call']
+      
+      // ENHANCED: Protect both incoming and outgoing calls from unauthorized state transitions
+      if (!hasUserAccepted && blockedStates.includes(data.status)) {
+        // For incoming calls: always block if user hasn't accepted
+        // For outgoing calls: block 'connected' state if user hasn't explicitly accepted locally
+        const shouldBlock = isIncoming || 
+                           (data.status === 'connected' && !hasUserAccepted) ||
+                           (data.status === 'connecting' && isIncoming && !hasUserAccepted)
+        
+        if (shouldBlock) {
+          console.log(`[CallModal] 🚨 ENHANCED STATE GUARD: Blocking ${data.status} for non-accepting user`)
+          console.log(`[CallModal] 🚫 User details: {hasAccepted: ${hasUserAccepted}, isIncoming: ${isIncoming}, userId: ${currentUserId}, status: ${data.status}}`)
+          console.log(`[CallModal] 📋 Block reason: ${isIncoming ? 'incoming call not accepted' : 'connected state without acceptance'}`)
+          
+          // Additional validation: Check if this state update includes participant states
+          if ((data as any).participantStates && currentUserId) {
+            const currentUserState = (data as any).participantStates[currentUserId]
+            console.log(`[CallModal] 🔍 Current user state in server data: ${currentUserState}`)
+            
+            // Double-check: Even if server says user is connected, block it if user hasn't explicitly accepted locally
+            if ((currentUserState === 'connected' || currentUserState === 'connecting') && !hasUserAccepted && isIncoming) {
+              console.log(`[CallModal] 🚨 CRITICAL BLOCK: Server reports user as ${currentUserState} but local state shows not accepted!`)
+              console.log(`[CallModal] 🚨 This indicates a server-side state sync issue - preventing auto-join`)
+            }
+          }
+          
+          return // Block the state update completely
+        }
+      }
+      
+      // Additional safeguard: Log any suspicious state transitions
+      if (data.status === 'connected' && callState.status === 'ringing' && !hasUserAccepted && isIncoming) {
+        console.log(`[CallModal] ⚠️ SUSPICIOUS STATE TRANSITION: Direct ringing->connected without user acceptance`)
+        console.log(`[CallModal] ⚠️ This may indicate a server-side bug. Blocking transition.`)
+        return
+      }
+
+      // CRITICAL: Group call auto-answer protection - check participant states
+      if (isIncoming && !hasUserAccepted && (data as any).participantStates && currentUserId) {
+        const participantStates = (data as any).participantStates
+        const currentUserServerState = participantStates[currentUserId]
+
+        // If server thinks we're connecting/connected but we haven't accepted, force override
+        if (currentUserServerState && currentUserServerState !== 'ringing') {
+          console.log(`[CallModal] 🚨 GROUP CALL AUTO-ANSWER PROTECTION: Server state=${currentUserServerState}, local acceptance=${hasUserAccepted}`)
+          console.log(`[CallModal] 📊 Participant states from server:`, participantStates)
+          console.log(`[CallModal] 🛡️ FORCING current user state to 'ringing' to prevent auto-answer UI`)
+
+          // Create corrected data to prevent auto-answer UI display
+          const correctedParticipantStates = {
+            ...participantStates,
+            [currentUserId]: 'ringing'  // Force current user to ringing state
+          }
+
+          // Update the data object that will be processed
+          ;(data as any).participantStates = correctedParticipantStates
+          console.log(`[CallModal] ✅ Corrected participant states - current user forced to 'ringing'`)
+        }
       }
       
       console.log(`[CallModal] Current state: ${callState.status} -> New state: ${data.status}`)
@@ -1087,46 +1988,67 @@ export function CallModal({
         stopOutgoingRingingSound()
       }
       
-      // Force update call state based on server authoritative state
+      // CRITICAL FIX: Update call state based on CURRENT USER's state, not global call state
       setCallState(prev => {
-        const newState = {
-          ...prev, 
-          status: data.status as CallState['status'],
-          connectedParticipants: data.participantCount
-        }
-        console.log('[CallModal] 🔄 State FORCEFULLY updated from server:', prev.status, '->', newState.status)
+        const hasUserAccepted = userHasAcceptedCall.current
+        const currentUserId = session?.user?.id
         
-        // CRITICAL: If we're being moved to connecting/connected without WebRTC, initialize it
-        if ((data.status === 'connecting' || data.status === 'connected') && !webrtcServiceRef.current) {
-          console.log('[CallModal] ⚡ EMERGENCY WebRTC initialization - state changed to', data.status, 'without WebRTC service')
+        // Determine the current user's individual state from server data
+        let userSpecificStatus = data.status as CallState['status']
+        
+        // If server provides participant states, use current user's specific state
+        if ((data as any).participantStates && currentUserId) {
+          const currentUserServerState = (data as any).participantStates[currentUserId]
+          console.log(`[CallModal] 🔍 Current user server state: ${currentUserServerState}, hasAccepted: ${hasUserAccepted}`)
           
-          // Initialize WebRTC service immediately
-          setTimeout(async () => {
-            try {
-              const WebRTCServiceModule = await import('@/lib/webrtc')
-              const WebRTCService = WebRTCServiceModule.default
-              const service = new WebRTCService(callId, socket)
-              webrtcServiceRef.current = service
-              
-              // Initialize call with media
-              const stream = await service.initializeCall(callId, callType === 'video')
-              localStreamRef.current = stream
-              service.setLocalStream(stream)
-              
-              console.log('[CallModal] ✅ Emergency WebRTC initialization completed')
-              
-              // Try to connect to existing participants
-              if (memoizedParticipantIds.length > 0) {
-                console.log('[CallModal] 🔗 Connecting to existing participants:', memoizedParticipantIds)
-                service.initiateConnections(memoizedParticipantIds).catch(error => {
-                  console.error('[CallModal] Failed to connect to participants:', error)
-                })
-              }
-              
-            } catch (error) {
-              console.error('[CallModal] ❌ Emergency WebRTC initialization failed:', error)
-            }
-          }, 100)
+          // Apply user acceptance logic to determine appropriate status
+          if (currentUserServerState === 'connected' && hasUserAccepted) {
+            userSpecificStatus = 'connected'
+          } else if (currentUserServerState === 'connecting' && hasUserAccepted) {
+            userSpecificStatus = 'connecting'
+          } else if (isIncoming && !hasUserAccepted) {
+            // Incoming calls: stay in ringing until user accepts, regardless of server state
+            userSpecificStatus = 'ringing'
+          } else if (!isIncoming && hasUserAccepted) {
+            // Outgoing calls: follow server state if user has accepted
+            userSpecificStatus = currentUserServerState || data.status as CallState['status']
+          } else if (!isIncoming && !hasUserAccepted) {
+            // Outgoing calls: should not happen (caller auto-accepts), but default to ringing
+            userSpecificStatus = 'ringing'
+          } else {
+            // Fallback to server's individual state or global state
+            userSpecificStatus = currentUserServerState || data.status as CallState['status']
+          }
+        } else {
+          // No individual participant states available, apply acceptance logic to global state
+          if (data.status === 'connecting' && isIncoming && !hasUserAccepted) {
+            // Don't let incoming users show connecting if they haven't accepted
+            userSpecificStatus = 'ringing'
+          } else if (data.status === 'connected' && isIncoming && !hasUserAccepted) {
+            // Don't let incoming users show connected if they haven't accepted
+            userSpecificStatus = 'ringing'
+          }
+        }
+        
+        // AUTHORITATIVE COUNT: Use server's connectedParticipants if available, fallback to participantCount
+        const authoritativeConnectedCount = data.connectedParticipants ?? data.participantCount
+
+        const newState = {
+          ...prev,
+          status: userSpecificStatus,
+          connectedParticipants: authoritativeConnectedCount
+        }
+        
+        debouncedLoggers.stateUpdate(prev.status, newState.status, {
+          connectedParticipants: data.connectedParticipants,
+          participantCount: data.participantCount,
+          hasAccepted: hasUserAccepted,
+          isIncoming,
+          serverGlobal: data.status
+        })
+
+        if (data.authoritative) {
+          console.log('[CallModal] ✅ AUTHORITATIVE state applied: sequence=', data.sequenceNumber, ', count=', authoritativeConnectedCount)
         }
         
         return newState
@@ -1184,11 +2106,29 @@ export function CallModal({
         }
       }
       
-      // Handle connecting state with timeout protection
+      // ENHANCED: Handle connecting state with improved timeout protection and user-specific ringing stop
       if (data.status === 'connecting') {
-        console.log('[CallModal] 🔄 Call state updated to connecting - WebRTC should be starting')
+        console.log('[CallModal] 🔄 Call state updated to connecting - checking if current user should stop ringing')
+
+        // CRITICAL FIX: Only stop ringing if current user has actually accepted
+        const currentUserId = session?.user?.id
+        const hasCurrentUserAccepted = userHasAcceptedCall.current
+        const isCurrentUserCaller = !isIncoming && currentUserId
+
+        if (hasCurrentUserAccepted || isCurrentUserCaller) {
+          console.log('[CallModal] 🔇 Current user accepted or is caller - stopping ringing')
+          stopOutgoingRingingSound()
+        } else {
+          console.log('[CallModal] 🔔 Current user has not accepted - keeping ringing despite global connecting state')
+          console.log('[CallModal] 🔍 Ringing decision context:', {
+            hasAccepted: hasCurrentUserAccepted,
+            isIncoming,
+            isCaller: isCurrentUserCaller,
+            globalState: data.status
+          })
+        }
         
-        // Set a fallback timeout to prevent getting stuck in connecting state
+        // Set a more aggressive timeout to prevent getting stuck in connecting state
         const connectingTimeout = setTimeout(async () => {
           console.log('[CallModal] ⏰ Connecting timeout reached, checking if we should force connection')
           
@@ -1196,48 +2136,50 @@ export function CallModal({
           if (callState.status === 'connecting') {
             console.log('[CallModal] Still in connecting state after timeout, forcing connected state')
             
-            // CRITICAL: Verify WebRTC connections before marking as connected
-            let hasValidConnections = false
+            // ENHANCED: For group calls, be more aggressive about transitioning
+            // Don't wait for ALL participants - transition when ready
+            let shouldTransitionToConnected = false
+            
             if (webrtcServiceRef.current) {
               const activePeerConnections = webrtcServiceRef.current.getActivePeerConnections()
-              hasValidConnections = Object.keys(activePeerConnections).length > 0
-              console.log('[CallModal] Active peer connections before transition:', Object.keys(activePeerConnections).length)
-            }
-            
-            // Force connection establishment if needed before transitioning to connected
-            if (!hasValidConnections && webrtcServiceRef.current && participants && participants.length > 0) {
-              const otherParticipantIds = participants.filter(p => p.id !== session?.user?.id).map(p => p.id)
-              if (otherParticipantIds.length > 0) {
-                console.log('[CallModal] 🚀 Forcing peer connection establishment before connected transition')
-                try {
-                  await webrtcServiceRef.current.initiateConnections(otherParticipantIds)
-                  // Wait a moment for connections to establish
-                  setTimeout(() => {
-                    const newConnections = webrtcServiceRef.current?.getActivePeerConnections() || {}
-                    console.log('[CallModal] Post-initiation peer connections:', Object.keys(newConnections).length)
-                    
-                    setCallState(prev => ({ ...prev, status: 'connected' }))
-                    
-                    // Also emit to server to sync state
-                    if (socket && callId) {
-                      socket.emit('force_call_connected', { callId })
-                    }
-                  }, 1000)
-                  return // Skip immediate transition, wait for connection establishment
-                } catch (error) {
-                  console.error('[CallModal] Failed to force peer connections:', error)
-                }
+              const connectionCount = Object.keys(activePeerConnections).length
+              const hasLocalStream = webrtcServiceRef.current.hasLocalStream?.() ?? false
+              
+              console.log('[CallModal] Connection evaluation:', {
+                connectionCount,
+                hasLocalStream,
+                isGroupCall,
+                totalParticipants: participants?.length || 0
+              })
+              
+              // AGGRESSIVE TRANSITION CONDITIONS for better UX:
+              // 1. Has ANY peer connection (even one is enough)
+              // 2. Has local stream ready (can proceed even without peers in group calls)
+              // 3. Group calls: transition immediately if we have media OR connections
+              if (connectionCount > 0 || hasLocalStream) {
+                shouldTransitionToConnected = true
+                console.log('[CallModal] ✅ Transition condition met:', {hasConnections: connectionCount > 0, hasMedia: hasLocalStream})
               }
+            } else if (isGroupCall && localStreamRef.current) {
+              // If no WebRTC service but we have local stream in group call, still transition
+              // This handles cases where participants join but WebRTC initialization is pending
+              shouldTransitionToConnected = true
+              console.log('[CallModal] ✅ Transition condition met: Group call with local stream')
             }
             
-            setCallState(prev => ({ ...prev, status: 'connected' }))
-            
-            // Also emit to server to sync state
-            if (socket && callId) {
-              socket.emit('force_call_connected', { callId })
+            if (shouldTransitionToConnected) {
+              console.log('[CallModal] ✅ Transitioning to connected state')
+              setCallState(prev => ({ ...prev, status: 'connected' }))
+              
+              // Notify server of state change
+              if (socket && callId) {
+                socket.emit('force_call_connected', { callId })
+              }
+            } else {
+              console.log('[CallModal] ⚠️ Not ready to transition, remaining in connecting state')
             }
           }
-        }, 8000) // 8 second timeout for connecting state - reduced to prevent stuck states
+        }, 3000) // Further reduced to 3 seconds for much faster transitions
         
         // Store timeout ID to clear it if state changes
         return () => clearTimeout(connectingTimeout)
@@ -1269,6 +2211,37 @@ export function CallModal({
         console.log('[CallModal] 📊 Updated participant states:', Object.fromEntries(newStates))
         return newStates
       })
+      
+      // Update activeParticipants if participant is disconnecting
+      if (data.state === 'disconnected') {
+        setActiveParticipants(prev => {
+          const filtered = prev.filter(p => p.id !== data.participantId)
+          console.log('[CallModal] 🚫 Removed disconnected participant:', data.participantId)
+          return filtered
+        })
+        
+        // Clean up streams and connections
+        setRemoteStreams(prev => {
+          const newStreams = new Map(prev)
+          newStreams.delete(data.participantId)
+          return newStreams
+        })
+        
+        if (webrtcServiceRef.current) {
+          webrtcServiceRef.current.removePeerConnection(data.participantId)
+        }
+      } else {
+        // Update participant status in activeParticipants (only for valid states)
+        if (['ringing', 'connecting', 'connected'].includes(data.state)) {
+          setActiveParticipants(prev => {
+            return prev.map(p => 
+              p.id === data.participantId 
+                ? { ...p, participantStatus: data.state as 'ringing' | 'connecting' | 'connected', isConnected: data.state === 'connected' }
+                : p
+            )
+          })
+        }
+      }
       
     }
 
@@ -1315,12 +2288,88 @@ export function CallModal({
       console.log('[CallModal] Participant', data.participantId, 'camera state changed to:', data.isCameraOff ? 'OFF' : 'ON')
     }
 
+    // Handle connection recovery for stuck connections
+    const handleConnectionRecovery = (data: {
+      callId: string
+      participantId: string
+      action: string
+      newState: string
+      participantStates: Record<string, string>
+    }) => {
+      console.log('[CallModal] 🔄 Connection recovery received:', data)
+      
+      if (data.callId !== callId) {
+        console.log('[CallModal] ❌ Ignoring recovery for different call:', data.callId)
+        return
+      }
+      
+      if (data.participantId === session?.user?.id && data.action === 'retry_connection') {
+        console.log('[CallModal] 🔄 Retrying connection setup after recovery')
+        
+        // Reset local state to allow retry
+        setCallState(prev => ({ ...prev, status: 'ringing' }))
+        
+        // Clean up any existing WebRTC connections
+        if (webrtcServiceRef.current) {
+          webrtcServiceRef.current.cleanup()
+          webrtcServiceRef.current = null
+        }
+        
+        // Clear local stream
+        if (localStreamRef.current) {
+          localStreamRef.current.getTracks().forEach(track => track.stop())
+          localStreamRef.current = null
+        }
+        
+        console.log('[CallModal] ✅ Reset complete, ready for fresh connection attempt')
+      }
+    }
+
+    // ENHANCED: Handle participant data updates (refreshed names)
+    const handleParticipantDataUpdated = (data: {
+      callId: string
+      participantId: string
+      participantData: {
+        id: string
+        name: string
+        username: string
+        avatar: string | null
+      }
+    }) => {
+      console.log('[CallModal] 🔄 Participant data update received:', data)
+
+      if (data.callId !== callId) {
+        console.log('[CallModal] Ignoring data update for different call')
+        return
+      }
+
+      // Update the participant in activeParticipants list
+      setActiveParticipants(prev => {
+        const existingIndex = prev.findIndex(p => p.id === data.participantId)
+        if (existingIndex !== -1) {
+          const updatedParticipants = [...prev]
+          updatedParticipants[existingIndex] = {
+            ...updatedParticipants[existingIndex],
+            name: data.participantData.name,
+            username: data.participantData.username,
+            avatar: data.participantData.avatar
+          }
+
+          console.log(`[CallModal] ✅ Updated participant data: ${data.participantData.name} (${data.participantId})`)
+          return updatedParticipants
+        }
+
+        console.log(`[CallModal] ⚠️ Participant ${data.participantId} not found for data update`)
+        return prev
+      })
+    }
+
     console.log(`\n🔌 [CallModal] SETTING UP SOCKET LISTENERS`)
     console.log(`[CallModal] Call ID: ${callId}`)
     console.log(`[CallModal] Session User ID: ${session?.user?.id}`)
     console.log(`[CallModal] Socket Connected: ${socket?.connected}`)
     console.log(`[CallModal] Is Incoming: ${isIncoming}`)
-    
+
     socket.on('call_response', handleCallResponse)
     socket.on('participant_joined', handleParticipantJoined)
     socket.on('participant_left', handleParticipantLeft)
@@ -1328,25 +2377,39 @@ export function CallModal({
     socket.on('call_timeout', handleCallTimeout)
     socket.on('call_state_update', handleCallStateUpdate)
     socket.on('webrtc_stream_ready', handleWebRTCStreamReady)
+    socket.on('participant_data_updated', handleParticipantDataUpdated)
     // Note: WebRTC signaling events handled directly by WebRTC service
     socket.on('participant_state_update', handleParticipantStateUpdate)
     socket.on('participant_mute_change', handleParticipantMuteChange)
     socket.on('participant_camera_change', handleParticipantCameraChange)
+    socket.on('connection_recovery', handleConnectionRecovery)
     
     console.log('[CallModal] ✅ All socket listeners registered')
 
     // Auto-progress to ringing when modal opens for outgoing calls
     if (callState.status === 'dialing' && !isIncoming) {
       setTimeout(async () => {
-        setCallState(prev => ({ ...prev, status: 'ringing' }))
-        // ENHANCED: Initialize AudioContext with user gesture and start ringing
-        console.log('[CallModal] Starting outgoing ringing sound with proper user gesture handling')
-        try {
-          // Pre-initialize AudioContext to ensure it's ready
-          await initializeAudioContext()
-          playOutgoingRingingSound()
-        } catch (error) {
-          console.warn('[CallModal] Failed to initialize audio for ringing:', error)
+        // ENHANCED: Only start ringing if we're still in a valid calling state
+        if (callState.status === 'dialing' || callState.status === 'ringing') {
+          setCallState(prev => ({ ...prev, status: 'ringing' }))
+          // ENHANCED: Initialize AudioContext with user gesture and start ringing
+          console.log('[CallModal] Starting outgoing ringing sound with proper user gesture handling')
+          try {
+            // Pre-initialize AudioContext to ensure it's ready
+            await initializeAudioContext()
+
+            // Use the global audio manager for ringing
+            const audioManager = getGlobalAudioManager()
+            if (audioManager) {
+              await audioManager.playOutgoingRinging()
+            } else {
+              console.warn('[CallModal] AudioManager not available')
+            }
+          } catch (error) {
+            console.warn('[CallModal] Failed to initialize audio for ringing:', error)
+          }
+        } else {
+          console.log('[CallModal] Skipping ringing start - call state changed:', callState.status)
         }
       }, 1000) // Show dialing state briefly
     }
@@ -1359,12 +2422,14 @@ export function CallModal({
       socket.off('call_timeout', handleCallTimeout)
       socket.off('call_state_update', handleCallStateUpdate)
       socket.off('webrtc_stream_ready', handleWebRTCStreamReady)
+      socket.off('participant_data_updated', handleParticipantDataUpdated)
       // Note: WebRTC signaling events handled directly by WebRTC service
       socket.off('participant_state_update', handleParticipantStateUpdate)
       socket.off('participant_mute_change', handleParticipantMuteChange)
       socket.off('participant_camera_change', handleParticipantCameraChange)
+      socket.off('connection_recovery', handleConnectionRecovery)
     }
-  }, [socket, isOpen, callId])
+  }, [socket, callId])
 
   // Call duration timer and connection verification
   useEffect(() => {
@@ -1423,24 +2488,266 @@ export function CallModal({
     }
   }, [callState.status, participants, session?.user?.id])
 
-  // CRITICAL: Stop ringing when call state changes away from ringing/dialing
+  // ENHANCED: Proactive participant data refresh for fallback names
   useEffect(() => {
-    if (callState.status !== 'ringing' && callState.status !== 'dialing') {
-      console.log('[CallModal] 🔇 State changed away from ringing/dialing, ensuring ringing is stopped:', callState.status)
-      stopOutgoingRingingSound()
-    }
-  }, [callState.status, stopOutgoingRingingSound])
+    const refreshParticipantData = async () => {
+      if (!socket || !callId || !activeParticipants.length) return
 
-  // CRITICAL: Cleanup ringing on component unmount
+      // Find participants with fallback names that need refreshing
+      const participantsNeedingRefresh = activeParticipants.filter(participant =>
+        participant.name.match(/^User[-\s][A-Z0-9]{6,8}$/i) ||
+        participant.username.startsWith('user_') ||
+        participant.username.startsWith('user') && participant.username.length <= 12
+      )
+
+      if (participantsNeedingRefresh.length === 0) return
+
+      console.log('[CallModal] 🔄 Found participants needing data refresh:',
+        participantsNeedingRefresh.map(p => `${p.name} (${p.id})`))
+
+      // Request fresh participant data from server
+      for (const participant of participantsNeedingRefresh) {
+        try {
+          console.log(`[CallModal] 🔍 Requesting fresh data for participant: ${participant.id}`)
+
+          // Emit a request for participant data refresh
+          socket.emit('refresh_participant_data', {
+            callId,
+            participantId: participant.id
+          })
+        } catch (error) {
+          console.error(`[CallModal] ❌ Failed to request refresh for participant ${participant.id}:`, error)
+        }
+      }
+    }
+
+    // Debounce the refresh to avoid excessive requests
+    const refreshTimeout = setTimeout(refreshParticipantData, 2000)
+
+    return () => clearTimeout(refreshTimeout)
+  }, [activeParticipants, socket, callId])
+
+  // ENHANCED: Comprehensive call monitoring and debugging system
+  useEffect(() => {
+    const startMonitoring = () => {
+      if (!callId || callState.status === 'ended') return
+
+      const monitoringInterval = setInterval(() => {
+        try {
+          // Collect call state metrics
+          const now = Date.now()
+          const callDuration = callState.status === 'connected' ? callState.duration : 0
+          const connectedParticipantCount = connectedParticipants.length
+          const totalParticipantCount = activeParticipants.length
+          const actualConnectedCount = actualConnectedParticipants
+
+          // Collect WebRTC metrics
+          let webrtcMetrics = {
+            activePeerConnections: 0,
+            totalConnections: 0,
+            connectedConnections: 0,
+            connectingConnections: 0,
+            failedConnections: 0,
+            hasLocalStream: false,
+            remoteStreamCount: 0
+          }
+
+          if (webrtcServiceRef.current) {
+            const peerConnections = webrtcServiceRef.current.getActivePeerConnections()
+            webrtcMetrics.activePeerConnections = Object.keys(peerConnections).length
+            webrtcMetrics.totalConnections = webrtcServiceRef.current.getActivePeerConnectionCount()
+            webrtcMetrics.connectedConnections = webrtcServiceRef.current.getConnectedParticipantCount()
+            webrtcMetrics.hasLocalStream = !!localStreamRef.current
+            webrtcMetrics.remoteStreamCount = remoteStreams.size
+
+            // Count connection states
+            Object.values(peerConnections).forEach(pc => {
+              const state = pc.connectionState
+              if (state === 'connected') webrtcMetrics.connectedConnections++
+              else if (state === 'connecting') webrtcMetrics.connectingConnections++
+              else if (state === 'failed' || state === 'disconnected') webrtcMetrics.failedConnections++
+            })
+          }
+
+          // Collect participant state metrics
+          const participantStates = Array.from(participantConnectionStates.entries())
+          const stateDistribution = {
+            ringing: participantStates.filter(([, state]) => state === 'ringing').length,
+            connecting: participantStates.filter(([, state]) => state === 'connecting').length,
+            connected: participantStates.filter(([, state]) => state === 'connected').length
+          }
+
+          // Identify participants with fallback names
+          const fallbackParticipants = activeParticipants.filter(p =>
+            p.name.match(/^User[-\s][A-Z0-9]{6,8}$/i)
+          ).length
+
+          // Comprehensive monitoring log
+          console.log(`[CallModal] 📊 CALL MONITORING - ${now}:`, {
+            callId: callId,
+            callStatus: callState.status,
+            callDuration: callDuration,
+            isIncoming: isIncoming,
+            isGroupCall: isGroupCall,
+            userAccepted: userHasAcceptedCall.current,
+            participants: {
+              total: totalParticipantCount,
+              connected: connectedParticipantCount,
+              actualConnected: actualConnectedCount,
+              withFallbackNames: fallbackParticipants,
+              stateDistribution: stateDistribution
+            },
+            webrtc: webrtcMetrics,
+            audio: {
+              isRinging: callState.status === 'ringing',
+              hasLocalStream: !!localStreamRef.current,
+              remoteStreams: remoteStreams.size
+            },
+            ui: {
+              isVisible: true,
+              lastUpdate: now
+            }
+          })
+
+          // Performance warnings
+          if (webrtcMetrics.failedConnections > 0) {
+            console.warn(`[CallModal] ⚠️ PERFORMANCE WARNING: ${webrtcMetrics.failedConnections} failed WebRTC connections`)
+          }
+
+          if (fallbackParticipants > 0) {
+            console.warn(`[CallModal] ⚠️ DATA WARNING: ${fallbackParticipants} participants have fallback names`)
+          }
+
+          if (totalParticipantCount !== actualConnectedCount && callState.status === 'connected') {
+            console.warn(`[CallModal] ⚠️ COUNT MISMATCH: UI shows ${totalParticipantCount} total, but ${actualConnectedCount} actually connected`)
+          }
+
+          // Alert for long connecting states
+          if (callState.status === 'connecting' && callDuration > 30) {
+            console.warn(`[CallModal] ⚠️ LONG CONNECTING: Call has been connecting for ${callDuration}s`)
+          }
+
+        } catch (error) {
+          console.error('[CallModal] ❌ Error in call monitoring:', error)
+        }
+      }, 5000) // Monitor every 5 seconds
+
+      return monitoringInterval
+    }
+
+    const interval = startMonitoring()
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [callId, callState.status, callState.duration, isIncoming, isGroupCall, connectedParticipants, activeParticipants, actualConnectedParticipants, participantConnectionStates, remoteStreams])
+
+  // ENHANCED: Heartbeat mechanism for participant health monitoring
+  useEffect(() => {
+    if (!callId || !socket || callState.status === 'disconnected' || callState.status === 'ended') {
+      return
+    }
+
+    // Send heartbeat every 10 seconds during active call
+    const heartbeatInterval = setInterval(() => {
+      socket.emit('call_heartbeat', {
+        callId,
+        timestamp: Date.now()
+      })
+    }, 10000)
+
+    console.log(`[CallModal] 💓 Started heartbeat monitoring for call ${callId}`)
+
+    return () => {
+      clearInterval(heartbeatInterval)
+      console.log(`[CallModal] 💔 Stopped heartbeat monitoring for call ${callId}`)
+    }
+  }, [callId, socket, callState.status])
+
+  // CRITICAL FIX: Only stop ringing based on CURRENT USER's individual state, not global call state
+  useEffect(() => {
+    const currentUserId = session?.user?.id
+    if (!currentUserId) return
+
+    // Get current user's individual participant state
+    const currentUserState = participantConnectionStates.get(currentUserId)
+    const hasUserAccepted = userHasAcceptedCall.current
+
+    // CRITICAL FIX: Only stop ringing based on USER ACCEPTANCE, not participant state
+    // Participant state can be corrupted by server/client bugs, so rely only on explicit user action
+    const shouldStopRinging = hasUserAccepted
+
+    // Additional check: For outgoing calls, caller should auto-accept
+    const isCallerAutoAccept = !isIncoming && currentUserId
+    const finalShouldStopRinging = shouldStopRinging || isCallerAutoAccept
+
+    // Log detailed state information for debugging
+    console.log('[CallModal] 🔍 Ringing state evaluation:', {
+      globalCallState: callState.status,
+      currentUserState,
+      hasUserAccepted,
+      shouldStopRinging,
+      isCallerAutoAccept,
+      finalShouldStopRinging,
+      isIncoming,
+      currentUserId
+    })
+
+    // Only stop ringing if this user has explicitly accepted or is making an outgoing call
+    if (finalShouldStopRinging && (callState.status === 'connecting' || callState.status === 'connected')) {
+      console.log('[CallModal] 🔇 Current user acceptance detected - stopping ringing:', {
+        reason: hasUserAccepted ? 'user_accepted' : (isCallerAutoAccept ? 'caller_auto_accept' : 'unknown'),
+        userState: currentUserState,
+        hasAccepted: hasUserAccepted,
+        isOutgoing: !isIncoming
+      })
+      requestStopRinging(`current_user_accepted_${hasUserAccepted ? 'manual' : 'auto'}`)
+    } else if (!finalShouldStopRinging) {
+      console.log('[CallModal] 🔔 Keeping ringing - current user has not explicitly accepted yet')
+      console.log('[CallModal] 🔔 Ringing decision context:', {
+        hasAccepted: hasUserAccepted,
+        isIncoming,
+        participantState: currentUserState,
+        reason: 'waiting_for_explicit_user_action'
+      })
+    }
+  }, [callState.status, participantConnectionStates, session?.user?.id, isIncoming, requestStopRinging])
+
+  // ENHANCED: Comprehensive cleanup on component unmount
   useEffect(() => {
     return () => {
-      console.log('[CallModal] 🔇 Component unmounting, stopping all ringing sounds')
-      stopOutgoingRingingSound()
+      console.log('[CallModal] 🧹 Component unmounting - performing comprehensive cleanup')
+
+      // Stop all ringing
+      requestStopRinging('component_unmount')
+
+      // Clean up WebRTC connections
+      if (webrtcServiceRef.current) {
+        console.log('[CallModal] 🔧 Cleaning up WebRTC connections')
+        try {
+          webrtcServiceRef.current.cleanup()
+        } catch (error) {
+          console.warn('[CallModal] Error during WebRTC cleanup:', error)
+        }
+      }
+
+      // Clear any remaining intervals
       if (outgoingRingingInterval) {
         clearInterval(outgoingRingingInterval)
       }
+
+      // Cleanup audio context
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        try {
+          audioContextRef.current.close()
+        } catch (error) {
+          console.warn('[CallModal] Error closing audio context:', error)
+        }
+      }
     }
-  }, [stopOutgoingRingingSound, outgoingRingingInterval])
+  }, [requestStopRinging, outgoingRingingInterval])
 
   // IMPROVED: Earlier WebRTC initialization with better error handling
   useEffect(() => {
@@ -1455,25 +2762,96 @@ export function CallModal({
     }
 
     // CRITICAL FIX: More robust WebRTC initialization logic  
-    // Skip WebRTC for ALL calls that are still in ringing state (both incoming and outgoing)
-    // This ensures users get proper answer/decline flow before WebRTC starts
-    const shouldSkipWebRTC = callState.status === 'ringing'
+    // ENHANCED: Multi-layer WebRTC initialization guard against auto-join bug
+    const currentUserId = session?.user?.id
+    const hasUserAcceptedCall = userHasAcceptedCall.current
+    
+    // Primary guard: Skip WebRTC for non-accepting incoming call participants
+    const shouldSkipWebRTC = callState.status === 'ringing' || 
+                           (callState.status === 'connecting' && !hasUserAcceptedCall && isIncoming) ||
+                           (callState.status === 'connected' && !hasUserAcceptedCall && isIncoming)
 
-    if (shouldSkipWebRTC) {
-      console.log('[CallModal] 🔄 Skipping WebRTC for ringing call - waiting for acceptance:', { 
+    // Secondary guard: Additional checks for suspicious states that could indicate auto-join
+    const suspiciousStates = ['connected', 'in_call']
+    const isSuspiciousAutoJoin = isIncoming && 
+                                suspiciousStates.includes(callState.status) && 
+                                !hasUserAcceptedCall
+    
+    if (shouldSkipWebRTC || isSuspiciousAutoJoin) {
+      const reason = isSuspiciousAutoJoin ? 'suspicious auto-join detected' : 'user has not accepted call'
+      console.log(`[CallModal] 🔄 Skipping WebRTC - ${reason}:`, { 
         isIncoming, 
-        callState: callState.status 
+        callState: callState.status,
+        hasUserAccepted: hasUserAcceptedCall,
+        userId: currentUserId,
+        suspiciousAutoJoin: isSuspiciousAutoJoin
       })
+      
+      // Extra logging for debugging auto-join issues
+      if (isSuspiciousAutoJoin) {
+        console.log(`[CallModal] 🚨 AUTO-JOIN PREVENTION: Blocked WebRTC initialization for non-accepting user`)
+        console.log(`[CallModal] 🚨 Call details: {callId: ${callId}, status: ${callState.status}, participants: ${participants?.length}}`)
+      }
+      
       return
     }
 
-    // CRITICAL: Emergency WebRTC initialization for connected/connecting states without WebRTC service
+    // CRITICAL FIX: Emergency WebRTC initialization only if current user has EXPLICITLY accepted the call
+    const currentUserState = participantConnectionStates.get(session?.user?.id || '')
+    const currentUserIsConnecting = currentUserState === 'connecting' || currentUserState === 'connected'
+    
+    // CRITICAL FIX: Strict validation to prevent emergency WebRTC for non-accepting users
+    // Allow emergency init only if: (1) user explicitly accepted OR (2) user is the caller for outgoing calls
+    const isOutgoingCallInitiator = !isIncoming && session?.user?.id
+    const hasExplicitlyAccepted = userHasAcceptedCall.current || isOutgoingCallInitiator
+    const isInValidParticipantState = currentUserIsConnecting && currentUserState !== undefined
+    const shouldAllowEmergencyInit = hasExplicitlyAccepted && isInValidParticipantState
+    
     const needsEmergencyInit = (callState.status === 'connected' || callState.status === 'connecting') && 
-                              !webrtcServiceRef.current
+                              !webrtcServiceRef.current &&
+                              shouldAllowEmergencyInit // Triple-validated acceptance check
 
     if (needsEmergencyInit) {
-      console.log('[CallModal] 🆘 EMERGENCY WebRTC initialization needed - call is active but no WebRTC service!')
+      console.log('[CallModal] 🆘 EMERGENCY WebRTC RECOVERY - Call is connected but WebRTC needs help!', {
+        hasUserAccepted: hasExplicitlyAccepted,
+        currentUserState,
+        callState: callState.status,
+        isIncoming,
+        shouldAllowEmergencyInit
+      })
+    } else {
+      // Log why emergency init was blocked for debugging
+      if ((callState.status === 'connected' || callState.status === 'connecting') && !webrtcServiceRef.current) {
+        console.log('[CallModal] 🚫 EMERGENCY WebRTC BLOCKED - User has not accepted call', {
+          hasUserAccepted: hasExplicitlyAccepted,
+          currentUserState,
+          callState: callState.status,
+          isIncoming,
+          shouldAllowEmergencyInit
+        })
+      }
     }
+
+    // CIRCUIT BREAKER: Prevent rapid WebRTC initialization attempts - ENHANCED for group calls
+    const now = Date.now()
+    const isGroupCall = activeParticipants.length > 2
+    const MIN_INIT_INTERVAL = isGroupCall ? 1000 : 2000 // Shorter interval for group calls (need faster recovery)
+    const timeSinceLastAttempt = now - lastRecoveryAttemptRef.current
+
+    // Be more lenient for group calls and emergency situations
+    if (lastRecoveryAttemptRef.current > 0 &&
+        timeSinceLastAttempt < MIN_INIT_INTERVAL &&
+        !shouldAllowEmergencyInit) {
+      console.log('[CallModal] 🚫 Circuit breaker: WebRTC init too soon after last attempt:', {
+        timeSinceLastAttempt,
+        minInterval: MIN_INIT_INTERVAL,
+        isGroupCall,
+        emergencyOverride: shouldAllowEmergencyInit
+      })
+      return
+    }
+    
+    lastRecoveryAttemptRef.current = now
 
     // Initialize WebRTC for outgoing calls immediately, or for any call that's past initial ringing
     console.log('[CallModal] 🚀 SHOULD initialize WebRTC - State:', callState.status, 'IsIncoming:', isIncoming, 'Connected participants:', callState.connectedParticipants, 'Emergency:', needsEmergencyInit)
@@ -1628,24 +3006,46 @@ export function CallModal({
           if (memoizedParticipantIds.length > 0) {
             console.log('[CallModal] ✅ Scheduling offer creation after stream is ready')
             
-            // Wait a brief moment for stream to be fully set, then create offers
+            // ENHANCED: Use group call optimization for multiple participants
             setTimeout(async () => {
               try {
                 const streamReady = await webrtcServiceRef.current?.waitForLocalStream(2000)
-                if (streamReady) {
-                  for (const participantId of memoizedParticipantIds) {
+                if (streamReady && memoizedParticipantIds.length > 0) {
+                  console.log('[CallModal] 🚀 Setting up group call connections for participants:', memoizedParticipantIds)
+
+                  if (memoizedParticipantIds.length === 1) {
+                    // For single participant, use direct offer creation
+                    const participantId = memoizedParticipantIds[0]
                     try {
                       await webrtcServiceRef.current?.safeCreateOffer(participantId)
-                      console.log('[CallModal] ✅ Created offer for:', participantId)
+                      console.log('[CallModal] ✅ Created direct offer for single participant:', participantId)
                     } catch (offerError) {
                       console.error('[CallModal] ❌ Failed to create offer for:', participantId, offerError)
                     }
+                  } else {
+                    // For multiple participants, use group call optimization
+                    try {
+                      await webrtcServiceRef.current?.setupGroupCallConnections(memoizedParticipantIds)
+                      console.log('[CallModal] ✅ Group call connections setup completed')
+                    } catch (groupError) {
+                      console.error('[CallModal] ❌ Group call setup failed, falling back to individual offers:', groupError)
+
+                      // Fallback to individual offers if group setup fails
+                      for (const participantId of memoizedParticipantIds) {
+                        try {
+                          await webrtcServiceRef.current?.safeCreateOffer(participantId)
+                          console.log('[CallModal] ✅ Fallback offer created for:', participantId)
+                        } catch (offerError) {
+                          console.error('[CallModal] ❌ Fallback offer failed for:', participantId, offerError)
+                        }
+                      }
+                    }
                   }
                 } else {
-                  console.error('[CallModal] ❌ Stream not ready - cannot create offers')
+                  console.error('[CallModal] ❌ Stream not ready or no participants - cannot create offers')
                 }
               } catch (error) {
-                console.error('[CallModal] ❌ Error during delayed offer creation:', error)
+                console.error('[CallModal] ❌ Error during connection setup:', error)
               }
             }, 500)
           }
@@ -1695,15 +3095,23 @@ export function CallModal({
   useEffect(() => {
     if (!isOpen || !callId || !session?.user?.id || !socket) return
     
-    // Enhanced conditions for when we need emergency WebRTC initialization
+    // CRITICAL FIX: Only initialize WebRTC if current user has EXPLICITLY accepted the call
+    // Allow WebRTC init for: (1) users who accepted OR (2) outgoing call initiators
+    const currentUserState = participantConnectionStates.get(session?.user?.id || '')
+    const isOutgoingCallInitiator = !isIncoming && session?.user?.id
+    const currentUserAccepted = (userHasAcceptedCall.current || isOutgoingCallInitiator) && 
+                               (currentUserState === 'connecting' || currentUserState === 'connected')
+    
     const needsWebRTCInit = (callState.status === 'connected' || callState.status === 'connecting') && 
-                           !webrtcServiceRef.current
+                           !webrtcServiceRef.current &&
+                           currentUserAccepted // Only if current user accepted
                            
     // Also check if WebRTC exists but has no active connections when it should
     const needsConnectionRecovery = webrtcServiceRef.current && 
                                    (callState.status === 'connected' || callState.status === 'connecting') &&
                                    memoizedParticipantIds.length > 0 &&
-                                   Object.keys(webrtcServiceRef.current.getActivePeerConnections()).length === 0
+                                   Object.keys(webrtcServiceRef.current.getActivePeerConnections()).length === 0 &&
+                                   currentUserAccepted // Only if current user accepted
     
     // Add cooldown mechanism to prevent infinite recovery loops
     const now = Date.now()
@@ -2138,7 +3546,7 @@ export function CallModal({
             localVideoRef.current.srcObject = localStreamRef.current
             
             // Force video element to reload and play
-            await localVideoRef.current.load()
+            localVideoRef.current.load()
             localVideoRef.current.play().catch(error => {
               console.warn('[CallModal] Failed to play restored video:', error)
             })
@@ -2244,6 +3652,9 @@ export function CallModal({
       // This prevents WebRTC failures from blocking call acceptance
       console.log('[CallModal] 🚀 STEP 1: Sending call acceptance to server...')
       
+      // Mark that this user has explicitly accepted the call
+      userHasAcceptedCall.current = true
+      
       socket.emit('call_response', {
         callId,
         conversationId,
@@ -2260,6 +3671,18 @@ export function CallModal({
         status: 'connecting',
         connectedParticipants: prev.connectedParticipants || 1
       }))
+      
+      // CRITICAL: Immediately stop ringing when accepting call
+      stopOutgoingRingingSound()
+      
+      // Update our own participant state
+      setParticipantConnectionStates(prev => {
+        const updated = new Map(prev)
+        if (session?.user?.id) {
+          updated.set(session.user.id, 'connecting')
+        }
+        return updated
+      })
       
       // Now try to initialize WebRTC - if it fails, call is still accepted
       try {
@@ -2440,6 +3863,9 @@ export function CallModal({
     // Mark this as a user-initiated close
     userInitiatedCloseRef.current = true
     
+    // Mark that this user has explicitly declined the call
+    userHasAcceptedCall.current = false
+    
     // Immediately cleanup resources to stop ringing
     cleanupCallResources(true)
     
@@ -2533,19 +3959,24 @@ export function CallModal({
     // AUDIO INDICATOR FIX: Use server state if available, otherwise assume unmuted during connection setup
     const isActuallyMuted = serverMuteState !== undefined ? serverMuteState : (latestStream ? streamBasedMuted : false)
     
-    // AUDIO INDICATOR FIX: Enhanced debugging for voice activity and mute states
-    console.log(`[VoiceParticipant] ${participant.name} voice activity debug:`, {
-      participantId: participant.id,
-      hasOriginalStream: !!stream,
-      hasLatestStream: !!latestStream,
-      streamActive: latestStream?.active,
-      audioTracksCount: latestStream?.getAudioTracks().length || 0,
-      audioTracksEnabled: latestStream?.getAudioTracks().map(t => t.enabled) || [],
-      isSpeaking,
-      serverMuteState,
-      streamBasedMuted,
-      finalMuteState: isActuallyMuted
-    })
+    // PERFORMANCE FIX: Reduced logging frequency to prevent browser slowdown
+    // Only log when there are significant state changes or issues
+    const shouldLogDebug = React.useRef(0)
+    if (shouldLogDebug.current % 50 === 0) { // Log every 50th render to reduce noise
+      console.log(`[VoiceParticipant] ${participant.name} voice activity debug:`, {
+        participantId: participant.id,
+        hasOriginalStream: !!stream,
+        hasLatestStream: !!latestStream,
+        streamActive: latestStream?.active,
+        audioTracksCount: latestStream?.getAudioTracks().length || 0,
+        isSpeaking,
+        serverMuteState,
+        streamBasedMuted,
+        finalMuteState: isActuallyMuted,
+        renderCount: shouldLogDebug.current
+      })
+    }
+    shouldLogDebug.current++
 
     return (
       <div className="flex flex-col items-center relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl p-6 backdrop-blur-sm border border-slate-700/50 transition-all duration-300 hover:scale-105">
@@ -2604,10 +4035,12 @@ export function CallModal({
               <span className={`px-2 py-1 rounded-full ${
                 participant.participantStatus === 'ringing' ? 'bg-blue-500/20 text-blue-300' :
                 participant.participantStatus === 'connecting' ? 'bg-yellow-500/20 text-yellow-300' : 
+                participant.participantStatus === 'connected' ? 'bg-green-500/20 text-green-300' :
                 'bg-gray-500/20 text-gray-300'
               }`}>
                 {participant.participantStatus === 'ringing' ? 'Ringing' :
-                 participant.participantStatus === 'connecting' ? 'Joining' : 
+                 participant.participantStatus === 'connecting' ? 'Connecting' : 
+                 participant.participantStatus === 'connected' ? 'Connected' :
                  'Waiting'}
               </span>
             ) : (
@@ -2714,7 +4147,7 @@ export function CallModal({
                     {isGroupCall && (
                       <>
                         <span className="text-gray-500">•</span>
-                        <span className="text-gray-400">{participants.length} invited</span>
+                        <span className="text-gray-400">{totalInvitedCount} invited</span>
                       </>
                     )}
                   </div>
@@ -2806,7 +4239,7 @@ export function CallModal({
               <VideoGrid
                 localStream={localStreamRef.current}
                 remoteStreams={remoteStreams}
-                participants={isGroupCall ? activeParticipants : connectedParticipants}
+                participants={connectedParticipants}
                 currentUserId={session?.user?.id || ''}
                 isLocalCameraOff={callState.isCameraOff}
                 isLocalMuted={callState.isMuted}
@@ -3011,7 +4444,7 @@ export function CallModal({
                     </div>
 
                     {/* Connected participants with voice activity */}
-                    {(isGroupCall ? activeParticipants : connectedParticipants).map((participant) => (
+                    {connectedParticipants.filter(p => p.id !== session?.user?.id).map((participant) => (
                       <VoiceParticipant 
                         key={participant.id}
                         participant={participant}
@@ -3023,7 +4456,7 @@ export function CallModal({
                   /* Calling state */
                   <div className="flex flex-col items-center">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {(isGroupCall ? activeParticipants : connectedParticipants).map((participant) => (
+                      {connectedParticipants.filter(p => p.id !== session?.user?.id).map((participant) => (
                         <VoiceParticipant 
                           key={participant.id}
                           participant={participant}
