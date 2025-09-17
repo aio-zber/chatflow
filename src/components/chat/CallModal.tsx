@@ -90,7 +90,7 @@ export function CallModal({
   const userHasAcceptedCall = useRef<boolean>(!isIncoming)
   const lastStateUpdateRef = useRef<string>('')
   const lastRecoveryAttemptRef = useRef<number>(0)
-  const authoritativeStateRef = useRef<{connectedParticipants: number, sequenceNumber: number} | null>(null)
+  // PHASE 1 FIX: Removed authoritative state logic to prevent race conditions
 
   const [callState, setCallState] = useState<CallState>({
     status: isIncoming ? 'ringing' : 'dialing',
@@ -461,47 +461,30 @@ export function CallModal({
     }) || []
   }, [activeParticipants, remoteStreams, participantConnectionStates, callState.status, callState.connectedParticipants, session?.user?.id, isIncoming])
 
-  // SIMPLIFIED: Single source of truth for participant counting
+  // PHASE 1 FIX: Simplified single source of truth for participant counting
   const actualConnectedParticipants = useMemo(() => {
     try {
-      // PRIORITY 1: Use authoritative server count when available and recent
-      if (authoritativeStateRef.current) {
-        const authoritativeCount = authoritativeStateRef.current.connectedParticipants
-        const isRecentAuthoritative = (Date.now() - authoritativeStateRef.current.sequenceNumber) < 10000 // 10 seconds
+      // Single source of truth: Use server's connectedParticipants count directly
+      // This eliminates race conditions and complex client-side calculations
+      const serverCount = callState.connectedParticipants || 0
 
-        if (isRecentAuthoritative) {
-          console.log(`[CallModal] 🎯 Using AUTHORITATIVE count: ${authoritativeCount} (age: ${Date.now() - authoritativeStateRef.current.sequenceNumber}ms)`)
-          return Math.max(0, authoritativeCount)
-        } else {
-          console.log(`[CallModal] ⚠️ Authoritative state too old, falling back to server count`)
-          authoritativeStateRef.current = null // Clear stale authoritative state
-        }
-      }
+      // For UI display: ensure minimum count of 1 when user has accepted and call is active
+      const isCallActive = callState.status === 'connected' || callState.status === 'connecting'
+      const userIsActive = userHasAcceptedCall.current && isCallActive
+      const displayCount = Math.max(serverCount, userIsActive ? 1 : 0)
 
-      // PRIORITY 2: Use server state as primary source
-      let baseCount = callState.connectedParticipants || 0
+      // Cap at reasonable maximum to prevent display issues
+      const maxParticipants = Math.max(activeParticipants.length, 10)
+      const finalCount = Math.min(displayCount, maxParticipants)
 
-      // PRIORITY 3: Only augment with current user state for better accuracy
-      const currentUserConnected = userHasAcceptedCall.current && (
-        callState.status === 'connected' ||
-        callState.status === 'connecting' ||
-        // For outgoing calls, caller is connected when call starts
-        (!isIncoming && callState.status !== 'ringing')
-      )
+      console.log(`[CallModal] 📊 SIMPLIFIED count logic: server=${serverCount}, userActive=${userIsActive}, display=${displayCount}, final=${finalCount}`)
 
-      // For group calls, ensure we don't exceed total participants
-      const finalCount = isGroupCall
-        ? Math.min(baseCount + (currentUserConnected && baseCount === 0 ? 1 : 0), activeParticipants.length)
-        : baseCount + (currentUserConnected && baseCount === 0 ? 1 : 0)
-
-      console.log(`[CallModal] 📊 Simplified count: server=${baseCount}, currentUser=${currentUserConnected}, final=${finalCount}, total=${activeParticipants.length}`)
-
-      return Math.max(0, finalCount)
+      return finalCount
     } catch (error) {
       console.error('[CallModal] Error calculating connected participants:', error)
       return Math.max(0, (callState.connectedParticipants || 0))
     }
-  }, [callState.connectedParticipants, callState.status, userHasAcceptedCall.current, isIncoming, isGroupCall, activeParticipants.length, authoritativeStateRef.current])
+  }, [callState.connectedParticipants, callState.status, userHasAcceptedCall.current, activeParticipants.length])
 
   // ENHANCED: Comprehensive participant state debugging
   useEffect(() => {
@@ -512,10 +495,7 @@ export function CallModal({
       isGroupCall,
       hasAccepted: userHasAcceptedCall.current,
       callStatus: callState.status,
-      authoritativeState: authoritativeStateRef.current ? {
-        count: authoritativeStateRef.current.connectedParticipants,
-        age: Date.now() - authoritativeStateRef.current.sequenceNumber
-      } : null,
+      // PHASE 1 FIX: Removed authoritative state debugging
       participantStates: Array.from(participantConnectionStates.entries()).map(([id, state]) => ({
         id: id.slice(-8), // Last 8 chars for privacy
         state
@@ -1950,7 +1930,7 @@ export function CallModal({
       participantCount: number
       connectedParticipants?: number
       sequenceNumber?: number
-      authoritative?: boolean
+      // PHASE 1 FIX: Removed authoritative property
       serverTimestamp?: number
       callStartTime?: number
       participantStates?: Record<string, string>
@@ -1999,33 +1979,8 @@ export function CallModal({
         return
       }
 
-      // SIMPLIFIED AUTHORITATIVE STATE: Only use truly authoritative updates
-      if (data.authoritative && data.sequenceNumber && data.connectedParticipants !== undefined) {
-        console.log(`[CallModal] 📊 AUTHORITATIVE state update received: sequence=${data.sequenceNumber}, connectedParticipants=${data.connectedParticipants}`)
-
-        // Store last authoritative sequence to prevent out-of-order updates
-        const lastSequence = sessionStorage.getItem(`call_${callId}_lastSequence`)
-        if (lastSequence && data.sequenceNumber <= parseInt(lastSequence)) {
-          console.log(`[CallModal] 🚫 Ignoring out-of-order authoritative update: ${data.sequenceNumber} <= ${lastSequence}`)
-          return
-        }
-        sessionStorage.setItem(`call_${callId}_lastSequence`, data.sequenceNumber.toString())
-
-        // Update authoritative state ref with current timestamp for aging
-        authoritativeStateRef.current = {
-          connectedParticipants: data.connectedParticipants,
-          sequenceNumber: Date.now() // Use current timestamp for aging, not server sequence
-        }
-
-        console.log(`[CallModal] ✅ Updated authoritative state: count=${data.connectedParticipants}, timestamp=${Date.now()}`)
-      } else {
-        // Clear authoritative state if we get non-authoritative updates
-        // This prevents stale authoritative data from overriding fresher server state
-        if (authoritativeStateRef.current) {
-          console.log(`[CallModal] 🧹 Clearing stale authoritative state due to non-authoritative update`)
-          authoritativeStateRef.current = null
-        }
-      }
+      // PHASE 1 FIX: Removed complex authoritative state logic
+      // Now using simple server state as single source of truth
 
       // RACE CONDITION PREVENTION: Add event sequence validation
       if ((data as any).eventSequence && (data as any).eventType === 'call_state_update') {
@@ -2165,13 +2120,13 @@ export function CallModal({
           }
         }
         
-        // AUTHORITATIVE COUNT: Use server's connectedParticipants if available, fallback to participantCount
-        const authoritativeConnectedCount = data.connectedParticipants ?? data.participantCount
+        // PHASE 1 FIX: Use server's connectedParticipants if available, fallback to participantCount
+        const serverConnectedCount = data.connectedParticipants ?? data.participantCount
 
         const newState = {
           ...prev,
           status: userSpecificStatus,
-          connectedParticipants: authoritativeConnectedCount
+          connectedParticipants: serverConnectedCount
         }
         
         debouncedLoggers.stateUpdate(prev.status, newState.status, {
@@ -2182,9 +2137,7 @@ export function CallModal({
           serverGlobal: data.status
         })
 
-        if (data.authoritative) {
-          console.log('[CallModal] ✅ AUTHORITATIVE state applied: sequence=', data.sequenceNumber, ', count=', authoritativeConnectedCount)
-        }
+        console.log('[CallModal] ✅ SIMPLIFIED state applied: count=', serverConnectedCount)
         
         return newState
       })
@@ -2506,6 +2459,45 @@ export function CallModal({
     console.log(`[CallModal] Socket Connected: ${socket?.connected}`)
     console.log(`[CallModal] Is Incoming: ${isIncoming}`)
 
+    // PHASE 2 FIX: Handle stuck participant events from WebRTC
+    const handleWebRTCParticipantStuck = (data: {
+      participantId: string
+      connectionState: string
+      iceState: string
+      connectionAge: number
+    }) => {
+      console.log(`[CallModal] 🚨 STUCK PARTICIPANT detected: ${data.participantId}`, data)
+
+      // Update participant connection state to show stuck status
+      setParticipantConnectionStates(prev => {
+        const newStates = new Map(prev)
+        newStates.set(data.participantId, 'stuck-connecting')
+        return newStates
+      })
+
+      // Schedule recovery attempt after a short delay
+      setTimeout(() => {
+        console.log(`[CallModal] 🔄 Attempting recovery for stuck participant: ${data.participantId}`)
+
+        // Force refresh the connection by triggering a new WebRTC stream ready event
+        if (webrtcServiceRef.current) {
+          // Remove the stuck participant and let them rejoin
+          setParticipantConnectionStates(prev => {
+            const newStates = new Map(prev)
+            newStates.delete(data.participantId)
+            return newStates
+          })
+
+          // Notify server about the stuck participant for recovery
+          socket.emit('request_participant_recovery', {
+            callId,
+            participantId: data.participantId,
+            reason: 'stuck_connection'
+          })
+        }
+      }, 2000) // 2 second delay before recovery
+    }
+
     socket.on('call_response', handleCallResponse)
     socket.on('participant_joined', handleParticipantJoined)
     socket.on('participant_left', handleParticipantLeft)
@@ -2520,6 +2512,7 @@ export function CallModal({
     socket.on('participant_camera_change', handleParticipantCameraChange)
     socket.on('connection_recovery', handleConnectionRecovery)
     socket.on('call_start_time_sync', handleCallStartTimeSync)
+    socket.on('webrtc_participant_stuck', handleWebRTCParticipantStuck)
 
     console.log('[CallModal] ✅ All socket listeners registered')
 
@@ -2567,6 +2560,7 @@ export function CallModal({
       socket.off('participant_camera_change', handleParticipantCameraChange)
       socket.off('connection_recovery', handleConnectionRecovery)
       socket.off('call_start_time_sync', handleCallStartTimeSync)
+      socket.off('webrtc_participant_stuck', handleWebRTCParticipantStuck)
     }
   }, [socket, callId])
 

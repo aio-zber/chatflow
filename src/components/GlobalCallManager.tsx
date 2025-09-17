@@ -166,16 +166,25 @@ export function GlobalCallManager() {
     }
   }, [ringingInterval])
 
-  // ENHANCED: Event deduplication helper - OPTIMIZED for group calls
+  // PHASE 4 FIX: Enhanced event deduplication with better group call handling
   const shouldProcessEvent = useCallback((eventType: string, eventId: string) => {
     const now = Date.now()
     const lastEvent = lastProcessedEventRef.current
 
-    // ENHANCED: More lenient deduplication for group call events
-    const isGroupCallEvent = eventType.includes('call_state_update') || eventType.includes('call_response')
-    const deduplicationWindow = isGroupCallEvent ? 50 : 300 // Ultra-short window for real-time responsiveness
+    // Different deduplication strategies based on event criticality
+    const criticalEvents = ['call_ended', 'call_timeout', 'incoming_call']
+    const realTimeEvents = ['call_state_update', 'call_response', 'participant_joined', 'participant_left']
 
-    // Check for duplicate events within a short time window
+    let deduplicationWindow: number
+    if (criticalEvents.includes(eventType)) {
+      deduplicationWindow = 100 // Very short for critical events
+    } else if (realTimeEvents.includes(eventType)) {
+      deduplicationWindow = 25 // Ultra-short for real-time events
+    } else {
+      deduplicationWindow = 200 // Standard for other events
+    }
+
+    // Check for duplicate events within the appropriate window
     if (lastEvent &&
         lastEvent.type === eventType &&
         lastEvent.id === eventId &&
@@ -189,35 +198,45 @@ export function GlobalCallManager() {
     return true
   }, [])
 
-  // ENHANCED: Process event with lock - OPTIMIZED for group calls
+  // PHASE 4 FIX: Improved event processing with priority-based locking
   const processEventWithLock = useCallback(async (eventType: string, eventId: string, handler: () => Promise<void> | void) => {
     if (!shouldProcessEvent(eventType, eventId)) {
       return
     }
 
-    // ENHANCED: Use shorter locks for group call events
-    const isGroupCallEvent = eventType.includes('call_state_update') || eventType.includes('call_response')
-    const lockTimeout = isGroupCallEvent ? 50 : 200 // Ultra-short locks for real-time responsiveness
+    // Priority-based lock timeouts
+    const criticalEvents = ['call_ended', 'call_timeout', 'incoming_call']
+    const realTimeEvents = ['call_state_update', 'call_response', 'participant_joined', 'participant_left']
 
-    // ENHANCED: Check if already locked with timeout and priority handling
-    const criticalEvents = ['call_ended', 'call_timeout', 'call_state_update']
-    const isCriticalEvent = criticalEvents.some(critical => eventType.includes(critical))
+    let lockTimeout: number
+    let maxWaitTime: number
 
+    if (criticalEvents.includes(eventType)) {
+      lockTimeout = 100
+      maxWaitTime = 200 // Short wait for critical events
+    } else if (realTimeEvents.includes(eventType)) {
+      lockTimeout = 50
+      maxWaitTime = 100 // Very short wait for real-time events
+    } else {
+      lockTimeout = 200
+      maxWaitTime = 300 // Standard wait for other events
+    }
+
+    // Handle lock contention with priority
     if (eventProcessingLockRef.current) {
-      if (isCriticalEvent) {
-        // For critical events, wait briefly then proceed
-        console.log(`[GlobalCallManager] ⏰ Critical event ${eventType} waiting for lock...`)
-        let waitTime = 0
-        const maxWait = 500 // 500ms max wait for critical events
+      const isCritical = criticalEvents.includes(eventType)
 
-        while (eventProcessingLockRef.current && waitTime < maxWait) {
-          await new Promise(resolve => setTimeout(resolve, 50))
-          waitTime += 50
+      if (isCritical) {
+        console.log(`[GlobalCallManager] ⚡ Critical event ${eventType} waiting for lock...`)
+        let waitTime = 0
+
+        while (eventProcessingLockRef.current && waitTime < maxWaitTime) {
+          await new Promise(resolve => setTimeout(resolve, 25)) // Smaller wait increments
+          waitTime += 25
         }
 
         if (eventProcessingLockRef.current) {
-          console.warn(`[GlobalCallManager] ⚠️ Critical event ${eventType} proceeding despite lock (timeout)`)
-          // Force clear stale lock
+          console.warn(`[GlobalCallManager] 🚨 Critical event ${eventType} forcing lock release`)
           eventProcessingLockRef.current = false
         }
       } else {
@@ -229,13 +248,13 @@ export function GlobalCallManager() {
     eventProcessingLockRef.current = true
     const lockStart = Date.now()
 
-    // Auto-release lock after maximum timeout to prevent deadlocks
+    // Auto-release lock with shorter timeout to prevent deadlocks
     const lockReleaseTimeout = setTimeout(() => {
       if (eventProcessingLockRef.current) {
-        console.warn(`[GlobalCallManager] 🚨 Force releasing stuck lock for ${eventType} after ${lockTimeout * 2}ms`)
+        console.warn(`[GlobalCallManager] 🚨 Force releasing stuck lock for ${eventType} after ${lockTimeout}ms`)
         eventProcessingLockRef.current = false
       }
-    }, lockTimeout * 2)
+    }, lockTimeout)
 
     try {
       await handler()
@@ -245,8 +264,8 @@ export function GlobalCallManager() {
 
       // DEBUGGING: Log excessive lock times
       const lockDuration = Date.now() - lockStart
-      if (lockDuration > lockTimeout) {
-        console.warn(`[GlobalCallManager] ⏱️ Long event processing: ${eventType} took ${lockDuration}ms (expected <${lockTimeout}ms)`)
+      if (lockDuration > lockTimeout * 0.8) { // Warn at 80% of timeout
+        console.warn(`[GlobalCallManager] ⏱️ Slow event processing: ${eventType} took ${lockDuration}ms (timeout: ${lockTimeout}ms)`)
       }
     }
   }, [shouldProcessEvent])

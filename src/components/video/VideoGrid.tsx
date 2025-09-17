@@ -260,25 +260,32 @@ function RemoteParticipantVideo({
   // CRITICAL FIX: Add proper cleanup for video elements
   const videoRef = useRef<HTMLVideoElement | null>(null)
   
-  // ENHANCED: Voice activity detection for remote participant with better stream handling
+  // PHASE 3 FIX: Enhanced voice activity detection with more lenient stream validation
   const { isSpeaking } = useVoiceActivity({
-    stream: stream && stream.active ? stream : null,
+    stream: stream || null, // Pass stream even if not active - let useVoiceActivity handle validation
     threshold: -40 // More sensitive threshold for better detection
   })
 
-  // DEBUGGING: Log stream changes for voice activity
+  // PHASE 3 FIX: Enhanced voice activity debugging for audio indicator issues
   React.useEffect(() => {
-    if (Math.random() < 0.1) { // Throttled logging
-      console.log(`[VoiceParticipant] ${participant.name} voice activity debug:`, {
+    if (Math.random() < 0.05) { // Reduced logging frequency but more detailed
+      console.log(`[VoiceParticipant] ${participant.name} voice activity state:`, {
         participantId: participant.id,
-        hasOriginalStream: !!stream,
-        hasLatestStream: !!(stream && stream.active),
+        hasStream: !!stream,
         streamActive: stream?.active,
+        streamId: stream?.id,
         audioTracksCount: stream?.getAudioTracks().length || 0,
         audioTracksEnabled: stream?.getAudioTracks().filter(t => t.enabled).length || 0,
-        audioTracksLive: stream?.getAudioTracks().filter(t => t.readyState === 'live').length || 0,
+        audioTracksDetails: stream?.getAudioTracks().map(t => ({
+          id: t.id,
+          kind: t.kind,
+          enabled: t.enabled,
+          readyState: t.readyState,
+          muted: t.muted
+        })) || [],
         isSpeaking,
-        participantMuted: participant.isMuted
+        participantMuted: participant.isMuted,
+        voiceActivityWorking: stream ? stream.getAudioTracks().some(t => t.enabled) : false
       })
     }
   }, [stream, participant.id, participant.name, participant.isMuted, isSpeaking])

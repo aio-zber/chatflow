@@ -20,33 +20,73 @@ class EnhancedWebRTCService extends WebRTCService {
     this.activeIntervals.add(monitoringInterval);
   }
 
+  // PHASE 5 FIX: Enhanced resource monitoring with performance optimizations
   private monitorResourceUsage(): void {
     const peerConnections = this.getActivePeerConnections();
     const activePeers = peerConnections.size;
 
     console.log(`[WebRTC Enhanced] Resource monitoring - Active peers: ${activePeers}`);
-    
-    // Check for stale connections
+
+    // Enhanced connection health monitoring
     let staleConnections = 0;
+    let stuckConnections = 0;
+    let performanceIssues = 0;
+
     peerConnections.forEach((peerConn, participantId) => {
       const connectionState = peerConn.connection.connectionState;
       const iceState = peerConn.connection.iceConnectionState;
-      
+      const connectionAge = Date.now() - (peerConn.createdAt || 0);
+
+      // Detect stale connections
       if (connectionState === 'failed' || connectionState === 'closed' ||
           iceState === 'failed' || iceState === 'closed') {
         console.log(`[WebRTC Enhanced] Found stale connection for ${participantId}: ${connectionState}/${iceState}`);
         this.removePeerConnection(participantId);
         staleConnections++;
       }
+      // PHASE 5 FIX: Detect stuck connections with age-based detection
+      else if ((connectionState === 'connecting' && connectionAge > 20000) ||
+               (iceState === 'checking' && connectionAge > 25000) ||
+               (connectionState === 'new' && connectionAge > 15000)) {
+        console.log(`[WebRTC Enhanced] Found stuck connection for ${participantId}: ${connectionState}/${iceState}, age: ${connectionAge}ms`);
+        this.removePeerConnection(participantId);
+        stuckConnections++;
+      }
+      // Monitor for performance issues
+      else if (connectionAge > 60000 && connectionState !== 'connected') {
+        console.warn(`[WebRTC Enhanced] Performance issue for ${participantId}: long-running non-connected state ${connectionState}`);
+        performanceIssues++;
+      }
     });
 
-    if (staleConnections > 0) {
-      console.log(`[WebRTC Enhanced] Cleaned up ${staleConnections} stale connections`);
+    // Detailed cleanup reporting
+    if (staleConnections > 0 || stuckConnections > 0) {
+      console.log(`[WebRTC Enhanced] Cleaned up - stale: ${staleConnections}, stuck: ${stuckConnections}, performance issues: ${performanceIssues}`);
     }
 
-    // Memory usage monitoring
-    if (activePeers > 10) {
-      console.warn(`[WebRTC Enhanced] High peer connection count: ${activePeers}`);
+    // Enhanced memory usage monitoring with recommendations
+    if (activePeers > 8) {
+      console.warn(`[WebRTC Enhanced] High peer connection count: ${activePeers} (recommended max: 8 for optimal performance)`);
+      if (activePeers > 12) {
+        console.error(`[WebRTC Enhanced] CRITICAL: Too many peer connections (${activePeers}) - expect performance degradation`);
+        // Trigger optimization for high peer count
+        this.optimizeForMemoryUsage();
+      }
+    }
+
+    // Connection quality assessment
+    let healthyConnections = 0;
+    peerConnections.forEach((peerConn) => {
+      if (peerConn.connection.connectionState === 'connected' &&
+          (peerConn.connection.iceConnectionState === 'connected' ||
+           peerConn.connection.iceConnectionState === 'completed')) {
+        healthyConnections++;
+      }
+    });
+
+    const healthRatio = activePeers > 0 ? (healthyConnections / activePeers) * 100 : 100;
+    if (healthRatio < 80 && activePeers > 1) {
+      console.warn(`[WebRTC Enhanced] Connection health below 80%: ${healthRatio.toFixed(1)}% (${healthyConnections}/${activePeers})`);
     }
   }
 

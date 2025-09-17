@@ -18,15 +18,7 @@ export function useVoiceActivity({
   const audioContextRef = useRef<AudioContext | null>(null)
   const animationFrameRef = useRef<number>()
 
-  // ENHANCED: Adaptive polling for performance optimization
-  const pollingStateRef = useRef({
-    isStable: false,
-    lastChangeTime: Date.now(),
-    consecutiveStableChecks: 0,
-    pollingInterval: 100, // Start with 100ms
-    maxInterval: 500, // Max 500ms for stable calls
-    minInterval: 50  // Min 50ms during active speech
-  })
+  // PHASE 3 FIX: Removed adaptive polling state (was causing detection gaps)
 
   useEffect(() => {
     // ENHANCED: Throttled logging to reduce console spam
@@ -58,16 +50,16 @@ export function useVoiceActivity({
       return
     }
 
-    // ENHANCED: Be more lenient with track states - allow 'live' or other valid states
-    const validAudioTracks = audioTracks.filter(track => {
-      // Accept tracks that are live, or that have valid readyState and are enabled
-      const isValidState = track.readyState === 'live' || track.readyState === 'ended'
-      const isUsable = track.enabled && stream.active
-      return isValidState && isUsable
+    // PHASE 3 FIX: Enhanced track validation to handle muted-but-enabled tracks
+    const usableAudioTracks = audioTracks.filter(track => {
+      // Accept tracks that are enabled, even if marked as muted
+      // Remote tracks often show as muted:true but still transmit audio
+      return track.enabled && track.readyState !== 'ended'
     })
 
-    // FALLBACK: If stream is active but tracks aren't "live", still try to use it
-    const tracksToUse = validAudioTracks.length > 0 ? validAudioTracks : (stream.active ? audioTracks : [])
+    // If no enabled tracks but stream is active, still try to use available tracks
+    const tracksToUse = usableAudioTracks.length > 0 ? usableAudioTracks :
+                       (stream.active ? audioTracks : [])
 
     if (tracksToUse.length === 0) {
       if (Math.random() < 0.1) {
@@ -123,57 +115,36 @@ export function useVoiceActivity({
         // Combine all conditions for more accurate detection
         const speaking = hasSignificantAverage && isAboveThreshold && hasConsistentSignal
 
-        // Additional check: ensure stream and tracks are still active
-        const streamStillActive = stream?.active && stream.getAudioTracks().some(t => t.readyState === 'live' && t.enabled)
+        // PHASE 3 FIX: Enhanced stream validation (ignore muted state for remote tracks)
+        const streamStillActive = stream?.active && stream.getAudioTracks().some(t => t.enabled && t.readyState !== 'ended')
         const finalSpeaking = speaking && streamStillActive
 
-        // ENHANCED: Adaptive polling optimization
-        const pollingState = pollingStateRef.current
-        const now = Date.now()
-
-        // Check if speaking state changed
+        // Update speaking state when it changes
         if (finalSpeaking !== isSpeaking) {
           setIsSpeaking(finalSpeaking)
-          pollingState.lastChangeTime = now
-          pollingState.consecutiveStableChecks = 0
-          pollingState.isStable = false
-
-          // Use minimum interval during state changes
-          pollingState.pollingInterval = pollingState.minInterval
-        } else {
-          // State unchanged, potentially entering stable period
-          pollingState.consecutiveStableChecks++
-
-          // If stable for a while, reduce polling frequency
-          if (pollingState.consecutiveStableChecks > 10) { // 10 stable checks
-            pollingState.isStable = true
-            pollingState.pollingInterval = Math.min(
-              pollingState.pollingInterval * 1.1, // Gradually increase interval
-              pollingState.maxInterval
-            )
-          }
         }
 
+        // PHASE 3 FIX: Consistent polling interval (remove adaptive polling that caused gaps)
+        // Use consistent 100ms interval for reliable voice activity detection
+        const VOICE_ACTIVITY_POLLING_INTERVAL = 100
+
         // Debug logging (throttled for performance)
-        if (Math.random() < 0.005) { // Only log ~0.5% of the time
+        if (Math.random() < 0.01) { // Only log ~1% of the time
           console.log('[VoiceActivity] Volume analysis:', {
             average: average.toFixed(1),
             volume: volume.toFixed(1),
             threshold,
             speaking,
             finalSpeaking,
-            pollingInterval: pollingState.pollingInterval,
-            isStable: pollingState.isStable,
-            trackStates: stream?.getAudioTracks().map(t => ({ enabled: t.enabled, readyState: t.readyState }))
+            streamActive: stream?.active,
+            tracksEnabled: stream?.getAudioTracks().filter(t => t.enabled).length,
+            tracksMuted: stream?.getAudioTracks().filter(t => t.muted).length,
+            tracksLive: stream?.getAudioTracks().filter(t => t.readyState === 'live').length
           })
         }
 
-        // ENHANCED: Use adaptive timing instead of requestAnimationFrame for better performance
-        const nextCheck = () => {
-          animationFrameRef.current = setTimeout(monitorVolume, pollingState.pollingInterval) as any
-        }
-
-        nextCheck()
+        // Schedule next check with consistent interval
+        animationFrameRef.current = setTimeout(monitorVolume, VOICE_ACTIVITY_POLLING_INTERVAL) as any
       }
 
       monitorVolume()

@@ -885,35 +885,56 @@ export class WebRTCService {
       return false
     }
 
-    // ENHANCED: More lenient connection state checking for group calls
+    // PHASE 2 FIX: Enhanced connection state checking with stuck participant detection
     if (this.peerConnections.has(participantId)) {
       const existingConn = this.peerConnections.get(participantId)!
       const connectionState = existingConn.connection.connectionState
       const iceState = existingConn.connection.iceConnectionState
+      const connectionAge = Date.now() - (existingConn.createdAt || 0)
 
-      // Only reject if connection is already stable and functional
+      // Only keep connection if it's truly stable and functional
       if (connectionState === 'connected' &&
           (iceState === 'connected' || iceState === 'completed')) {
         console.log('[WebRTC] ✅ Connection already established for:', participantId, 'state:', connectionState, 'ice:', iceState)
-        return true // Connection already working - this is success!
+        return true // Connection already working
       }
 
-      // For group calls, allow retry of failed/stuck connections
+      // PHASE 2 FIX: Detect and clean up stuck connections
+      const isStuckConnection = (
+        (connectionState === 'connecting' && connectionAge > 15000) || // Stuck connecting > 15s
+        (connectionState === 'new' && connectionAge > 10000) || // Stuck new > 10s
+        (iceState === 'checking' && connectionAge > 20000) || // ICE stuck checking > 20s
+        (iceState === 'gathering' && connectionAge > 15000) // ICE stuck gathering > 15s
+      )
+
+      if (isStuckConnection) {
+        console.log(`[WebRTC] 🚨 STUCK CONNECTION detected for ${participantId}: state=${connectionState}, ice=${iceState}, age=${connectionAge}ms`)
+        this.closePeerConnection(participantId)
+        // Emit stuck participant event for UI coordination
+        this.socket.emit('webrtc_participant_stuck', {
+          participantId,
+          connectionState,
+          iceState,
+          connectionAge
+        })
+        return true // Allow retry after cleanup
+      }
+
+      // Clean up failed/disconnected connections
       if (connectionState === 'failed' || connectionState === 'disconnected' ||
           iceState === 'failed' || iceState === 'disconnected') {
-        console.log('[WebRTC] 🔄 Allowing retry for failed connection:', participantId, 'state:', connectionState, 'ice:', iceState)
-        // Clean up the failed connection before proceeding
+        console.log('[WebRTC] 🔄 Cleaning up failed connection:', participantId, 'state:', connectionState, 'ice:', iceState)
         this.closePeerConnection(participantId)
         return true
       }
 
-      // For connections in intermediate states, be more permissive in group calls
-      if (this.groupCallOptimization.isGroupCallMode) {
-        console.log('[WebRTC] 🎯 Group call mode: allowing connection attempt for:', participantId, 'current state:', connectionState)
-        return true
+      // For recent connections in valid intermediate states, allow them to continue
+      if (connectionAge < 10000 && (connectionState === 'connecting' || iceState === 'checking')) {
+        console.log('[WebRTC] ⏳ Recent connection in progress for:', participantId, 'age:', connectionAge + 'ms')
+        return false // Let it continue
       }
 
-      console.warn('[WebRTC] ❌ Connection already in progress for:', participantId, 'state:', connectionState, 'ice:', iceState)
+      console.warn('[WebRTC] ❌ Connection in unclear state for:', participantId, 'state:', connectionState, 'ice:', iceState, 'age:', connectionAge + 'ms')
       return false
     }
 
@@ -1442,10 +1463,11 @@ export class WebRTCService {
     // Monitor connection quality
     this.startQualityMonitoring(participantId, pc)
 
-    // Store peer connection
+    // PHASE 2 FIX: Store peer connection with creation timestamp for stuck detection
     this.peerConnections.set(participantId, {
       id: participantId,
-      connection: pc
+      connection: pc,
+      createdAt: Date.now()
     })
 
     // ENHANCED: Defer ICE candidate application until peer connection is ready
