@@ -148,7 +148,20 @@ export function VideoGrid({
     return 'aspect-[4/3]'
   }
 
-  const totalParticipants = participants.length + 1 // +1 for local user
+  // CRITICAL FIX: Filter out current user from participants to prevent duplicate UI
+  const remoteParticipants = participants.filter(p => p.id !== currentUserId)
+
+  // Validation: Log warning if current user was found in participants list
+  if (participants.length !== remoteParticipants.length) {
+    console.warn('[VideoGrid] ⚠️ Current user found in participants list - filtered out to prevent duplication:', {
+      originalCount: participants.length,
+      filteredCount: remoteParticipants.length,
+      currentUserId,
+      removedParticipant: participants.find(p => p.id === currentUserId)?.name
+    })
+  }
+
+  const totalParticipants = remoteParticipants.length + 1 // +1 for local user only
   const gridLayout = getGridLayout(totalParticipants)
   const aspectRatio = getAspectRatio(totalParticipants)
 
@@ -211,7 +224,7 @@ export function VideoGrid({
       </div>
 
       {/* Remote participants */}
-      {participants.map((participant) => {
+      {remoteParticipants.map((participant) => {
         const hasRemoteStream = remoteStreams.has(participant.id)
         const remoteStream = remoteStreams.get(participant.id)
         

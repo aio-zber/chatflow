@@ -53,28 +53,71 @@ class EnhancedWebRTCService extends WebRTCService {
   // Override cleanup to ensure all resources are properly released
   cleanup(): void {
     console.log('[WebRTC Enhanced] 🧹 Enhanced cleanup starting...');
-    
+
     this.resourceMonitoringEnabled = false;
-    
-    // Clear all timers first
-    this.cleanupTimers.forEach(timer => clearTimeout(timer));
-    this.activeIntervals.forEach(interval => clearInterval(interval));
+
+    // Clear all timers first with enhanced tracking
+    console.log(`[WebRTC Enhanced] Clearing ${this.cleanupTimers.size} timers and ${this.activeIntervals.size} intervals`);
+    this.cleanupTimers.forEach(timer => {
+      try {
+        clearTimeout(timer);
+      } catch (error) {
+        console.warn('[WebRTC Enhanced] Error clearing timer:', error);
+      }
+    });
+    this.activeIntervals.forEach(interval => {
+      try {
+        clearInterval(interval);
+      } catch (error) {
+        console.warn('[WebRTC Enhanced] Error clearing interval:', error);
+      }
+    });
     this.cleanupTimers.clear();
     this.activeIntervals.clear();
-    
+
+    // Enhanced peer connection cleanup with connection state validation
+    const peerConnections = this.getActivePeerConnections();
+    console.log(`[WebRTC Enhanced] Cleaning up ${peerConnections.size} peer connections`);
+
+    peerConnections.forEach((peerConn, participantId) => {
+      const connectionState = peerConn.connection.connectionState;
+      const iceState = peerConn.connection.iceConnectionState;
+
+      console.log(`[WebRTC Enhanced] Cleaning up connection for ${participantId}: ${connectionState}/${iceState}`);
+
+      try {
+        // Force close regardless of state
+        if (connectionState !== 'closed') {
+          peerConn.connection.close();
+        }
+        this.removePeerConnection(participantId);
+      } catch (error) {
+        console.warn(`[WebRTC Enhanced] Error cleaning up connection for ${participantId}:`, error);
+      }
+    });
+
     // Call parent cleanup
     super.cleanup();
-    
-    // Force garbage collection hint (if available)
-    if (typeof window !== 'undefined' && (window as any).gc) {
-      try {
-        (window as any).gc();
-        console.log('[WebRTC Enhanced] ✅ Forced garbage collection');
-      } catch (e) {
-        console.log('[WebRTC Enhanced] GC not available (normal in production)');
+
+    // Additional memory cleanup
+    try {
+      // Clear any remaining references
+      this.cleanupTimers = new Set();
+      this.activeIntervals = new Set();
+
+      // Force garbage collection hint (if available)
+      if (typeof window !== 'undefined' && (window as any).gc) {
+        try {
+          (window as any).gc();
+          console.log('[WebRTC Enhanced] ✅ Forced garbage collection');
+        } catch (e) {
+          console.log('[WebRTC Enhanced] GC not available (normal in production)');
+        }
       }
+    } catch (error) {
+      console.warn('[WebRTC Enhanced] Error during memory cleanup:', error);
     }
-    
+
     console.log('[WebRTC Enhanced] 🎯 Enhanced cleanup completed');
   }
 

@@ -100,12 +100,20 @@ export function CallModal({
     isScreenSharing: false,
     connectedParticipants: 0,
   })
+
+  // ENHANCED: Track server-provided call start time for synchronized duration
+  const callStartTimeRef = useRef<number | null>(null)
+  const serverCallStartTimeRef = useRef<number | null>(null)
   const [outgoingRingingInterval, setOutgoingRingingInterval] = useState<NodeJS.Timeout | null>(null)
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map())
   const [participantConnectionStates, setParticipantConnectionStates] = useState<Map<string, 'ringing' | 'connecting' | 'connected' | 'declined' | number>>(new Map())
   const [offerCreationAttempts, setOfferCreationAttempts] = useState<Set<string>>(new Set())
   const [isMinimized, setIsMinimized] = useState(false)
   const [activeParticipants, setActiveParticipants] = useState<CallParticipant[]>(participants || [])
+
+  // ENHANCED: Track group call connection attempts to prevent duplicates
+  const groupCallConnectionAttempts = useRef<Set<string>>(new Set())
+  const lastGroupCallParticipants = useRef<string>('')
   
   // PERFORMANCE: Track previous participant IDs to prevent unnecessary re-renders
   const prevParticipantIds = useRef<string>('')
@@ -114,23 +122,21 @@ export function CallModal({
   const lastProcessedEventRef = useRef<{ type: string; id: string; timestamp: number } | null>(null)
   const eventProcessingLockRef = useRef<boolean>(false)
   
-  // ENHANCED: Event deduplication helper
+  // ENHANCED: Event deduplication helper - OPTIMIZED for group calls
   const shouldProcessEvent = useCallback((eventType: string, eventId: string) => {
-    // Prevent concurrent event processing
-    if (eventProcessingLockRef.current) {
-      console.log(`[CallModal] 🔒 Event processing locked, skipping ${eventType}:${eventId}`)
-      return false
-    }
-
     const now = Date.now()
     const lastEvent = lastProcessedEventRef.current
 
+    // ENHANCED: More lenient deduplication for group call events
+    const isGroupCallEvent = eventType.includes('call_state_update') || eventType.includes('call_response')
+    const deduplicationWindow = isGroupCallEvent ? 50 : 200 // Ultra-short window for real-time responsiveness
+
     // Check for duplicate events within a short time window
-    if (lastEvent && 
-        lastEvent.type === eventType && 
-        lastEvent.id === eventId && 
-        (now - lastEvent.timestamp) < 500) { // 500ms deduplication window
-      console.log(`[CallModal] 🔄 Duplicate event detected, skipping ${eventType}:${eventId}`)
+    if (lastEvent &&
+        lastEvent.type === eventType &&
+        lastEvent.id === eventId &&
+        (now - lastEvent.timestamp) < deduplicationWindow) {
+      console.log(`[CallModal] 🔄 Duplicate event detected, skipping ${eventType}:${eventId} (window: ${deduplicationWindow}ms)`)
       return false
     }
 
@@ -139,17 +145,65 @@ export function CallModal({
     return true
   }, [])
 
-  // ENHANCED: Process event with lock
+  // ENHANCED: Process event with lock - OPTIMIZED for group calls
   const processEventWithLock = useCallback(async (eventType: string, eventId: string, handler: () => Promise<void> | void) => {
     if (!shouldProcessEvent(eventType, eventId)) {
       return
     }
 
+    // ENHANCED: Use shorter locks for group call events
+    const isGroupCallEvent = eventType.includes('call_state_update') || eventType.includes('call_response')
+    const lockTimeout = isGroupCallEvent ? 50 : 200 // Ultra-short locks for real-time responsiveness
+
+    // ENHANCED: Check if already locked with timeout and priority handling
+    const criticalEvents = ['call_ended', 'call_timeout', 'call_response', 'call_state_update']
+    const isCriticalEvent = criticalEvents.some(critical => eventType.includes(critical))
+
+    if (eventProcessingLockRef.current) {
+      if (isCriticalEvent) {
+        // For critical events, wait briefly then proceed
+        console.log(`[CallModal] ⏰ Critical event ${eventType} waiting for lock...`)
+        let waitTime = 0
+        const maxWait = 300 // 300ms max wait for critical events
+
+        while (eventProcessingLockRef.current && waitTime < maxWait) {
+          await new Promise(resolve => setTimeout(resolve, 50))
+          waitTime += 50
+        }
+
+        if (eventProcessingLockRef.current) {
+          console.warn(`[CallModal] ⚠️ Critical event ${eventType} proceeding despite lock (timeout)`)
+          // Force clear stale lock
+          eventProcessingLockRef.current = false
+        }
+      } else {
+        console.log(`[CallModal] 🔒 Event processing locked, skipping ${eventType}:${eventId}`)
+        return
+      }
+    }
+
     eventProcessingLockRef.current = true
+    const lockStart = Date.now()
+
+    // Auto-release lock after maximum timeout to prevent deadlocks
+    const lockReleaseTimeout = setTimeout(() => {
+      if (eventProcessingLockRef.current) {
+        console.warn(`[CallModal] 🚨 Force releasing stuck lock for ${eventType} after ${lockTimeout * 2}ms`)
+        eventProcessingLockRef.current = false
+      }
+    }, lockTimeout * 2)
+
     try {
       await handler()
     } finally {
+      clearTimeout(lockReleaseTimeout)
       eventProcessingLockRef.current = false
+
+      // DEBUGGING: Log excessive lock times
+      const lockDuration = Date.now() - lockStart
+      if (lockDuration > lockTimeout) {
+        console.warn(`[CallModal] ⏱️ Long event processing: ${eventType} took ${lockDuration}ms (expected <${lockTimeout}ms)`)
+      }
     }
   }, [shouldProcessEvent])
   
@@ -551,7 +605,7 @@ export function CallModal({
     
     return () => {
       console.log('[CallModal] 🧹 Component unmounting - performing thorough cleanup')
-      clearTimeout(stabilityTimeout)
+      clearTimeout(timeoutId)
       
       // CRITICAL: Ensure WebRTC is completely cleaned up on unmount
       if (webrtcServiceRef.current) {
@@ -823,6 +877,49 @@ export function CallModal({
       window.dispatchEvent(stopRingingEvent)
     }
   }, [outgoingRingingInterval, callId, session?.user?.id])
+
+  // ENHANCED: Handle call start time synchronization from other participants
+  const handleCallStartTimeSync = useCallback((data: {
+    callId: string
+    participantId: string
+    callStartTime: number
+    timestamp: number
+  }) => {
+    if (data.callId !== callId) return
+
+    console.log('[CallModal] ⏰ Received call start time sync:', {
+      from: data.participantId,
+      startTime: new Date(data.callStartTime).toISOString(),
+      currentLocal: callStartTimeRef.current ? new Date(callStartTimeRef.current).toISOString() : 'none'
+    })
+
+    // CRITICAL: Use the earliest start time for synchronization
+    const shouldUpdateTime = !callStartTimeRef.current || data.callStartTime < callStartTimeRef.current
+
+    if (shouldUpdateTime) {
+      const oldStartTime = callStartTimeRef.current
+      callStartTimeRef.current = data.callStartTime
+
+      console.log('[CallModal] ⏰ Updated call start time to earlier timestamp:', {
+        old: oldStartTime ? new Date(oldStartTime).toISOString() : 'none',
+        new: new Date(data.callStartTime).toISOString(),
+        difference: oldStartTime ? (oldStartTime - data.callStartTime) : 0,
+        source: 'peer_sync'
+      })
+
+      // Immediately update duration if call is connected and no server time exists
+      if (callState.status === 'connected' && !serverCallStartTimeRef.current) {
+        const elapsed = Math.max(0, Math.floor((Date.now() - data.callStartTime) / 1000))
+        setCallState(prev => ({ ...prev, duration: elapsed }))
+        console.log('[CallModal] ⏰ Duration updated from peer sync:', elapsed, 'seconds')
+      }
+    } else {
+      console.log('[CallModal] ⏰ Ignoring later call start time from peer:', {
+        received: new Date(data.callStartTime).toISOString(),
+        current: callStartTimeRef.current ? new Date(callStartTimeRef.current).toISOString() : 'none'
+      })
+    }
+  }, [callId, callState.status])
 
   useEffect(() => {
     console.log('[CallModal] 🔌 Socket setup useEffect triggered:', {
@@ -1718,15 +1815,27 @@ export function CallModal({
         if (!hasConnectionToParticipant) {
           console.log('[CallModal] 🚀 Creating peer connection to', data.participantId)
 
-          // ENHANCED: Check if this is a group call to enable optimization
+          // ENHANCED: Check if this is a group call to enable optimization - WITH DUPLICATE PREVENTION
           const isGroupCall = activeParticipants.length > 2
-          if (isGroupCall && webrtcServiceRef.current?.setupGroupCallConnections) {
+          const participantKey = `${data.participantId}-${callId}`
+
+          if (isGroupCall &&
+              webrtcServiceRef.current?.initializeGroupCallConnections &&
+              !groupCallConnectionAttempts.current.has(participantKey)) {
+
             console.log('[CallModal] 🎯 Group call detected - using optimized connection setup')
+
+            // Mark this participant as attempted to prevent duplicates
+            groupCallConnectionAttempts.current.add(participantKey)
+
             try {
-              await webrtcServiceRef.current.setupGroupCallConnections([data.participantId])
+              await webrtcServiceRef.current.initializeGroupCallConnections([data.participantId])
               console.log('[CallModal] ✅ Group call connection created successfully')
             } catch (error) {
               console.error('[CallModal] ❌ Group call connection failed, falling back to direct offer:', error)
+
+              // Remove from attempts on failure so it can be retried
+              groupCallConnectionAttempts.current.delete(participantKey)
 
               // Fallback to direct offer
               try {
@@ -1736,6 +1845,8 @@ export function CallModal({
                 console.error('[CallModal] ❌ Fallback offer also failed:', fallbackError)
               }
             }
+          } else if (isGroupCall && groupCallConnectionAttempts.current.has(participantKey)) {
+            console.log('[CallModal] 🔄 Group call connection already attempted for:', data.participantId)
           } else {
             try {
               // Use the safe offer creation method that waits for local stream
@@ -1841,8 +1952,32 @@ export function CallModal({
       sequenceNumber?: number
       authoritative?: boolean
       serverTimestamp?: number
+      callStartTime?: number
       participantStates?: Record<string, string>
     }) => {
+      // CRITICAL: Handle server-provided call start time as authoritative source
+      if (data.callStartTime) {
+        const hadServerTime = !!serverCallStartTimeRef.current
+
+        // Always use server time as authoritative, even if we already have one
+        if (!hadServerTime || data.callStartTime < serverCallStartTimeRef.current!) {
+          const oldServerTime = serverCallStartTimeRef.current
+          serverCallStartTimeRef.current = data.callStartTime
+          console.log('[CallModal] ⏰ Server call start time updated:', {
+            new: new Date(data.callStartTime).toISOString(),
+            old: oldServerTime ? new Date(oldServerTime).toISOString() : 'none',
+            isEarlier: !oldServerTime || data.callStartTime < oldServerTime
+          })
+
+          // Immediately recalculate duration for connected calls
+          if (callState.status === 'connected') {
+            const elapsed = Math.max(0, Math.floor((Date.now() - data.callStartTime) / 1000))
+            setCallState(prev => ({ ...prev, duration: elapsed }))
+            console.log('[CallModal] ⏰ Duration immediately synchronized to server time:', elapsed, 'seconds')
+          }
+        }
+      }
+
       // Create unique key for this update
       const updateKey = `${data.callId}-${data.status}-${data.participantCount}-${Date.now()}`
       
@@ -1850,7 +1985,7 @@ export function CallModal({
       const timeSinceLastUpdate = Date.now() - parseInt(lastStateUpdateRef.current.split('-').pop() || '0')
       const isSameUpdate = lastStateUpdateRef.current.includes(`${data.callId}-${data.status}`)
       
-      if (isSameUpdate && timeSinceLastUpdate < 100) { // 100ms deduplication window
+      if (isSameUpdate && timeSinceLastUpdate < 50) { // 50ms deduplication window for better responsiveness
         console.log('[CallModal] 🚫 Ignoring duplicate CALL_STATE_UPDATE within 100ms:', data.status)
         return
       }
@@ -2364,6 +2499,7 @@ export function CallModal({
       })
     }
 
+
     console.log(`\n🔌 [CallModal] SETTING UP SOCKET LISTENERS`)
     console.log(`[CallModal] Call ID: ${callId}`)
     console.log(`[CallModal] Session User ID: ${session?.user?.id}`)
@@ -2383,7 +2519,8 @@ export function CallModal({
     socket.on('participant_mute_change', handleParticipantMuteChange)
     socket.on('participant_camera_change', handleParticipantCameraChange)
     socket.on('connection_recovery', handleConnectionRecovery)
-    
+    socket.on('call_start_time_sync', handleCallStartTimeSync)
+
     console.log('[CallModal] ✅ All socket listeners registered')
 
     // Auto-progress to ringing when modal opens for outgoing calls
@@ -2414,6 +2551,7 @@ export function CallModal({
       }, 1000) // Show dialing state briefly
     }
 
+
     return () => {
       socket.off('call_response', handleCallResponse)
       socket.off('participant_joined', handleParticipantJoined)
@@ -2428,15 +2566,65 @@ export function CallModal({
       socket.off('participant_mute_change', handleParticipantMuteChange)
       socket.off('participant_camera_change', handleParticipantCameraChange)
       socket.off('connection_recovery', handleConnectionRecovery)
+      socket.off('call_start_time_sync', handleCallStartTimeSync)
     }
   }, [socket, callId])
 
-  // Call duration timer and connection verification
+  // ENHANCED: Call duration timer with server synchronization and coordination
   useEffect(() => {
     if (callState.status === 'connected') {
-      // Start duration timer
+      // Initialize call start time if not already set
+      if (!callStartTimeRef.current) {
+        const now = Date.now()
+        callStartTimeRef.current = now
+        console.log('[CallModal] ⏰ Call start time initialized:', new Date(now).toISOString())
+
+        // ENHANCED: Broadcast call start time to coordinate with other participants
+        if (socket?.connected && callId && session?.user?.id) {
+          const syncData = {
+            callId,
+            participantId: session.user.id,
+            callStartTime: now,
+            timestamp: now
+          }
+          console.log('[CallModal] 📡 Broadcasting call start time for coordination:', syncData)
+          socket.emit('call_start_time_sync', syncData)
+        }
+      }
+
+      // Start synchronized duration timer
       timerRef.current = setInterval(() => {
-        setCallState(prev => ({ ...prev, duration: prev.duration + 1 }))
+        setCallState(prev => {
+          // CRITICAL: Prioritize server timestamp for authoritative timing
+          let startTime: number
+
+          if (serverCallStartTimeRef.current) {
+            // Use server time as authoritative source
+            startTime = serverCallStartTimeRef.current
+          } else if (callStartTimeRef.current) {
+            // Fallback to local time if no server time
+            startTime = callStartTimeRef.current
+          } else {
+            // Emergency fallback - should not happen in connected state
+            console.warn('[CallModal] ⚠️ No start time available in connected state, using current time')
+            startTime = Date.now()
+            callStartTimeRef.current = startTime
+          }
+
+          const elapsed = Math.max(0, Math.floor((Date.now() - startTime) / 1000))
+
+          // Only update if duration actually changed to prevent unnecessary renders
+          if (prev.duration !== elapsed) {
+            // Log duration occasionally for debugging synchronization
+            if (elapsed % 10 === 0 && elapsed > 0) {
+              console.log(`[CallModal] ⏰ Duration: ${elapsed}s (start: ${new Date(startTime).toISOString()}, source: ${serverCallStartTimeRef.current ? 'server' : 'local'})`)
+            }
+
+            return { ...prev, duration: elapsed }
+          }
+
+          return prev
+        })
       }, 1000)
       
       // CRITICAL: Verify WebRTC connections when transitioning to connected
@@ -2476,14 +2664,24 @@ export function CallModal({
       setTimeout(verifyConnections, 2000) // Re-verify after 2 seconds
       
     } else {
+      // Clear timer and reset timestamps when not connected
       if (timerRef.current) {
         clearInterval(timerRef.current)
+        timerRef.current = null
+      }
+
+      // Reset timestamps when call is no longer connected
+      if (callState.status === 'disconnected' || callState.status === 'ended') {
+        callStartTimeRef.current = null
+        serverCallStartTimeRef.current = null
+        console.log('[CallModal] ⏰ Call timestamps reset for ended call')
       }
     }
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current)
+        timerRef.current = null
       }
     }
   }, [callState.status, participants, session?.user?.id])
@@ -3023,22 +3221,31 @@ export function CallModal({
                       console.error('[CallModal] ❌ Failed to create offer for:', participantId, offerError)
                     }
                   } else {
-                    // For multiple participants, use group call optimization
-                    try {
-                      await webrtcServiceRef.current?.setupGroupCallConnections(memoizedParticipantIds)
-                      console.log('[CallModal] ✅ Group call connections setup completed')
-                    } catch (groupError) {
-                      console.error('[CallModal] ❌ Group call setup failed, falling back to individual offers:', groupError)
+                    // ENHANCED: For multiple participants, use group call optimization with duplicate prevention
+                    const participantListKey = memoizedParticipantIds.sort().join(',')
 
-                      // Fallback to individual offers if group setup fails
-                      for (const participantId of memoizedParticipantIds) {
-                        try {
-                          await webrtcServiceRef.current?.safeCreateOffer(participantId)
-                          console.log('[CallModal] ✅ Fallback offer created for:', participantId)
-                        } catch (offerError) {
-                          console.error('[CallModal] ❌ Fallback offer failed for:', participantId, offerError)
+                    if (lastGroupCallParticipants.current !== participantListKey) {
+                      lastGroupCallParticipants.current = participantListKey
+                      console.log('[CallModal] 🎯 New group call configuration detected:', memoizedParticipantIds)
+
+                      try {
+                        await webrtcServiceRef.current?.initializeGroupCallConnections(memoizedParticipantIds)
+                        console.log('[CallModal] ✅ Group call connections setup completed')
+                      } catch (groupError) {
+                        console.error('[CallModal] ❌ Group call setup failed, falling back to individual offers:', groupError)
+
+                        // Fallback to individual offers if group setup fails
+                        for (const participantId of memoizedParticipantIds) {
+                          try {
+                            await webrtcServiceRef.current?.safeCreateOffer(participantId)
+                            console.log('[CallModal] ✅ Fallback offer created for:', participantId)
+                          } catch (offerError) {
+                            console.error('[CallModal] ❌ Fallback offer failed for:', participantId, offerError)
+                          }
                         }
                       }
+                    } else {
+                      console.log('[CallModal] 🔄 Group call already setup for current participants:', memoizedParticipantIds)
                     }
                   }
                 } else {
@@ -3282,12 +3489,37 @@ export function CallModal({
       console.log('[CallModal] 🧹 Performing controlled cleanup - preserving WebRTC service for subsequent calls')
       
       try {
-        // SUBSEQUENT CALL FIX: Only cleanup peer connections, preserve the WebRTC service
+        // ENHANCED: Comprehensive WebRTC cleanup with memory management
         if (webrtcServiceRef.current) {
-          console.log('[CallModal] 🔄 Cleaning peer connections but preserving WebRTC service')
-          // Use the new clearPeerConnections method instead of destroying the service
-          webrtcServiceRef.current.clearPeerConnections()
-          console.log('[CallModal] ✅ WebRTC service preserved for subsequent calls')
+          console.log('[CallModal] 🔄 Performing enhanced WebRTC cleanup')
+
+          try {
+            // Get active connections count before cleanup for logging
+            const activePeerConnections = webrtcServiceRef.current.getActivePeerConnections()
+            console.log(`[CallModal] Cleaning up ${activePeerConnections.size} active peer connections`)
+
+            // Use enhanced cleanup if available, otherwise fallback to standard
+            if (typeof webrtcServiceRef.current.clearPeerConnections === 'function') {
+              webrtcServiceRef.current.clearPeerConnections()
+              console.log('[CallModal] ✅ WebRTC peer connections cleared, service preserved')
+            } else {
+              // Fallback to full cleanup
+              webrtcServiceRef.current.cleanup()
+              webrtcServiceRef.current = null
+              console.log('[CallModal] ⚠️ Full WebRTC cleanup performed (no clearPeerConnections available)')
+            }
+          } catch (webrtcError) {
+            console.error('[CallModal] Error during WebRTC cleanup:', webrtcError)
+            // Force cleanup on error
+            try {
+              if (webrtcServiceRef.current) {
+                webrtcServiceRef.current.cleanup()
+                webrtcServiceRef.current = null
+              }
+            } catch (forceError) {
+              console.error('[CallModal] Error during force cleanup:', forceError)
+            }
+          }
         }
 
         // SUBSEQUENT CALL FIX: Preserve local stream but stop tracks only when truly ending
@@ -4239,7 +4471,16 @@ export function CallModal({
               <VideoGrid
                 localStream={localStreamRef.current}
                 remoteStreams={remoteStreams}
-                participants={connectedParticipants}
+                participants={(() => {
+                  const filteredParticipants = connectedParticipants.filter(p => p.id !== session?.user?.id)
+                  console.log('[CallModal] VideoGrid participants:', {
+                    total: connectedParticipants.length,
+                    filtered: filteredParticipants.length,
+                    currentUserId: session?.user?.id,
+                    participantNames: filteredParticipants.map(p => `${p.name} (${p.id})`)
+                  })
+                  return filteredParticipants
+                })()}
                 currentUserId={session?.user?.id || ''}
                 isLocalCameraOff={callState.isCameraOff}
                 isLocalMuted={callState.isMuted}
@@ -4303,9 +4544,25 @@ export function CallModal({
                         element.muted = false
                         element.autoplay = true
                         
-                        // FIRST CALL FIX: Enhanced play sequence with multiple retry strategies
+                        // CRITICAL FIX: Prevent audio play race conditions
+                        let playAttemptInProgress = false
+
                         const attemptPlay = async () => {
+                          // Prevent multiple concurrent play attempts
+                          if (playAttemptInProgress) {
+                            console.log(`[CallModal] ⏸️ Play attempt already in progress for ${participantId}, skipping`)
+                            return
+                          }
+
+                          playAttemptInProgress = true
+
                           try {
+                            // Pause any existing playback first to prevent conflicts
+                            if (!element.paused) {
+                              element.pause()
+                              await new Promise(resolve => setTimeout(resolve, 50)) // Brief pause
+                            }
+
                             // Wait for stream to be ready
                             if (stream.active && audioTracks.length > 0) {
                               await element.play()
@@ -4316,54 +4573,53 @@ export function CallModal({
                             }
                           } catch (error) {
                             console.warn(`[CallModal] ❌ Initial audio play failed for ${participantId}:`, error)
-                            
-                            // Strategy 1: Wait for stream to become active
+
+                            // Single retry strategy after ensuring element is ready
                             if (!stream.active || audioTracks.length === 0) {
                               console.log(`[CallModal] 🔄 Waiting for stream to become active for ${participantId}`)
-                              const checkActiveStream = () => {
-                                if (stream.active && stream.getAudioTracks().length > 0) {
-                                  element.play().then(() => {
-                                    console.log(`[CallModal] ✅ Audio playing after stream became active for ${participantId}`)
-                                  }).catch(console.warn)
-                                } else {
-                                  setTimeout(checkActiveStream, 100)
+
+                              // Wait for stream with timeout
+                              const streamReadyPromise = new Promise<void>((resolve, reject) => {
+                                const checkActiveStream = () => {
+                                  if (stream.active && stream.getAudioTracks().length > 0) {
+                                    resolve()
+                                  } else {
+                                    setTimeout(checkActiveStream, 100)
+                                  }
                                 }
-                              }
-                              setTimeout(checkActiveStream, 100)
-                              return
-                            }
-                            
-                            // Strategy 2: Force play after short delay
-                            setTimeout(() => {
-                              element.play().then(() => {
-                                console.log(`[CallModal] ✅ Audio playing after retry for participant ${participantId}`)
-                              }).catch(retryError => {
-                                console.warn(`[CallModal] Retry audio play failed for ${participantId}:`, retryError)
-                                
-                                // Strategy 3: Reset and try again (for first call issues)
-                                element.load()
-                                setTimeout(() => {
-                                  element.play().catch(finalError => {
-                                    console.error(`[CallModal] Final audio play attempt failed for ${participantId}:`, finalError)
-                                  })
-                                }, 200)
+                                setTimeout(() => reject(new Error('Stream timeout')), 5000) // 5 second timeout
+                                checkActiveStream()
                               })
-                            }, 300)
+
+                              try {
+                                await streamReadyPromise
+                                await element.play()
+                                console.log(`[CallModal] ✅ Audio playing after stream became active for ${participantId}`)
+                              } catch (streamError) {
+                                console.warn(`[CallModal] Stream wait or play failed for ${participantId}:`, streamError)
+                              }
+                            }
+                          } finally {
+                            playAttemptInProgress = false
                           }
                         }
                         
                         // Try immediate play
                         attemptPlay()
                         
-                        // Also set up comprehensive event listeners for reliability
+                        // Set up event listeners for additional play attempts
                         element.addEventListener('loadeddata', () => {
                           console.log(`[CallModal] Audio loadeddata event for ${participantId}`)
-                          attemptPlay()
+                          if (!playAttemptInProgress) {
+                            attemptPlay()
+                          }
                         }, { once: true })
-                        
+
                         element.addEventListener('canplay', () => {
                           console.log(`[CallModal] Audio canplay event for ${participantId}`)
-                          attemptPlay()
+                          if (!playAttemptInProgress) {
+                            attemptPlay()
+                          }
                         }, { once: true })
                       } else {
                         remoteAudioRefs.current.delete(participantId)

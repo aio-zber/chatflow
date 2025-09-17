@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useSocketContext } from '@/context/SocketContext'
 import { useSession } from 'next-auth/react'
 import { CallModal } from './chat/CallModal'
+import { getGlobalAudioManager } from '@/lib/audio-manager'
 
 interface IncomingCall {
   callId: string
@@ -172,7 +173,7 @@ export function GlobalCallManager() {
 
     // ENHANCED: More lenient deduplication for group call events
     const isGroupCallEvent = eventType.includes('call_state_update') || eventType.includes('call_response')
-    const deduplicationWindow = isGroupCallEvent ? 200 : 1000 // Shorter window for group call events
+    const deduplicationWindow = isGroupCallEvent ? 50 : 300 // Ultra-short window for real-time responsiveness
 
     // Check for duplicate events within a short time window
     if (lastEvent &&
@@ -196,20 +197,50 @@ export function GlobalCallManager() {
 
     // ENHANCED: Use shorter locks for group call events
     const isGroupCallEvent = eventType.includes('call_state_update') || eventType.includes('call_response')
-    const lockTimeout = isGroupCallEvent ? 100 : 500 // Shorter locks for group calls
+    const lockTimeout = isGroupCallEvent ? 50 : 200 // Ultra-short locks for real-time responsiveness
 
-    // Check if already locked, but be more permissive for critical events
-    if (eventProcessingLockRef.current && !eventType.includes('call_ended') && !eventType.includes('call_timeout')) {
-      console.log(`[GlobalCallManager] 🔒 Event processing locked, skipping ${eventType}:${eventId}`)
-      return
+    // ENHANCED: Check if already locked with timeout and priority handling
+    const criticalEvents = ['call_ended', 'call_timeout', 'call_state_update']
+    const isCriticalEvent = criticalEvents.some(critical => eventType.includes(critical))
+
+    if (eventProcessingLockRef.current) {
+      if (isCriticalEvent) {
+        // For critical events, wait briefly then proceed
+        console.log(`[GlobalCallManager] ⏰ Critical event ${eventType} waiting for lock...`)
+        let waitTime = 0
+        const maxWait = 500 // 500ms max wait for critical events
+
+        while (eventProcessingLockRef.current && waitTime < maxWait) {
+          await new Promise(resolve => setTimeout(resolve, 50))
+          waitTime += 50
+        }
+
+        if (eventProcessingLockRef.current) {
+          console.warn(`[GlobalCallManager] ⚠️ Critical event ${eventType} proceeding despite lock (timeout)`)
+          // Force clear stale lock
+          eventProcessingLockRef.current = false
+        }
+      } else {
+        console.log(`[GlobalCallManager] 🔒 Event processing locked, skipping ${eventType}:${eventId}`)
+        return
+      }
     }
 
     eventProcessingLockRef.current = true
     const lockStart = Date.now()
 
+    // Auto-release lock after maximum timeout to prevent deadlocks
+    const lockReleaseTimeout = setTimeout(() => {
+      if (eventProcessingLockRef.current) {
+        console.warn(`[GlobalCallManager] 🚨 Force releasing stuck lock for ${eventType} after ${lockTimeout * 2}ms`)
+        eventProcessingLockRef.current = false
+      }
+    }, lockTimeout * 2)
+
     try {
       await handler()
     } finally {
+      clearTimeout(lockReleaseTimeout)
       eventProcessingLockRef.current = false
 
       // DEBUGGING: Log excessive lock times
@@ -457,7 +488,7 @@ export function GlobalCallManager() {
         if (lastEvent && 
             lastEvent.callId === eventCallId && 
             lastEvent.reason === reason &&
-            (now - lastEvent.timestamp) < 200) { // 200ms debounce window
+            (now - lastEvent.timestamp) < 100) { // 100ms debounce window for better real-time response
           console.log('[GlobalCallManager] 🚫 Debouncing duplicate stop ringing event')
           return
         }

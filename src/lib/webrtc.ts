@@ -1573,6 +1573,16 @@ export class WebRTCService {
       }
       
       console.log('[WebRTC] Setting local description...')
+
+      // CRITICAL: Validate peer connection state before setting local offer
+      const signalingState = pc.signalingState
+      console.log('[WebRTC] Current signaling state before setting local offer:', signalingState)
+
+      if (signalingState !== 'stable') {
+        console.warn('[WebRTC] Invalid state for setting local offer:', signalingState)
+        throw new Error(`Cannot set local offer in state: ${signalingState}`)
+      }
+
       await pc.setLocalDescription(offer)
       
       console.log('[WebRTC] 📡 Sending offer to participant:', participantId)
@@ -1682,6 +1692,16 @@ export class WebRTCService {
       })
       
       console.log('[WebRTC] Setting remote description from offer...')
+
+      // CRITICAL: Validate peer connection state before setting remote description
+      const currentSignalingState = pc.signalingState
+      console.log('[WebRTC] Current signaling state before setting remote offer:', currentSignalingState)
+
+      if (currentSignalingState !== 'stable' && currentSignalingState !== 'have-local-offer') {
+        console.warn('[WebRTC] Invalid state for setting remote offer:', currentSignalingState)
+        throw new Error(`Cannot set remote offer in state: ${currentSignalingState}`)
+      }
+
       await pc.setRemoteDescription(new RTCSessionDescription(data.offer))
 
       // CRITICAL FIX: Apply any buffered ICE candidates now that remote description is set
@@ -1707,6 +1727,16 @@ export class WebRTCService {
       console.log('[WebRTC] 🔍 Answer SDP analysis:', { hasAudio, hasVideo })
       
       console.log('[WebRTC] Setting local description with answer...')
+
+      // CRITICAL: Validate peer connection state before setting local description
+      const signalingStateBeforeLocal = pc.signalingState
+      console.log('[WebRTC] Current signaling state before setting local answer:', signalingStateBeforeLocal)
+
+      if (signalingStateBeforeLocal !== 'have-remote-offer') {
+        console.warn('[WebRTC] Invalid state for setting local answer:', signalingStateBeforeLocal)
+        throw new Error(`Cannot set local answer in state: ${signalingStateBeforeLocal}`)
+      }
+
       await pc.setLocalDescription(answer)
       
       console.log('[WebRTC] 📡 Sending answer to:', data.fromUserId)
@@ -1781,6 +1811,13 @@ export class WebRTCService {
       
       if (currentState === 'have-local-offer') {
         console.log('[WebRTC] Setting remote description from answer')
+
+        // CRITICAL: Additional validation before setting remote answer
+        if (peerConn.connection.remoteDescription) {
+          console.warn('[WebRTC] Remote description already exists, skipping answer')
+          return
+        }
+
         await peerConn.connection.setRemoteDescription(new RTCSessionDescription(data.answer))
 
         // CRITICAL FIX: Apply any buffered ICE candidates now that remote description is set
@@ -2447,6 +2484,16 @@ export class WebRTCService {
       
       // Create new offer with ICE restart
       const offer = await peerConn.connection.createOffer({ iceRestart: true })
+
+      // CRITICAL: Validate state before setting local description for ICE restart
+      const currentState = peerConn.connection.signalingState
+      console.log('[WebRTC] Current signaling state before ICE restart offer:', currentState)
+
+      if (currentState !== 'stable' && currentState !== 'have-remote-offer') {
+        console.warn('[WebRTC] Invalid state for ICE restart:', currentState)
+        throw new Error(`Cannot perform ICE restart in state: ${currentState}`)
+      }
+
       await peerConn.connection.setLocalDescription(offer)
       
       // Send the new offer to restart ICE
